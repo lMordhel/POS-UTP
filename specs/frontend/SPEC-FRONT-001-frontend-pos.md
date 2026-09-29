@@ -5,7 +5,7 @@
 - ID: SPEC-FRONT-001
 - Requirement: Transversal (consume ERF-01..ERF-08 vía APIs reales)
 - Service: Frontend
-- Status: IMPLEMENTED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Media
 
@@ -98,5 +98,6 @@ Tests: Smoke manual + `npm run build` en verde
 
 | Version | Date | Change | Reason |
 |---|---|---|---|
+| 1.0.0 | 2026-09-29 | IMPLEMENTED → VALIDATED (demo manual: venta + descuento visibles) | AC-FRONT-01 confirmada por usuario |
 | 1.0.0 | 2026-09-29 | IMPLEMENTED (build verde + serve 200 + backends healthy) | Smoke: AC-FRONT-01 demo manual pendiente |
 | 1.0.0 | 2026-09-29 | Approved; scope mínimo sobre APIs reales | User decision: frontend Vite |
