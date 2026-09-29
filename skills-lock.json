@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "fastapi-templates": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/api-scaffolding/skills/fastapi-templates/SKILL.md",
+      "computedHash": "e28ca940d4a3a85eaa9150f0d4c0cc36c16de33368963b7f9da5875842b328b4"
+    },
+    "pydantic": {
+      "source": "pydantic/skills",
+      "sourceType": "github",
+      "skillPath": "skills/pydantic/SKILL.md",
+      "computedHash": "5e9c70289cf543ee4664431b6b9566c36f2efa53a938613c2e38defca4984c9a"
+    },
+    "python-testing-patterns": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/python-development/skills/python-testing-patterns/SKILL.md",
+      "computedHash": "66b0f13c33ca5689ce6d59dfc6c441bacf3d017299d8ee3c30a028299e5d28e9"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-best-practices/SKILL.md",
+      "computedHash": "6b526d013e28073246a36f99b529bc43745d30832ecfa8217b359c34f260ca6b"
+    }
+  }
+}

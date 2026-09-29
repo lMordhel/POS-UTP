@@ -1,0 +1,43 @@
+# POS-UTP Fase 3 (ADR-001/002/003/004).
+# Sin Docker en la máquina actual: validado vía E2E local (ver infra/e2e_check.py).
+# Uso: docker compose -f infra/docker-compose.yml up -d --build
+name: pos-utp
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: pos
+      POSTGRES_PASSWORD: pos
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pos"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  stock:
+    build: ../services/stock-service
+    environment:
+      STOCK_DATABASE_URL: postgresql+psycopg2://pos:pos@postgres:5432/stock_db
+    ports:
+      - "8002:8002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  sales:
+    build: ../services/sales-service
+    environment:
+      SALES_DATABASE_URL: postgresql+psycopg2://pos:pos@postgres:5432/ventas_db
+      SALES_STOCK_SERVICE_URL: http://stock:8002
+    ports:
+      - "8001:8001"
+    depends_on:
+      stock:
+        condition: service_started
+
+volumes:
+  pgdata:
