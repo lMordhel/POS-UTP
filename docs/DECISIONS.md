@@ -69,6 +69,7 @@
 
 | Fecha | Cambio |
 |---|---|
+| 2026-09-29 | Frontend Vite IMPLEMENTED (SPEC-FRONT-001): productos/venta/ventas sobre APIs reales, build verde, serve 200; demo manual AC-FRONT-01 pendiente |
 | 2026-09-29 | Fase 3: infra/docker-compose.yml + Dockerfiles + init.sql (ventas_db/stock_db); E2E real Ventas→Stock por HTTP en verde (infra/e2e_check.py); docker CLI no disponible en esta máquina, compose entregado sin ejecutar |
 | 2026-09-29 | SPEC-SALES-001/002/003 1.0.0 APPROVED → VALIDATED (13/13 pytest); OQ-ERF03-01 (fusión) y OQ-ARCH-01 (sin estados) DECIDED; backend ERF-01..08 completo |
 | 2026-09-29 | SPEC-STOCK-001/002/003/005 1.0.0 APPROVED → VALIDATED (25/25 pytest); stock-service completa ERF-02/04/05/06/08 |
