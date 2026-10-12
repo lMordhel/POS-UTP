@@ -5,7 +5,7 @@
 - ID: SPEC-OPS-002
 - Requirement: Plan de seguridad Fase 6, transversal (sin ERF nuevo; hace consumible lo instrumentado en Fases 1-5).
 - Service: Stock + Sales
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Media
 
@@ -120,5 +120,6 @@ Tests: Pendiente (futuros: `test_request_id_echo`, `test_metrics_groups_by_templ
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 1.0.0 | 2026-10-12 | OQ-OBS-01/02/03 DECIDED (hand-rolled/propia/ya); DRAFT → APPROVED (autoriza desarrollo) | User approval: hand-rolled, propia, ya |
+| 1.0.0 | 2026-10-12 | APPROVED → VALIDATED (116/116 pytest + E2E en verde) | Tests confirman AC-OBS02-01..05 |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Plan de seguridad Fase 6 |
