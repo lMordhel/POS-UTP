@@ -85,7 +85,7 @@ def db_engine():
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    from app.models import sale, sale_detail  # noqa: F401 — register tables
+    from app.models import sale, sale_detail, user  # noqa: F401 — register tables
 
     Base.metadata.create_all(bind=engine)
     yield engine
