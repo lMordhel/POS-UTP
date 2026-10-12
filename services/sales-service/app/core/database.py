@@ -67,6 +67,16 @@ def downgrade_database(url: str, revision: str = "base") -> None:
     command.downgrade(_config(url), revision)
 
 
+def check_db() -> bool:
+    """SPEC-OPS-002: chequeo real para `/ready` (SELECT 1)."""
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("select 1"))
+        return True
+    except Exception:
+        return False
+
+
 def get_db() -> Iterator[Session]:
     db = SessionLocal()
     try:
