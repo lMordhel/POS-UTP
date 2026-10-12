@@ -105,7 +105,7 @@
 
 ## ADR-011 — Migraciones Alembic + auditoría de inventario
 
-- Status: PROPOSED (la aprobación de SPEC-OPS-001 lo aprueba)
+- Status: APPROVED (2026-10-12, con SPEC-OPS-001 1.0.0)
 - Decisión: Alembic por servicio con baseline autogenerada (upgrade + downgrade); `init_db` adopta-o-migra (stamp head si hay tablas sin versión, upgrade si no); bootstrap admin preservado. Auditoría: tabla `inventory_movements` por cada ajuste aplicado (actor desde claims, motivo, antes/después, clave nullable; replays no auditan); eventos de seguridad en logs estructurados (sin tablas extra).
 - Fundamento: `create_all` no versiona y no puede evolucionar el esquema con datos; los ajustes manuales de admin hoy no dejan traza con actor.
 - Pendientes (OQ-AUD-01/02/03): alcance de auditoría, upgrade-head en todo vs solo prod, baseline+seed mínimo.

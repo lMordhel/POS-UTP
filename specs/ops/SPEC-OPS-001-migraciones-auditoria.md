@@ -5,8 +5,8 @@
 - ID: SPEC-OPS-001
 - Requirement: Plan de seguridad Fase 4, transversal (toca ERF-02/05/06 en Stock y ERF-09 en Sales sin cambiar endpoints; sin ERF nuevo).
 - Service: Stock + Sales
-- Status: DRAFT
-- Version: 0.1.0
+- Status: APPROVED
+- Version: 1.0.0
 - Priority: Alta
 
 ## Objective
@@ -112,9 +112,9 @@ Then deben emitirse logs con usuario/resultado (nunca passwords).
 
 ## Open Questions
 
-* OQ-AUD-01: ¿Alcanza con movimientos de inventario en tabla + eventos de seguridad en logs (propuesta), o también tabla de auditoría para usuarios/ventas? Las ventas ya son inmutables y consultables; usuarios es bajo volumen. La propuesta evita dos tablas más.
-* OQ-AUD-02: ¿`upgrade head` en `init_db` para todo (propuesta, un solo camino en dev y prod) o solo en Postgres/prod? Un solo camino evita derivas; los tests siguen con `create_all` en memoria + test de head limpio.
-* OQ-AUD-03: ¿Baseline única por servicio con seed solo-admin vía bootstrap existente (propuesta sí)? Sin más seeds.
+* OQ-AUD-01: DECIDED 2026-10-12 → movimientos en tabla + seguridad en logs (ventas inmutables ya auditan; usuarios bajo volumen; ampliar en Fase 6+ si hace falta).
+* OQ-AUD-02: DECIDED 2026-10-12 → un solo camino (`upgrade head` / adoptar-o-migrar en todo entorno); tests con `create_all` en memoria + test de head limpio.
+* OQ-AUD-03: DECIDED 2026-10-12 → sí, baseline única por servicio + seed solo-admin vía bootstrap (sin seeds de negocio en migraciones).
 
 ## Traceability
 
@@ -134,5 +134,7 @@ Tests: Pendiente (futuros: `test_baseline_upgrades_clean`, `test_init_db_adopts_
 ## Change History
 
 | Version | Date | Change | Reason |
+|---|---|---|---|
+| 1.0.0 | 2026-10-12 | OQ-AUD-01/02/03 DECIDED (tabla+logs, un solo camino, sí baseline); DRAFT → APPROVED (autoriza desarrollo) | User approval: tabla+logs, todo, sí |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Plan de seguridad Fase 4 |
