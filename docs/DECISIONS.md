@@ -121,7 +121,7 @@
 
 ## ADR-013 — Observabilidad mínima sin dependencias nuevas
 
-- Status: PROPOSED (la aprobación de SPEC-OPS-002 lo aprueba)
+- Status: APPROVED (2026-10-12, con SPEC-OPS-002 1.0.0)
 - Decisión: Access log JSON con `X-Request-ID` (middleware propio); `/metrics` hand-rolled en formato Prometheus (contadores + latencias + `app_info`, en memoria/1 réplica); `/ready` solo DB propia (200/503); `/health` intacto. Sin OTel, sin Prometheus/Grafana, sin propagación profunda del request id en esta fase.
 - Pendientes (OQ-OBS-01/02/03): hand-rolled vs librería, alcance de ready, unificación de logs.
 - Afecta a: SPEC-OPS-002.

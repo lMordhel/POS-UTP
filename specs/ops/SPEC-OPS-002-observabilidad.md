@@ -5,8 +5,8 @@
 - ID: SPEC-OPS-002
 - Requirement: Plan de seguridad Fase 6, transversal (sin ERF nuevo; hace consumible lo instrumentado en Fases 1-5).
 - Service: Stock + Sales
-- Status: DRAFT
-- Version: 0.1.0
+- Status: APPROVED
+- Version: 1.0.0
 - Priority: Media
 
 ## Objective
@@ -97,9 +97,9 @@ Then debe ser JSON con `method`, `route`, `status`, `duration_ms`, `request_id`.
 
 ## Open Questions
 
-* OQ-OBS-01: ¿Métricas hand-rolled mínimas sin dependencia (propuesta) o `prometheus_client`? La propuesta evita una dependencia por 3 contadores con formato válido.
-* OQ-OBS-02: ¿`/ready` solo DB propia (propuesta; integración vía E2E) o también chequea Sales→Stock? Chequear abajo acopla readiness y genera flapping.
-* OQ-OBS-03: ¿Access log JSON ya (propuesta) y unificación de logs de negocio después, o todo junto ahora? Todo junto duplica el alcance de la fase.
+* OQ-OBS-01: DECIDED 2026-10-12 → hand-rolled (sin dependencia nueva; migrable a `prometheus_client` sin romper `/metrics`).
+* OQ-OBS-02: DECIDED 2026-10-12 → solo DB propia (readiness local; cascadas y flapping fuera; integración vía E2E).
+* OQ-OBS-03: DECIDED 2026-10-12 → access log JSON ya; unificación de negocio después (menos riesgo, validable).
 
 ## Traceability
 
@@ -118,5 +118,7 @@ Tests: Pendiente (futuros: `test_request_id_echo`, `test_metrics_groups_by_templ
 ## Change History
 
 | Version | Date | Change | Reason |
+|---|---|---|---|
+| 1.0.0 | 2026-10-12 | OQ-OBS-01/02/03 DECIDED (hand-rolled/propia/ya); DRAFT → APPROVED (autoriza desarrollo) | User approval: hand-rolled, propia, ya |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Plan de seguridad Fase 6 |
