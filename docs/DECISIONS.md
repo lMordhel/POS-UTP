@@ -111,6 +111,14 @@
 - Pendientes (OQ-AUD-01/02/03): alcance de auditoría, upgrade-head en todo vs solo prod, baseline+seed mínimo.
 - Afecta a: SPEC-OPS-001.
 
+## ADR-012 — Lectura por lote para la saga (sin cambiar semántica)
+
+- Status: PROPOSED (la aprobación de SPEC-STOCK-006 lo aprueba)
+- Decisión: `POST /api/v1/products/batch` aditivo (producto + stock, tope 100, RBAC lector); Sales lo usa como único camino de lectura (3N → N+1 llamadas); ajustes por línea intactos; sin cachés, threads ni batch de escritura en esta fase.
+- Fundamento medido: la saga hace N×(`get_product` + `get_stock`) secuenciales + N ajustes.
+- Pendientes (OQ-BATCH-01/02/03): encontrados-vs-404, camino único, tope.
+- Afecta a: SPEC-STOCK-006.
+
 ## D-AUTH-SCOPE — Ampliación de alcance: seguridad backend
 
 - Status: DECIDED (2026-10-12, decisión de usuario — Opción 1)
