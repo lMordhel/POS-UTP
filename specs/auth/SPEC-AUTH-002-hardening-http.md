@@ -5,7 +5,7 @@
 - ID: SPEC-AUTH-002
 - Requirement: Plan de seguridad Fase 2 — endurece ERF-09/ERF-10 (sin ERF nuevo; no amplía funcionalidad, reduce superficie).
 - Service: Sales + Stock
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Muy alta
 
@@ -134,5 +134,6 @@ Tests: Pendiente (futuros: `test_cors_forbids_unknown_origin`, `test_cors_allows
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 1.0.0 | 2026-10-12 | OQ-HARD-01/02 DECIDED (sí a ambos); DRAFT → APPROVED (autoriza desarrollo) | User approval: sí, sí |
+| 1.0.0 | 2026-10-12 | APPROVED → VALIDATED (79/79 pytest + E2E en verde) | Tests confirman AC-HARD02-01..06 |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Plan de seguridad Fase 2 |

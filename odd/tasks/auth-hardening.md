@@ -35,8 +35,8 @@ OQ-HARD-01/02 DECIDED (sí, sí). Endurece ERF-09/10 sin ERF nuevo.
 
 - [x] F2-T1 — SPEC-AUTH-002 DRAFT + rama + ADR-009 PROPOSED
 - [x] F2-T2 — SPEC-AUTH-002 → APPROVED 1.0.0 (OQ-HARD-01/02 sí, sí)
-- [ ] F2-T3 — Implementar hardening en Sales y Stock con TDD
-- [ ] F2-T4 — Verificación completa + SPEC VALIDATED + reporte
+- [x] F2-T3 — Hardening en Sales y Stock con TDD (slowapi, CORS env, headers, fail-fast, docs-off)
+- [x] F2-T4 — Verificación completa + SPEC VALIDATED
 
 ## Authorized scope
 
@@ -58,7 +58,19 @@ TDD ROJO→VERDE donde haya RED ejecutable.
 
 ## Progress
 
-- SPEC aprobada; pendiente implementar.
+- Feature completa y validada en `feature/auth-hardening` (4/4 tareas).
+
+## Verification evidence
+
+- Sales: 39 passed (33 previos + 6 hardening). Stock: 40 passed (34 + 6).
+- `py infra/e2e_check.py` → OK sin regresiones.
+- SPEC-AUTH-002 1.0.0 VALIDATED; ADR-009 APPROVED.
+- Commits: cac55cd (SPEC DRAFT), 1b974f1 (SPEC APPROVED), 1d23a6b (implementación), + cierre.
+
+## Next step
+
+- Decisión del usuario: merge en orden (auth-rbac → main, luego auth-hardening) o PRs. Luego Fase 3 (SPEC idempotencia/saga) cuando quiera.
+- Nota: nueva dependencia `slowapi` (instalar en despliegue con requirements).
 
 ## Verification evidence
 
