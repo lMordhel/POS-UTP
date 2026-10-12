@@ -101,6 +101,27 @@ class StockClient:
         resp.raise_for_status()
         return int(resp.json()["cantidad"])
 
+    def batch_get_products(self, ids: list[int]) -> list[StockProduct]:
+        """SPEC-STOCK-006: una lectura por lote (precios + stock)."""
+        try:
+            resp = self._request("POST", "/api/v1/products/batch", json={"ids": ids})
+        except httpx.HTTPError as exc:
+            raise StockUnavailableError(f"stock no disponible: {exc}")
+        if resp.status_code >= 500:
+            raise StockUnavailableError(f"stock falló: HTTP {resp.status_code}")
+        resp.raise_for_status()
+        return [
+            StockProduct(
+                id=item["id"],
+                codigo=item["codigo"],
+                nombre=item["nombre"],
+                precio=Decimal(str(item["precio"])),
+                activo=item["activo"],
+                stock=item["stock"],
+            )
+            for item in resp.json()
+        ]
+
     def adjust_stock(self, product_id: int, delta: int, motivo: str, idem_key: str | None = None) -> int:
         try:
             headers = {"Idempotency-Key": idem_key} if idem_key else None

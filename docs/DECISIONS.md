@@ -111,6 +111,14 @@
 - Pendientes (OQ-AUD-01/02/03): alcance de auditoría, upgrade-head en todo vs solo prod, baseline+seed mínimo.
 - Afecta a: SPEC-OPS-001.
 
+## ADR-012 — Lectura por lote para la saga (sin cambiar semántica)
+
+- Status: APPROVED (2026-10-12, con SPEC-STOCK-006 1.0.0)
+- Decisión: `POST /api/v1/products/batch` aditivo (producto + stock, tope 100, RBAC lector); Sales lo usa como único camino de lectura (3N → N+1 llamadas); ajustes por línea intactos; sin cachés, threads ni batch de escritura en esta fase.
+- Fundamento medido: la saga hace N×(`get_product` + `get_stock`) secuenciales + N ajustes.
+- Pendientes (OQ-BATCH-01/02/03): encontrados-vs-404, camino único, tope.
+- Afecta a: SPEC-STOCK-006.
+
 ## D-AUTH-SCOPE — Ampliación de alcance: seguridad backend
 
 - Status: DECIDED (2026-10-12, decisión de usuario — Opción 1)
@@ -126,6 +134,7 @@
 | 2026-10-12 | SPEC-AUTH-002 1.0.0 VALIDATED (79/79 pytest + E2E; OQ-HARD-01/02 sí, sí) |
 | 2026-10-12 | SPEC-SALES-004 1.0.0 VALIDATED (86/86 pytest + E2E con replay; OQ-SAGA 200/sin-exp/422) |
 | 2026-10-12 | SPEC-OPS-001 1.0.0 VALIDATED (97/97 pytest + E2E; OQ-AUD tabla+logs/todo/sí) |
+| 2026-10-12 | SPEC-STOCK-006 1.0.0 VALIDATED (106/106 pytest + E2E; OQ-BATCH encontrados/siempre/100) |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 APPROVED (usuario conforme; autoriza desarrollo); ADR-006/007/008 → APPROVED |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 VALIDATED (67/67 pytest + E2E con login); identidad de servicio Sales→Stock (addendum ADR-008) |
 | 2026-10-12 | SPEC-AUTH-001 0.1.0 DRAFT (Opción 1: admin/cajero, sin registro público); ADR-006/007/008 PROPOSED; D-AUTH-SCOPE DECIDED (ampliación de alcance a seguridad backend) |

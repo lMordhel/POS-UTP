@@ -40,3 +40,9 @@ class ProductRead(BaseModel):
     stock: int = 0
     created_at: datetime | None = None
     updated_at: datetime | None = None
+
+
+class BatchRequest(BaseModel):
+    """SPEC-STOCK-006: lote de ids (1..100)."""
+
+    ids: Annotated[list[Annotated[int, Field(gt=0)]], Field(min_length=1, max_length=100)]

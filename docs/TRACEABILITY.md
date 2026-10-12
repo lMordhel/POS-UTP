@@ -4,9 +4,9 @@ Relación obligatoria: `ERF → SPEC → AC → Endpoint → Service → Test`.
 
 | ERF | Specification | Service | Acceptance Criteria | Endpoint | Tests | Status |
 |---|---|---|---|---|---|---|
-| ERF-01 | SPEC-SALES-001 + SPEC-SALES-004 | Sales | AC-ERF01-01, AC-ERF01-02, AC-ERF01-03, AC-ERF01-04 | POST /api/v1/sales | test_sales.py + test_saga.py (5 passed) + e2e_check.py (E2E real OK incl. replay) | Validated |
+| ERF-01 | SPEC-SALES-001 + SPEC-SALES-004 + SPEC-STOCK-006 | Sales | AC-ERF01-01, AC-ERF01-02, AC-ERF01-03, AC-ERF01-04 | POST /api/v1/sales | test_sales.py + test_saga.py (5 passed) + e2e_check.py (E2E real OK incl. replay) | Validated |
 | ERF-02 | SPEC-STOCK-001 | Stock | AC-ERF02-01, AC-ERF02-02, AC-ERF02-03 | GET /api/v1/products, GET /api/v1/products/{id} | services/stock-service/tests/test_integration/test_product_read.py | Validated |
-| ERF-03 | SPEC-SALES-002 + SPEC-SALES-004 | Sales | AC-ERF03-01, AC-ERF03-02, AC-ERF03-03 | POST /api/v1/sales (líneas) | test_sales.py + test_saga.py (5 passed) | Validated |
+| ERF-03 | SPEC-SALES-002 + SPEC-SALES-004 + SPEC-STOCK-006 | Sales | AC-ERF03-01, AC-ERF03-02, AC-ERF03-03 | POST /api/v1/sales (líneas) | test_sales.py + test_saga.py (5 passed) | Validated |
 | ERF-04 | SPEC-STOCK-002 | Stock | AC-ERF04-01, AC-ERF04-02 | GET /api/v1/products/{id}/stock | services/stock-service/tests/test_integration/test_stock.py | Validated |
 | ERF-05 | SPEC-STOCK-003 | Stock | AC-ERF05-01, AC-ERF05-02, AC-ERF05-03 | PATCH /api/v1/products/{id}/stock | services/stock-service/tests/test_integration/test_stock.py | Validated |
 | ERF-06 | SPEC-STOCK-004 | Stock | AC-ERF06-01..AC-ERF06-05 | POST /api/v1/products, PUT /api/v1/products/{id}, DELETE /api/v1/products/{id} | services/stock-service/tests/test_integration/test_products.py (12 passed) | Validated |

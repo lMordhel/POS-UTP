@@ -66,6 +66,19 @@ class ProductService:
         row = product_repository.get_with_stock(db, product_id)
         return _to_read(row[0], row[1]) if row else None
 
+    def get_batch(self, db: Session, ids: list[int]) -> list[ProductRead]:
+        """SPEC-STOCK-006: encontrados con stock, orden de petición, dedupe."""
+        seen: set[int] = set()
+        result: list[ProductRead] = []
+        for product_id in ids:
+            if product_id in seen:
+                continue
+            seen.add(product_id)
+            row = product_repository.get_with_stock(db, product_id)
+            if row:
+                result.append(_to_read(row[0], row[1]))
+        return result
+
     def update(self, db: Session, product_id: int, data: ProductUpdate) -> ProductRead | None:
         product = product_repository.get(db, product_id)
         if product is None:
