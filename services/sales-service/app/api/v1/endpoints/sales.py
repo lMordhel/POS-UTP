@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import require_active_role
@@ -9,6 +9,9 @@ from app.core.middleware import limiter
 from app.models.user import User
 from app.schemas.sale import SaleCreate, SaleRead
 from app.services.sale_service import (
+    IdempotencyConflictError,
+    IdempotencyKeyInvalidError,
+    IdempotencyMismatchError,
     SaleInsufficientStockError,
     SaleProductNotFoundError,
     SaleService,
@@ -24,26 +27,44 @@ def _service() -> SaleService:
     return sale_service
 
 
-@router.post("", response_model=SaleRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=SaleRead)
 @limiter.limit(_rate_write)
 def register_sale(
     request: Request,
+    response: Response,
     data: SaleCreate,
     db: Session = Depends(get_db),
     service: SaleService = Depends(_service),
     _user: User = Depends(seller),
+    idempotency_key: str | None = Header(default=None),
 ):
-    """ERF-01 + ERF-03 (SPEC-SALES-001/002). ERF-10: admin y cajero."""
+    """ERF-01 + ERF-03 (SPEC-SALES-001/002). ERF-10: admin y cajero.
+
+    SPEC-SALES-004: con `Idempotency-Key`, replay → 200 + header,
+    mismatch → 422, clave en proceso → 409.
+    """
     try:
-        return service.register_sale(db, data)
+        sale, replayed = service.register_sale(db, data, idempotency_key=idempotency_key)
     except SaleProductNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except SaleInsufficientStockError as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
+    except IdempotencyMismatchError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except IdempotencyKeyInvalidError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except IdempotencyConflictError as exc:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
     except StockUnavailableError as exc:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY, detail=str(exc)
         )
+    if replayed:
+        response.status_code = status.HTTP_200_OK
+        response.headers["Idempotent-Replayed"] = "true"
+    else:
+        response.status_code = status.HTTP_201_CREATED
+    return sale
 
 
 @router.get("", response_model=list[SaleRead])

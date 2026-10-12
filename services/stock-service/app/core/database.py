@@ -36,6 +36,6 @@ def get_db() -> Iterator[Session]:
 
 
 def init_db() -> None:
-    from app.models import product, inventory  # noqa: F401 — register tables
+    from app.models import inventory, product, stock_adjustment  # noqa: F401 — register tables
 
     Base.metadata.create_all(bind=engine)

@@ -2,6 +2,12 @@ from sqlalchemy.orm import Session
 
 from app.models.product import Product
 from app.repositories.product_repository import inventory_repository, product_repository
+from app.repositories.stock_adjustment_repository import (
+    create as record_adjustment,
+)
+from app.repositories.stock_adjustment_repository import (
+    get_by_clave as get_adjustment,
+)
 from app.schemas.product import ProductCreate, ProductRead, ProductUpdate
 from app.schemas.stock import StockRead
 
@@ -92,8 +98,22 @@ class ProductService:
             producto_id=product_id, cantidad=inv.cantidad, updated_at=inv.updated_at
         )
 
-    def adjust_stock(self, db: Session, product_id: int, delta: int) -> StockRead:
-        """SPEC-STOCK-003: único punto de escritura del inventario."""
+    def adjust_stock(
+        self, db: Session, product_id: int, delta: int, idem_key: str | None = None
+    ) -> StockRead:
+        """SPEC-STOCK-003: único punto de escritura del inventario.
+
+        SPEC-SALES-004 (FR-07): con clave repetida devuelve lo registrado
+        sin re-aplicar el delta (exactamente-una-vez por clave).
+        """
+        if idem_key:
+            existing = get_adjustment(db, idem_key)
+            if existing is not None:
+                return StockRead(
+                    producto_id=product_id,
+                    cantidad=existing.cantidad_resultante,
+                    updated_at=existing.created_at,
+                )
         inv = inventory_repository.get_by_product(db, product_id)
         if inv is None:
             if product_repository.get(db, product_id) is None:
@@ -107,6 +127,8 @@ class ProductService:
         inv.cantidad = new_quantity
         db.flush()
         db.refresh(inv)
+        if idem_key:
+            record_adjustment(db, idem_key, product_id, delta, inv.cantidad)
         return StockRead(
             producto_id=product_id, cantidad=inv.cantidad, updated_at=inv.updated_at
         )

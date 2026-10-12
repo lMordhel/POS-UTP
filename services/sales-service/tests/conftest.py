@@ -30,6 +30,9 @@ class FakeStockClient:
     def __init__(self):
         self.reset()
         self.fail_unavailable = False
+        self.fail_once_negative = False
+        self.fail_compensate = False
+        self.fail_adjust_ids: set[int] = set()
 
     def reset(self):
         self.products = {
@@ -47,6 +50,7 @@ class FakeStockClient:
             ),
         }
         self.adjust_calls: list[tuple[int, int, str]] = []
+        self.seen_keys: set[str] = set()
 
     def _guard(self):
         if self.fail_unavailable:
@@ -62,14 +66,33 @@ class FakeStockClient:
     def get_stock(self, product_id: int) -> int:
         return self.get_product(product_id).stock
 
-    def adjust_stock(self, product_id: int, delta: int, motivo: str) -> int:
+    def adjust_stock(self, product_id: int, delta: int, motivo: str, idem_key: str | None = None) -> int:
         self._guard()
+        if self.fail_compensate and delta > 0:
+            raise StockUnavailableError("compensa caída (fake)")
+        if idem_key is not None and idem_key in self.seen_keys:
+            return self.get_product(product_id).stock
+        if product_id in self.fail_adjust_ids and delta < 0:
+            raise StockUnavailableError("ajuste caído (fake)")
+        if self.fail_once_negative and delta < 0:
+            self.fail_once_negative = False
+            product = self.get_product(product_id)
+            new_qty = product.stock + delta
+            if new_qty < 0:
+                raise StockInsufficientError("stock insuficiente (fake)")
+            product.stock = new_qty
+            self.adjust_calls.append((product_id, delta, motivo))
+            if idem_key is not None:
+                self.seen_keys.add(idem_key)
+            raise StockUnavailableError("timeout tras aplicar (fake)")
         product = self.get_product(product_id)
         new_qty = product.stock + delta
         if new_qty < 0:
             raise StockInsufficientError("stock insuficiente (fake)")
         product.stock = new_qty
         self.adjust_calls.append((product_id, delta, motivo))
+        if idem_key is not None:
+            self.seen_keys.add(idem_key)
         return new_qty
 
 
@@ -137,7 +160,7 @@ def db_engine():
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    from app.models import sale, sale_detail, user  # noqa: F401 — register tables
+    from app.models import idempotency, sale, sale_detail, user  # noqa: F401 — register tables
 
     Base.metadata.create_all(bind=engine)
     yield engine

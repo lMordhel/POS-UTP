@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
@@ -39,10 +39,11 @@ def adjust_stock(
     data: StockAdjust,
     db: Session = Depends(get_db),
     _claims: dict = Depends(admin_only),
+    idempotency_key: str | None = Header(default=None),
 ):
     """ERF-05 (SPEC-STOCK-003): ajuste por delta, único escritor del inventario. ERF-10: solo admin. Rate limit SPEC-AUTH-002."""
     try:
-        return product_service.adjust_stock(db, product_id, data.delta)
+        return product_service.adjust_stock(db, product_id, data.delta, idem_key=idempotency_key)
     except StockNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except InsufficientStockError as exc:
