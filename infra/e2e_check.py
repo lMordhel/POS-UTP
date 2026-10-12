@@ -33,17 +33,19 @@ def _wait(url: str, timeout: float = 30.0) -> None:
     raise RuntimeError(f"servicio no levantó: {url}")
 
 
-def _call(method: str, url: str, body: dict | None = None, token: str | None = None):
+def _call(method: str, url: str, body: dict | None = None, token: str | None = None, key: str | None = None):
     data = json.dumps(body).encode() if body is not None else None
     headers = {"Content-Type": "application/json"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
+    if key:
+        headers["Idempotency-Key"] = key
     req = urllib.request.Request(url, data=data, method=method, headers=headers)
     try:
         with urllib.request.urlopen(req, timeout=10) as r:
-            return r.status, json.loads(r.read().decode() or "null")
+            return r.status, json.loads(r.read().decode() or "null"), dict(r.headers)
     except urllib.error.HTTPError as e:
-        return e.code, e.read().decode()
+        return e.code, e.read().decode(), {}
 
 
 def main() -> int:
@@ -70,41 +72,51 @@ def main() -> int:
         _wait("http://127.0.0.1:8002/health")
         _wait("http://127.0.0.1:8001/health")
 
-        s, tok = _call("POST", "http://127.0.0.1:8001/api/v1/auth/login", {
+        s, tok, _h = _call("POST", "http://127.0.0.1:8001/api/v1/auth/login", {
             "username": "admin", "password": "change-me-admin"})
         assert s == 200, (s, tok)
         token = tok["access_token"]
 
-        s, denied = _call("GET", "http://127.0.0.1:8001/api/v1/sales")
+        s, denied, _h = _call("GET", "http://127.0.0.1:8001/api/v1/sales")
         assert s == 401, (s, denied)
 
-        s, p = _call("POST", "http://127.0.0.1:8002/api/v1/products", {
+        s, p, _h = _call("POST", "http://127.0.0.1:8002/api/v1/products", {
             "codigo": "E2E-1", "nombre": "E2E", "precio": "10.00",
             "cantidad_inicial": 5}, token)
         assert s == 201, (s, p)
         pid = p["id"]
 
-        s, v = _call("POST", "http://127.0.0.1:8001/api/v1/sales", {
+        s, v, _h = _call("POST", "http://127.0.0.1:8001/api/v1/sales", {
             "items": [{"producto_id": pid, "cantidad": 2}]}, token)
         assert s == 201, (s, v)
         assert v["total"] in ("20.00", 20, 20.0), v
         assert v["items"][0]["subtotal"] in ("20.00", 20, 20.0), v
 
-        s, st = _call("GET", f"http://127.0.0.1:8002/api/v1/products/{pid}/stock", token=token)
+        s, st, _h = _call("GET", f"http://127.0.0.1:8002/api/v1/products/{pid}/stock", token=token)
         assert s == 200 and st["cantidad"] == 3, (s, st)
 
-        s, _ = _call("POST", "http://127.0.0.1:8001/api/v1/sales", {
+        s, _b, _h = _call("POST", "http://127.0.0.1:8001/api/v1/sales", {
             "items": [{"producto_id": pid, "cantidad": 10}]}, token)
         assert s == 409, s
 
-        s, _ = _call("POST", "http://127.0.0.1:8001/api/v1/sales", {
+        s, _b, _h = _call("POST", "http://127.0.0.1:8001/api/v1/sales", {
             "items": [{"producto_id": 9999, "cantidad": 1}]}, token)
         assert s == 404, s
 
-        s, st = _call("GET", f"http://127.0.0.1:8002/api/v1/products/{pid}/stock", token=token)
+        s, st, _h = _call("GET", f"http://127.0.0.1:8002/api/v1/products/{pid}/stock", token=token)
         assert st["cantidad"] == 3, st  # 409/404 no mutaron
 
-        print("E2E OK: login 200 + 401 sin token, venta 201 total=20.00, stock 5->3, 409 y 404 verificados")
+        s, v2, h2 = _call("POST", "http://127.0.0.1:8001/api/v1/sales", {
+            "items": [{"producto_id": pid, "cantidad": 1}]}, token, key="E2E-KEY-1")
+        assert s == 201, (s, v2)
+        s, v3, h3 = _call("POST", "http://127.0.0.1:8001/api/v1/sales", {
+            "items": [{"producto_id": pid, "cantidad": 1}]}, token, key="E2E-KEY-1")
+        assert s == 200 and v3["id"] == v2["id"], (s, v3)
+        assert {k.lower(): v for k, v in h3.items()}.get("idempotent-replayed") == "true", h3
+        s, st, _h = _call("GET", f"http://127.0.0.1:8002/api/v1/products/{pid}/stock", token=token)
+        assert st["cantidad"] == 2, st  # un solo descuento neto (3->2)
+
+        print("E2E OK: login 200 + 401 sin token, venta 201 total=20.00, stock 5->3, 409 y 404 verificados, replay 200 misma venta")
         return 0
     finally:
         stock.terminate()

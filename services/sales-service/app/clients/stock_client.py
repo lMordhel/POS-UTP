@@ -101,12 +101,14 @@ class StockClient:
         resp.raise_for_status()
         return int(resp.json()["cantidad"])
 
-    def adjust_stock(self, product_id: int, delta: int, motivo: str) -> int:
+    def adjust_stock(self, product_id: int, delta: int, motivo: str, idem_key: str | None = None) -> int:
         try:
+            headers = {"Idempotency-Key": idem_key} if idem_key else None
             resp = self._request(
                 "PATCH",
                 f"/api/v1/products/{product_id}/stock",
                 json={"delta": delta, "motivo": motivo},
+                headers=headers,
             )
         except httpx.HTTPError as exc:
             raise StockUnavailableError(f"stock no disponible: {exc}")
