@@ -5,8 +5,8 @@
 - ID: SPEC-AUTH-002
 - Requirement: Plan de seguridad Fase 2 — endurece ERF-09/ERF-10 (sin ERF nuevo; no amplía funcionalidad, reduce superficie).
 - Service: Sales + Stock
-- Status: DRAFT
-- Version: 0.1.0
+- Status: APPROVED
+- Version: 1.0.0
 - Priority: Muy alta
 
 ## Objective
@@ -104,7 +104,7 @@ Given `POS_ENV=prod` con `JWT_SECRET` o `ADMIN_PASSWORD` de ejemplo
 When arranca el servicio
 Then debe fallar antes de servir (excepción clara en logs).
 
-### AC-HARD02-06 — Sin docs en prod (si se aprueba OQ-HARD-01)
+### AC-HARD02-06 — Sin docs en prod
 
 Given `POS_ENV=prod`
 When se pide `/docs` u `/openapi.json`
@@ -112,8 +112,8 @@ Then debe responder 404.
 
 ## Open Questions
 
-* OQ-HARD-01: ¿Desactivar `/docs`, `/redoc` y `/openapi.json` en producción? Propuesta: sí (menos superficie; Swagger queda en dev). NO implementar hasta decisión.
-* OQ-HARD-02: ¿Rate limit solo en escrituras+auth (propuesta) o también en lecturas? Las lecturas ya tienen RBAC+JWT; limitar todo añade fricción a la demo. NO implementar lecturas hasta decisión.
+* OQ-HARD-01: DECIDED 2026-10-12 → sí, desactivar `/docs`, `/redoc` y `/openapi.json` en producción (FR-06). En dev siguen activos.
+* OQ-HARD-02: DECIDED 2026-10-12 → rate limit solo en escrituras + auth con los valores propuestos (login 5/min, refresh 20/min, escrituras 60/min); lecturas sin límite. El abuso futuro en lecturas se cubre con límite selectivo sin tocar el resto.
 
 ## Traceability
 
@@ -132,5 +132,7 @@ Tests: Pendiente (futuros: `test_cors_forbids_unknown_origin`, `test_cors_allows
 ## Change History
 
 | Version | Date | Change | Reason |
+|---|---|---|---|
+| 1.0.0 | 2026-10-12 | OQ-HARD-01/02 DECIDED (sí a ambos); DRAFT → APPROVED (autoriza desarrollo) | User approval: sí, sí |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Plan de seguridad Fase 2 |

@@ -90,7 +90,7 @@
 
 ## ADR-009 — Hardening HTTP (CORS, rate limiting, config segura)
 
-- Status: PROPOSED (la aprobación de SPEC-AUTH-002 lo aprueba)
+- Status: APPROVED (2026-10-12, con SPEC-AUTH-002 1.0.0)
 - Decisión: CORS por env (default dev `http://localhost:5173`, fin de `*`); rate limit por IP en auth+escrituras con `slowapi` en memoria (login 5/min propuesto; lecturas sin límite); cabeceras `nosniff`/`DENY`/`no-referrer` + `Server` genérico; fail-fast en prod ante secretos/CORS de ejemplo; `/docs` desactivado en prod.
 - Pendientes (OQ-HARD-01/02): confirmar cierre de docs en prod y alcance del rate limit.
 - Afecta a: SPEC-AUTH-002.
