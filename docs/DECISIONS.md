@@ -113,7 +113,7 @@
 
 ## ADR-012 — Lectura por lote para la saga (sin cambiar semántica)
 
-- Status: PROPOSED (la aprobación de SPEC-STOCK-006 lo aprueba)
+- Status: APPROVED (2026-10-12, con SPEC-STOCK-006 1.0.0)
 - Decisión: `POST /api/v1/products/batch` aditivo (producto + stock, tope 100, RBAC lector); Sales lo usa como único camino de lectura (3N → N+1 llamadas); ajustes por línea intactos; sin cachés, threads ni batch de escritura en esta fase.
 - Fundamento medido: la saga hace N×(`get_product` + `get_stock`) secuenciales + N ajustes.
 - Pendientes (OQ-BATCH-01/02/03): encontrados-vs-404, camino único, tope.

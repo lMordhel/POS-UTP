@@ -5,8 +5,8 @@
 - ID: SPEC-STOCK-006
 - Requirement: Plan de seguridad Fase 5 — optimiza ERF-01/ERF-03 (sin ERF nuevo; sin cambios de comportamiento, solo menos llamadas).
 - Service: Stock (endpoint batch) + Sales (consume el batch en la saga)
-- Status: DRAFT
-- Version: 0.1.0
+- Status: APPROVED
+- Version: 1.0.0
 - Priority: Media
 
 ## Objective
@@ -103,9 +103,9 @@ Then todo debe seguir en verde sin cambios en assertions.
 
 ## Open Questions
 
-* OQ-BATCH-01: ¿El batch devuelve solo encontrados (propuesta) y Sales decide el 404, o el batch falla con 404 si falta alguno? La propuesta preserva la semántica fina actual (inexistente vs inactivo) sin acoplar.
-* OQ-BATCH-02: ¿Sales usa el batch siempre, incluso con 1 producto (propuesta: sí, camino único y testeable), o solo si N>1? Un camino evita bifurcaciones.
-* OQ-BATCH-03: ¿Tope de 100 ids por lote (propuesta, coherente con `limit <= 100`)?
+* OQ-BATCH-01: DECIDED 2026-10-12 → solo encontrados; Sales decide (flexible, resiliente, patrón Stripe/Shopify; un inexistente no tumba el lote).
+* OQ-BATCH-02: DECIDED 2026-10-12 → siempre, camino único (sin bifurcación N==1; overhead mínimo).
+* OQ-BATCH-03: DECIDED 2026-10-12 → sí, tope 100 (seguro, ampliable sin romper compatibilidad).
 
 ## Traceability
 
@@ -124,5 +124,7 @@ Tests: Pendiente (futuros: `test_batch_returns_found_with_stock`, `test_batch_in
 ## Change History
 
 | Version | Date | Change | Reason |
+|---|---|---|---|
+| 1.0.0 | 2026-10-12 | OQ-BATCH-01/02/03 DECIDED (encontrados/siempre/100); DRAFT → APPROVED (autoriza desarrollo) | User approval: encontrados, siempre, 100 |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Plan de seguridad Fase 5 |
