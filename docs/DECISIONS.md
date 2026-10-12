@@ -85,6 +85,7 @@
 - Status: APPROVED (2026-10-12, con SPEC-AUTH-001 1.0.0; la matriz rige desde la aprobación)
 - Decisión: Roles `admin` (productos, usuarios/roles, todo en lectura, ajustes de stock) y `cajero` (vender, consultar productos/stock/ventas; sin gestión de usuarios, productos ni ajustes manuales). El backend verifica el rol en cada endpoint; ocultar botones en el frontend es solo UX.
 - Alcance de consulta DECIDED 2026-10-12 (OQ-AUTH-03): el cajero consulta todas las ventas en lectura; las ventas son inmutables (no existen endpoints de modificación/eliminación; de crearse serían solo `admin`).
+- Identidad de servicio DECIDED 2026-10-12 (addendum de implementación, gap detectado por E2E): las llamadas internas Sales→Stock usan credencial de servicio (`create_service_token`: secreto compartido, rol `admin`, `type=service`, fresca por llamada sin estado). El rol del usuario final no se propaga a Stock; la atribución viaja en `motivo=venta:{id}`. La matriz RBAC rige llamadas directas de usuarios.
 - Afecta a: SPEC-AUTH-001.
 
 ## D-AUTH-SCOPE — Ampliación de alcance: seguridad backend
@@ -99,6 +100,7 @@
 | Fecha | Cambio |
 |---|---|
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 APPROVED (usuario conforme; autoriza desarrollo); ADR-006/007/008 → APPROVED |
+| 2026-10-12 | SPEC-AUTH-001 1.0.0 VALIDATED (67/67 pytest + E2E con login); identidad de servicio Sales→Stock (addendum ADR-008) |
 
 ## Historial
 

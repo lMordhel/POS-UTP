@@ -1,8 +1,9 @@
-"""E2E real Ventas → Stock por HTTP (Fase 3).
+"""E2E real Ventas → Stock por HTTP (Fase 3 + SPEC-AUTH-001).
 
 Arranca ambos servicios con uvicorn (SQLite temporal) y ejecuta la saga
-completa sin dobles: crear producto → registrar venta → verificar total y
-descuento → 409 sin stock → 404 inexistente.
+completa sin dobles: login (admin bootstrap) → crear producto →
+registrar venta → verificar total y descuento → 409 sin stock →
+404 inexistente → 401 sin token.
 
 Uso: py infra/e2e_check.py
 """
@@ -32,12 +33,12 @@ def _wait(url: str, timeout: float = 30.0) -> None:
     raise RuntimeError(f"servicio no levantó: {url}")
 
 
-def _call(method: str, url: str, body: dict | None = None):
+def _call(method: str, url: str, body: dict | None = None, token: str | None = None):
     data = json.dumps(body).encode() if body is not None else None
-    req = urllib.request.Request(
-        url, data=data, method=method,
-        headers={"Content-Type": "application/json"},
-    )
+    headers = {"Content-Type": "application/json"}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    req = urllib.request.Request(url, data=data, method=method, headers=headers)
     try:
         with urllib.request.urlopen(req, timeout=10) as r:
             return r.status, json.loads(r.read().decode() or "null")
@@ -69,33 +70,41 @@ def main() -> int:
         _wait("http://127.0.0.1:8002/health")
         _wait("http://127.0.0.1:8001/health")
 
+        s, tok = _call("POST", "http://127.0.0.1:8001/api/v1/auth/login", {
+            "username": "admin", "password": "change-me-admin"})
+        assert s == 200, (s, tok)
+        token = tok["access_token"]
+
+        s, denied = _call("GET", "http://127.0.0.1:8001/api/v1/sales")
+        assert s == 401, (s, denied)
+
         s, p = _call("POST", "http://127.0.0.1:8002/api/v1/products", {
             "codigo": "E2E-1", "nombre": "E2E", "precio": "10.00",
-            "cantidad_inicial": 5})
+            "cantidad_inicial": 5}, token)
         assert s == 201, (s, p)
         pid = p["id"]
 
         s, v = _call("POST", "http://127.0.0.1:8001/api/v1/sales", {
-            "items": [{"producto_id": pid, "cantidad": 2}]})
+            "items": [{"producto_id": pid, "cantidad": 2}]}, token)
         assert s == 201, (s, v)
         assert v["total"] in ("20.00", 20, 20.0), v
         assert v["items"][0]["subtotal"] in ("20.00", 20, 20.0), v
 
-        s, st = _call("GET", f"http://127.0.0.1:8002/api/v1/products/{pid}/stock")
+        s, st = _call("GET", f"http://127.0.0.1:8002/api/v1/products/{pid}/stock", token=token)
         assert s == 200 and st["cantidad"] == 3, (s, st)
 
         s, _ = _call("POST", "http://127.0.0.1:8001/api/v1/sales", {
-            "items": [{"producto_id": pid, "cantidad": 10}]})
+            "items": [{"producto_id": pid, "cantidad": 10}]}, token)
         assert s == 409, s
 
         s, _ = _call("POST", "http://127.0.0.1:8001/api/v1/sales", {
-            "items": [{"producto_id": 9999, "cantidad": 1}]})
+            "items": [{"producto_id": 9999, "cantidad": 1}]}, token)
         assert s == 404, s
 
-        s, st = _call("GET", f"http://127.0.0.1:8002/api/v1/products/{pid}/stock")
+        s, st = _call("GET", f"http://127.0.0.1:8002/api/v1/products/{pid}/stock", token=token)
         assert st["cantidad"] == 3, st  # 409/404 no mutaron
 
-        print("E2E OK: venta 201 total=20.00, stock 5->3, 409 y 404 verificados")
+        print("E2E OK: login 200 + 401 sin token, venta 201 total=20.00, stock 5->3, 409 y 404 verificados")
         return 0
     finally:
         stock.terminate()

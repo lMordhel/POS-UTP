@@ -42,3 +42,10 @@ def test_check_role_allows_and_forbids():
     with pytest.raises(HTTPException) as exc:
         security.check_role({"sub": "c", "rol": "cajero"}, "admin")
     assert exc.value.status_code == 403
+
+
+def test_service_token_has_admin_role_and_service_type():
+    claims = security.decode_token(security.create_service_token())
+    assert claims["sub"] == security.SERVICE_SUBJECT
+    assert claims["rol"] == "admin"
+    assert claims["type"] == "service"

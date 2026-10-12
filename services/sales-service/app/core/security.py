@@ -20,6 +20,21 @@ CREDENTIALS_EXCEPTION = HTTPException(
     "credenciales inválidas",
     {"WWW-Authenticate": "Bearer"},
 )
+SERVICE_SUBJECT = "svc-sales"
+
+
+def create_service_token() -> str:
+    """Credencial Sales→Stock (ADR-008 addendum): secreto compartido, rol admin.
+
+    Se genera fresca por llamada (TTL 15 min, uso inmediato): sin estado ni
+    renovación. La atribución de usuario viaja en `motivo=venta:{id}`.
+    """
+    settings = get_settings()
+    claims = _base_claims(SERVICE_SUBJECT, "admin", "service")
+    claims["exp"] = datetime.now(timezone.utc) + timedelta(
+        minutes=settings.ACCESS_TOKEN_MINUTES
+    )
+    return pyjwt.encode(claims, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
 
 
 def hash_password(plain: str) -> str:

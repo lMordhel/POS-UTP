@@ -5,7 +5,7 @@
 - ID: SPEC-AUTH-001
 - Requirement: ERF-09 (autenticación) + ERF-10 (autorización por roles) — propuestos por el usuario el 2026-10-12 para el documento académico (OQ-AUTH-02 DECIDED); base: decisión aprobada Opción 1 (modelo mínimo: `admin` + `cajero`, sin registro público). Ampliación de alcance autorizada (auth figuraba fuera de alcance en `architecture.md` y SDD-008; ver D-AUTH-SCOPE en `docs/DECISIONS.md`).
 - Service: Sales (emisión de tokens, gestión de usuarios en `ventas_db`) + Stock y Sales (verificación y enforcement)
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Muy alta (Fase 1 del plan de seguridad)
 
@@ -197,6 +197,7 @@ Tests: Pendiente (futuros: `test_login_valid`, `test_login_invalid_401`, `test_p
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 1.0.0 | 2026-10-12 | REVIEW → APPROVED (usuario conforme; autoriza desarrollo) | User approval: pasa al desarrollo |
+| 1.0.0 | 2026-10-12 | APPROVED → VALIDATED (67/67 pytest + E2E con login en verde) | Tests confirman AC-AUTH01-01..10 |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | OQ-AUTH-01..04 DECIDED; entra refresh rotativo + bootstrap por env; Status DRAFT → REVIEW | Respuestas del usuario a las 4 preguntas |
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Decisión usuario Opción 1 + plan de seguridad por fases |
