@@ -33,6 +33,7 @@ class RefreshToken(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
     family: Mapped[str] = mapped_column(String(36), index=True, nullable=False)
     revocado: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    rotado: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     expira: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     creado: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
