@@ -35,8 +35,8 @@ OQ-SAGA-01/02/03 DECIDED (200+header, sin expiración, 422). Endurece ERF-01/03.
 
 - [x] F3-T1 — SPEC-SALES-004 DRAFT + rama + ADR-010 PROPOSED
 - [x] F3-T2 — SPEC-SALES-004 → APPROVED 1.0.0 (OQ 200/sin-exp/422)
-- [ ] F3-T3 — Implementar idempotencia + saga robusta con TDD
-- [ ] F3-T4 — Verificación completa + SPEC VALIDATED + reporte
+- [x] F3-T3 — Idempotencia + saga robusta con TDD (doble nivel de claves, compensación con reintentos)
+- [x] F3-T4 — Verificación completa + SPEC VALIDATED
 
 ## Authorized scope
 
@@ -58,7 +58,18 @@ TDD ROJO→VERDE donde haya RED ejecutable.
 
 ## Progress
 
-- SPEC aprobada; pendiente implementar.
+- Feature completa y validada en `feature/sales-idempotency` (4/4 tareas).
+
+## Verification evidence
+
+- Sales: 44 passed (39 previos + 5 saga). Stock: 42 passed (40 + 2 idempotencia).
+- `py infra/e2e_check.py` → OK incl. replay 200 misma venta.
+- SPEC-SALES-004 1.0.0 VALIDATED; ADR-010 APPROVED; ERF-01/03 actualizados.
+- Commits: cc2c0e2 (SPEC DRAFT), e2e71c4 (SPEC APPROVED), 06bc03d (implementación), + cierre.
+
+## Next step
+
+- Decisión del usuario: merge a `main` (rama desde main, merge directo). Luego Fase 4 (SPEC Alembic + auditoría) cuando quiera.
 
 ## Verification evidence
 

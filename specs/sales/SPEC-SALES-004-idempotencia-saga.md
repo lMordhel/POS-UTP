@@ -5,7 +5,7 @@
 - ID: SPEC-SALES-004
 - Requirement: Plan de seguridad Fase 3 — endurece ERF-01/ERF-03 (sin ERF nuevo; no amplía funcionalidad, elimina duplicados y fugas ante fallos).
 - Service: Sales (clave de venta) + Stock (clave por línea)
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Muy alta
 
@@ -148,5 +148,6 @@ Tests: Pendiente (futuros: `test_replay_returns_same_sale`, `test_same_key_diffe
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 1.0.0 | 2026-10-12 | OQ-SAGA-01/02/03 DECIDED (200+header, sin expiración, 422); DRAFT → APPROVED (autoriza desarrollo) | User approval: 200, sin expiración, 422 |
+| 1.0.0 | 2026-10-12 | APPROVED → VALIDATED (86/86 pytest + E2E con replay en verde) | Tests confirman AC-SAGA04-01..06 |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Plan de seguridad Fase 3 |

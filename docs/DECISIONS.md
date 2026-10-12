@@ -116,6 +116,7 @@
 |---|---|
 | 2026-10-12 | SPEC-AUTH-002 0.1.0 DRAFT (Fase 2: CORS, rate limiting, config segura); ADR-009 PROPOSED |
 | 2026-10-12 | SPEC-AUTH-002 1.0.0 VALIDATED (79/79 pytest + E2E; OQ-HARD-01/02 sí, sí) |
+| 2026-10-12 | SPEC-SALES-004 1.0.0 VALIDATED (86/86 pytest + E2E con replay; OQ-SAGA 200/sin-exp/422) |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 APPROVED (usuario conforme; autoriza desarrollo); ADR-006/007/008 → APPROVED |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 VALIDATED (67/67 pytest + E2E con login); identidad de servicio Sales→Stock (addendum ADR-008) |
 | 2026-10-12 | SPEC-AUTH-001 0.1.0 DRAFT (Opción 1: admin/cajero, sin registro público); ADR-006/007/008 PROPOSED; D-AUTH-SCOPE DECIDED (ampliación de alcance a seguridad backend) |
