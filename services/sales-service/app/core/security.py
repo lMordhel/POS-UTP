@@ -90,10 +90,3 @@ def check_role(claims: dict, *roles: str) -> dict:
     if claims.get("rol") not in roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "permiso insuficiente")
     return claims
-
-
-def require_role(*roles: str):
-    def dependency(claims: dict = Depends(get_current_claims)):
-        return check_role(claims, *roles)
-
-    return dependency

@@ -10,7 +10,6 @@ from sqlalchemy.orm import Session
 from app.clients.stock_client import (
     StockClient,
     StockInsufficientError,
-    StockProductNotFoundError,
     StockUnavailableError,
     stock_client,
 )
@@ -114,6 +113,9 @@ class SaleService:
                     else:
                         time.sleep(0.1 * attempt)
 
+    # Mejora futura (auditoría punto 8, no refactorizar ahora): partir
+    # _resolve_key para devolver un resultado tipado (Replay/Nueva/EnProceso)
+    # en vez de tupla con string mágico + loop range(2). Cubierto por test_saga.py.
     def _resolve_key(
         self, db: Session, data: SaleCreate, idempotency_key: str | None
     ):
@@ -143,7 +145,6 @@ class SaleService:
         if record.venta_id is not None:
             if record.cuerpo_hash != body_hash:
                 raise IdempotencyMismatchError("clave reutilizada con otro cuerpo")
-            sale = sale_repository.get(db, record.venta_id)
             return record, body_hash, "replay"
         if not fresh:
             raise IdempotencyConflictError("clave en proceso, reintenta")
@@ -153,7 +154,7 @@ class SaleService:
         self, db: Session, data: SaleCreate, idempotency_key: str | None = None
     ) -> tuple[SaleRead, bool]:
         """Devuelve (venta, replayed). replayed=True solo en replay con clave."""
-        record, _body_hash_value, key_state = self._resolve_key(db, data, idempotency_key)
+        record, _, key_state = self._resolve_key(db, data, idempotency_key)
         if key_state == "replay":
             sale = sale_repository.get(db, record.venta_id)
             return SaleRead.model_validate(sale), True
