@@ -5,7 +5,7 @@ from app.core.config import get_settings
 from app.core.database import get_db
 from app.core.middleware import limiter
 from app.core.security import require_role
-from app.schemas.product import ProductCreate, ProductRead, ProductUpdate
+from app.schemas.product import BatchRequest, ProductCreate, ProductRead, ProductUpdate
 from app.services.product_service import product_service
 
 router = APIRouter()
@@ -33,6 +33,16 @@ def create_product(
         return product_service.create(db, data)
     except ValueError as exc:
         raise _handle_value_error(exc)
+
+
+@router.post("/batch", response_model=list[ProductRead])
+def batch_products(
+    data: BatchRequest,
+    db: Session = Depends(get_db),
+    _claims: dict = Depends(reader),
+):
+    """SPEC-STOCK-006: lectura por lote (aditiva). ERF-10: admin y cajero."""
+    return product_service.get_batch(db, data.ids)
 
 
 @router.get("", response_model=list[ProductRead])

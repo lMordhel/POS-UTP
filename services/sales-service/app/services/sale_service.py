@@ -160,29 +160,23 @@ class SaleService:
 
         merged = self._merge_items(data.items)
 
-        # 1-2. Precios oficiales + snapshot base.
+        # 1-3. Precios oficiales + disponibilidad en una lectura batch (SPEC-STOCK-006).
+        try:
+            catalog = {p.id: p for p in self.client.batch_get_products(list(merged))}
+        except StockUnavailableError:
+            raise
         prices: dict[int, Decimal] = {}
-        for producto_id in merged:
-            try:
-                product = self.client.get_product(producto_id)
-            except StockUnavailableError:
-                raise
-            except StockProductNotFoundError as exc:
-                raise SaleProductNotFoundError(str(exc))
-            if not product.activo:
-                raise SaleProductNotFoundError(f"producto inactivo: {producto_id}")
-            prices[producto_id] = product.precio
-
-        # 3. Disponibilidad.
         for producto_id, cantidad in merged.items():
-            try:
-                available = self.client.get_stock(producto_id)
-            except StockProductNotFoundError as exc:
-                raise SaleProductNotFoundError(str(exc))
-            if available < cantidad:
+            product = catalog.get(producto_id)
+            if product is None or not product.activo:
+                raise SaleProductNotFoundError(
+                    f"producto inexistente o inactivo: {producto_id}"
+                )
+            prices[producto_id] = product.precio
+            if product.stock < cantidad:
                 raise SaleInsufficientStockError(
                     f"stock insuficiente producto={producto_id}: "
-                    f"disponible={available}, solicitado={cantidad}"
+                    f"disponible={product.stock}, solicitado={cantidad}"
                 )
 
         # 4. Persistir venta + detalles.

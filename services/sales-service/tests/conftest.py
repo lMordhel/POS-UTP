@@ -33,6 +33,7 @@ class FakeStockClient:
         self.fail_once_negative = False
         self.fail_compensate = False
         self.fail_adjust_ids: set[int] = set()
+        self.batch_calls: list[list[int]] = []
 
     def reset(self):
         self.products = {
@@ -65,6 +66,22 @@ class FakeStockClient:
 
     def get_stock(self, product_id: int) -> int:
         return self.get_product(product_id).stock
+
+    def batch_get_products(self, ids: list[int]) -> list:
+        """Doble del batch (SPEC-STOCK-006): encontrados, con conteo."""
+        self._guard()
+        self.batch_calls.append(list(ids))
+        seen: set[int] = set()
+        result = []
+        for product_id in ids:
+            if product_id in seen:
+                continue
+            seen.add(product_id)
+            try:
+                result.append(self.products[product_id])
+            except KeyError:
+                continue
+        return result
 
     def adjust_stock(self, product_id: int, delta: int, motivo: str, idem_key: str | None = None) -> int:
         self._guard()
