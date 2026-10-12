@@ -65,7 +65,46 @@
 - D-ERF08-SOLAPE: ERF-02 y ERF-08 comparten endpoint base con distinto
   propósito. Ver OQ-ERF08-01. Estado: pendiente.
 
+## ADR-006 — Usuarios en ventas_db, gestionados por Sales
+
+- Status: APPROVED (2026-10-12, con SPEC-AUTH-001 1.0.0)
+- Decisión: Los usuarios viven en `ventas_db` y los gestiona Sales (sin tercer microservicio en este alcance). Stock valida el JWT con el mismo secreto y aplica RBAC; no almacena usuarios ni consulta a Sales para autenticar.
+- Motivo: alcance mínimo académico con 2 servicios; un servicio de identidad separado no tiene ERF ni escala que lo justifique (YAGNI).
+- Bootstrap DECIDED 2026-10-12 (OQ-AUTH-04): primer `admin` desde `ADMIN_USERNAME`/`ADMIN_PASSWORD`, solo si la tabla `users` está vacía.
+- Afecta a: SPEC-AUTH-001.
+
+## ADR-007 — Tokens JWT de corta duración + hash de contraseñas
+
+- Status: APPROVED (2026-10-12, con SPEC-AUTH-001 1.0.0; hash nunca-en-texto-plano como principio)
+- Decisión: Access JWT propuesto de 15 min (HS256, secreto por entorno, fail-fast si es valor de ejemplo en producción). Contraseñas con bcrypt (cost 12 propuesto), nunca en texto plano ni en logs.
+- Renovación DECIDED 2026-10-12 (OQ-AUTH-01): refresh rotativo con detección de reúso — cada uso emite un par nuevo e invalida el anterior; reutilizar un refresh rotado → 401 + revocación de la familia.
+- Afecta a: SPEC-AUTH-001.
+
+## ADR-008 — RBAC admin/cajero con enforcement en backend
+
+- Status: APPROVED (2026-10-12, con SPEC-AUTH-001 1.0.0; la matriz rige desde la aprobación)
+- Decisión: Roles `admin` (productos, usuarios/roles, todo en lectura, ajustes de stock) y `cajero` (vender, consultar productos/stock/ventas; sin gestión de usuarios, productos ni ajustes manuales). El backend verifica el rol en cada endpoint; ocultar botones en el frontend es solo UX.
+- Alcance de consulta DECIDED 2026-10-12 (OQ-AUTH-03): el cajero consulta todas las ventas en lectura; las ventas son inmutables (no existen endpoints de modificación/eliminación; de crearse serían solo `admin`).
+- Afecta a: SPEC-AUTH-001.
+
+## D-AUTH-SCOPE — Ampliación de alcance: seguridad backend
+
+- Status: DECIDED (2026-10-12, decisión de usuario — Opción 1)
+- Decisión: Auth/RBAC entra al alcance aunque figuraba fuera de alcance (architecture.md, SDD-008). Excepción documentada: la decisión aprobada del usuario cubre el requisito de SDD-008 ("toda adición exige ERF o decisión aprobada").
+- ERF-09 (autenticación) y ERF-10 (autorización por roles) DECIDED 2026-10-12 para el documento académico (OQ-AUTH-02); la edición del `.docx` queda a cargo del usuario (fuera del repo).
+- Plan por fases con SPEC propia cada una: 1 auth+RBAC (SPEC-AUTH-001) → 2 hardening → 3 idempotencia/saga → 4 Alembic/auditoría → 5 optimización Sales→Stock → 6 observabilidad.
+
 ## Historial
+
+| Fecha | Cambio |
+|---|---|
+| 2026-10-12 | SPEC-AUTH-001 1.0.0 APPROVED (usuario conforme; autoriza desarrollo); ADR-006/007/008 → APPROVED |
+
+## Historial
+
+| Fecha | Cambio |
+|---|---|
+| 2026-10-12 | SPEC-AUTH-001 0.1.0 DRAFT (Opción 1: admin/cajero, sin registro público); ADR-006/007/008 PROPOSED; D-AUTH-SCOPE DECIDED (ampliación de alcance a seguridad backend) |
 
 | Fecha | Cambio |
 |---|---|
