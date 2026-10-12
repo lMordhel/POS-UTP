@@ -1,4 +1,6 @@
 """Gestión de usuarios solo admin (SPEC-AUTH-001, FR-05)."""
+import logging
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -6,6 +8,8 @@ from app.core import security
 from app.models.user import User
 from app.repositories import user_repository
 from app.schemas.auth import UserCreate, UserUpdate
+
+logger = logging.getLogger(__name__)
 
 
 class UserExistsError(ValueError):
@@ -18,6 +22,7 @@ def create(db: Session, data: UserCreate) -> User:
             db, data.username, security.hash_password(data.password), data.rol
         )
         db.flush()
+        logger.info("usuario creado username=%s rol=%s", user.username, user.rol)
         return user
     except IntegrityError:
         raise UserExistsError(f"username duplicado: {data.username}") from None
@@ -42,4 +47,11 @@ def update(db: Session, user_id: int, data: UserUpdate) -> User | None:
     if data.password is not None:
         user.password_hash = security.hash_password(data.password)
     db.flush()
+    logger.info(
+        "usuario actualizado id=%s username=%s rol=%s activo=%s",
+        user.id,
+        user.username,
+        user.rol,
+        user.activo,
+    )
     return user

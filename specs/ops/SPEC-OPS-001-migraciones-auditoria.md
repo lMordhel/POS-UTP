@@ -45,7 +45,7 @@ estructurados de los eventos de seguridad.
 ## Functional Requirements
 
 * FR-01: Cada servicio debe tener `alembic/env.py` que lea `DATABASE_URL` de settings y `Base.metadata` propio, y directorio `versions/` con revisión baseline (upgrade + downgrade) del esquema actual.
-* FR-02: `init_db` debe: si no hay tabla `alembic_version` y existen tablas de negocio → `stamp head` (adopta, conserva datos); si no → `upgrade head`. Con múltiples heads → error de arranque.
+* FR-02: `init_db` debe: si no hay versión (tabla ausente o vacía) y existen tablas de negocio → `create_all` (rellena huecos), luego `stamp head` (adopta, conserva datos); si no → `upgrade head`. Con múltiples heads → error de arranque.
 * FR-03: Tras migrar, el bootstrap de admin (FR-08 de SPEC-AUTH-001) debe seguir funcionando.
 * FR-04: Cada `PATCH stock` aplicado debe insertar un `inventory_movement` con `producto_id`, `delta`, `cantidad_antes`, `cantidad_despues`, `motivo`, `actor_sub`, `actor_rol` y `clave` (nullable). El actor sale de los claims del endpoint (usuario o `svc-sales`).
 * FR-05: Los replays por clave (sin cambio) no deben crear movimientos.

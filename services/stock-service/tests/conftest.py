@@ -23,7 +23,7 @@ def db_engine():
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    from app.models import inventory, product, stock_adjustment  # noqa: F401 — register tables
+    from app.models import inventory, inventory_movement, product, stock_adjustment  # noqa: F401 — register tables
 
     Base.metadata.create_all(bind=engine)
     yield engine
