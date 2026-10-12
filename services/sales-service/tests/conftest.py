@@ -79,13 +79,53 @@ def fake_stock():
 
 
 @pytest.fixture()
+def seed_users(db_engine):
+    """Usuarios fijos para pruebas de auth (SPEC-AUTH-001)."""
+    from sqlalchemy.orm import sessionmaker
+
+    from app.core import security as security_module
+    from app.repositories import user_repository as user_repo
+
+    Session = sessionmaker(bind=db_engine)
+    db = Session()
+    users = {}
+    for username, password, rol in [
+        ("admin", "Admin1234", "admin"),
+        ("caja", "Caja1234", "cajero"),
+    ]:
+        users[rol] = user_repo.create_user(
+            db, username, security_module.hash_password(password), rol
+        )
+    db.commit()
+    data = {rol: {"id": user.id, "username": user.username} for rol, user in users.items()}
+    db.close()
+    return data
+
+
+@pytest.fixture()
+def admin_headers(seed_users):
+    from app.core import security as security_module
+
+    token = security_module.create_access_token(str(seed_users["admin"]["id"]), "admin")
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture()
+def cashier_headers(seed_users):
+    from app.core import security as security_module
+
+    token = security_module.create_access_token(str(seed_users["cajero"]["id"]), "cajero")
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture()
 def db_engine():
     engine = create_engine(
         "sqlite://",
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    from app.models import sale, sale_detail  # noqa: F401 — register tables
+    from app.models import sale, sale_detail, user  # noqa: F401 — register tables
 
     Base.metadata.create_all(bind=engine)
     yield engine

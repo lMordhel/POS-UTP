@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
+from app.api.deps import require_active_role
 from app.clients.stock_client import StockUnavailableError
 from app.core.database import get_db
+from app.models.user import User
 from app.schemas.sale import SaleCreate, SaleRead
 from app.services.sale_service import (
     SaleInsufficientStockError,
@@ -12,6 +14,7 @@ from app.services.sale_service import (
 )
 
 router = APIRouter()
+seller = require_active_role("admin", "cajero")
 
 
 def _service() -> SaleService:
@@ -23,8 +26,9 @@ def register_sale(
     data: SaleCreate,
     db: Session = Depends(get_db),
     service: SaleService = Depends(_service),
+    _user: User = Depends(seller),
 ):
-    """ERF-01 + ERF-03 (SPEC-SALES-001/002)."""
+    """ERF-01 + ERF-03 (SPEC-SALES-001/002). ERF-10: admin y cajero."""
     try:
         return service.register_sale(db, data)
     except SaleProductNotFoundError as exc:
@@ -43,8 +47,9 @@ def list_sales(
     limit: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db),
     service: SaleService = Depends(_service),
+    _user: User = Depends(seller),
 ):
-    """ERF-07 (SPEC-SALES-003)."""
+    """ERF-07 (SPEC-SALES-003). ERF-10: admin y cajero en lectura."""
     return service.list(db, skip, limit)
 
 
@@ -53,6 +58,7 @@ def get_sale(
     sale_id: int,
     db: Session = Depends(get_db),
     service: SaleService = Depends(_service),
+    _user: User = Depends(seller),
 ):
     found = service.get(db, sale_id)
     if found is None:

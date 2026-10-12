@@ -48,11 +48,21 @@ class StockClient:
         self.max_retries = max_retries
 
     def _request(self, method: str, path: str, **kwargs) -> httpx.Response:
-        """GET/POST/PATCH with retry on transient network errors only."""
+        """GET/POST/PATCH with retry on transient network errors only.
+
+        Incluye la credencial de servicio (ADR-008 addendum): Stock exige JWT
+        también en llamadas internas; el rol del usuario final no se propaga.
+        """
+        from app.core import security as security_module
+
+        headers = dict(kwargs.pop("headers", {}) or {})
+        headers.setdefault(
+            "Authorization", f"Bearer {security_module.create_service_token()}"
+        )
         last_exc: Exception | None = None
         for _ in range(self.max_retries):
             try:
-                return httpx.request(method, f"{self.base_url}{path}", timeout=self.timeout, **kwargs)
+                return httpx.request(method, f"{self.base_url}{path}", timeout=self.timeout, headers=headers, **kwargs)
             except (httpx.ConnectError, httpx.TimeoutException) as exc:
                 last_exc = exc
         raise StockUnavailableError(f"stock no disponible: {last_exc}")

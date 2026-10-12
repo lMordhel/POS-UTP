@@ -31,6 +31,14 @@ def get_db() -> Iterator[Session]:
 
 
 def init_db() -> None:
-    from app.models import sale, sale_detail  # noqa: F401 — register tables
+    from app.models import sale, sale_detail, user  # noqa: F401 — register tables
 
     Base.metadata.create_all(bind=engine)
+    from app.services.bootstrap import ensure_admin_user
+
+    db = SessionLocal()
+    try:
+        ensure_admin_user(db)
+        db.commit()
+    finally:
+        db.close()

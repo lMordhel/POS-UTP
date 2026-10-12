@@ -52,7 +52,24 @@ def client(db_engine):
 
 
 @pytest.fixture()
-def sample_product(client):
+def admin_headers():
+    """Token admin (Stock solo verifica firma/rol, sin tabla users)."""
+    from app.core import security as security_module
+
+    token = security_module.create_access_token("1", "admin")
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture()
+def cashier_headers():
+    from app.core import security as security_module
+
+    token = security_module.create_access_token("2", "cajero")
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture()
+def sample_product(client, admin_headers):
     resp = client.post(
         "/api/v1/products",
         json={
@@ -62,6 +79,7 @@ def sample_product(client):
             "precio": "10.50",
             "cantidad_inicial": 100,
         },
+        headers=admin_headers,
     )
     assert resp.status_code == 201
     return resp.json()
