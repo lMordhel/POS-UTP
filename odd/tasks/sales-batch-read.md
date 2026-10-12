@@ -31,8 +31,8 @@ OQ-BATCH-01/02/03 DECIDED (encontrados/siempre/100). Optimiza ERF-01/03.
 
 - [x] F5-T1 — SPEC-STOCK-006 DRAFT + rama + ADR-012 PROPOSED
 - [x] F5-T2 — SPEC-STOCK-006 → APPROVED 1.0.0 (OQ encontrados/siempre/100)
-- [ ] F5-T3 — Implementar batch + consumo en saga con TDD
-- [ ] F5-T4 — Verificación completa + SPEC VALIDATED + reporte
+- [x] F5-T3 — Batch + consumo en saga con TDD (3N→N+1)
+- [x] F5-T4 — Verificación completa + SPEC VALIDATED
 
 ## Authorized scope
 
@@ -55,7 +55,18 @@ TDD ROJO→VERDE donde haya RED ejecutable.
 
 ## Progress
 
-- SPEC aprobada; pendiente implementar.
+- Feature completa y validada en `feature/sales-batch-read` (4/4 tareas).
+
+## Verification evidence
+
+- Stock: 55 passed (47 previos + 8 batch). Sales: 51 passed (50 + 1 batch-usage).
+- `py infra/e2e_check.py` → OK (ejerce el camino batch por debajo).
+- SPEC-STOCK-006 1.0.0 VALIDATED; ADR-012 APPROVED; ERF-01/03 actualizados.
+- Commits: 14b2d3a (SPEC DRAFT), 3e55562 (SPEC APPROVED), 0a7a9e1 (implementación), + cierre.
+
+## Next step
+
+- Decisión del usuario: merge a `main`. Luego Fase 6 (observabilidad) cuando quiera.
 
 ## Verification evidence
 

@@ -5,7 +5,7 @@
 - ID: SPEC-STOCK-006
 - Requirement: Plan de seguridad Fase 5 — optimiza ERF-01/ERF-03 (sin ERF nuevo; sin cambios de comportamiento, solo menos llamadas).
 - Service: Stock (endpoint batch) + Sales (consume el batch en la saga)
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Media
 
@@ -126,5 +126,6 @@ Tests: Pendiente (futuros: `test_batch_returns_found_with_stock`, `test_batch_in
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 1.0.0 | 2026-10-12 | OQ-BATCH-01/02/03 DECIDED (encontrados/siempre/100); DRAFT → APPROVED (autoriza desarrollo) | User approval: encontrados, siempre, 100 |
+| 1.0.0 | 2026-10-12 | APPROVED → VALIDATED (106/106 pytest + E2E en verde) | Tests confirman AC-BATCH06-01..05 |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Plan de seguridad Fase 5 |
