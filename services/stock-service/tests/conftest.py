@@ -51,6 +51,18 @@ def client(db_engine):
     app.dependency_overrides.clear()
 
 
+@pytest.fixture(autouse=True)
+def _fresh_limiter():
+    """Aísla el rate limiting entre tests (SPEC-AUTH-002)."""
+    try:
+        from app.core import middleware as middleware_module
+    except ImportError:
+        yield
+        return
+    middleware_module.limiter.reset()
+    yield
+
+
 @pytest.fixture()
 def admin_headers():
     """Token admin (Stock solo verifica firma/rol, sin tabla users)."""

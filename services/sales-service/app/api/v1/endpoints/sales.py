@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import require_active_role
 from app.clients.stock_client import StockUnavailableError
+from app.core.config import get_settings
 from app.core.database import get_db
+from app.core.middleware import limiter
 from app.models.user import User
 from app.schemas.sale import SaleCreate, SaleRead
 from app.services.sale_service import (
@@ -15,6 +17,7 @@ from app.services.sale_service import (
 
 router = APIRouter()
 seller = require_active_role("admin", "cajero")
+_rate_write = get_settings().RATE_WRITE
 
 
 def _service() -> SaleService:
@@ -22,7 +25,9 @@ def _service() -> SaleService:
 
 
 @router.post("", response_model=SaleRead, status_code=status.HTTP_201_CREATED)
+@limiter.limit(_rate_write)
 def register_sale(
+    request: Request,
     data: SaleCreate,
     db: Session = Depends(get_db),
     service: SaleService = Depends(_service),

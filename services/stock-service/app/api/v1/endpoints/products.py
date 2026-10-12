@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
 
+from app.core.config import get_settings
 from app.core.database import get_db
+from app.core.middleware import limiter
 from app.core.security import require_role
 from app.schemas.product import ProductCreate, ProductRead, ProductUpdate
 from app.services.product_service import product_service
@@ -9,6 +11,7 @@ from app.services.product_service import product_service
 router = APIRouter()
 admin_only = require_role("admin")
 reader = require_role("admin", "cajero")
+_settings = get_settings()
 
 
 def _handle_value_error(exc: ValueError) -> HTTPException:
@@ -18,12 +21,14 @@ def _handle_value_error(exc: ValueError) -> HTTPException:
 
 
 @router.post("", response_model=ProductRead, status_code=status.HTTP_201_CREATED)
+@limiter.limit(_settings.RATE_WRITE)
 def create_product(
+    request: Request,
     data: ProductCreate,
     db: Session = Depends(get_db),
     _claims: dict = Depends(admin_only),
 ):
-    """ERF-06 (SPEC-STOCK-004). ERF-10: solo admin."""
+    """ERF-06 (SPEC-STOCK-004). ERF-10: solo admin. Rate limit SPEC-AUTH-002."""
     try:
         return product_service.create(db, data)
     except ValueError as exc:
@@ -56,13 +61,15 @@ def get_product(
 
 
 @router.put("/{product_id}", response_model=ProductRead)
+@limiter.limit(_settings.RATE_WRITE)
 def update_product(
+    request: Request,
     product_id: int,
     data: ProductUpdate,
     db: Session = Depends(get_db),
     _claims: dict = Depends(admin_only),
 ):
-    """ERF-10: solo admin."""
+    """ERF-10: solo admin. Rate limit SPEC-AUTH-002."""
     try:
         found = product_service.update(db, product_id, data)
     except ValueError as exc:
@@ -73,12 +80,14 @@ def update_product(
 
 
 @router.delete("/{product_id}", response_model=ProductRead)
+@limiter.limit(_settings.RATE_WRITE)
 def deactivate_product(
+    request: Request,
     product_id: int,
     db: Session = Depends(get_db),
     _claims: dict = Depends(admin_only),
 ):
-    """ERF-10: solo admin."""
+    """ERF-10: solo admin. Rate limit SPEC-AUTH-002."""
     found = product_service.deactivate(db, product_id)
     if found is None:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
