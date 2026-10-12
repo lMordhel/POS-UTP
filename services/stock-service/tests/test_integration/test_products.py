@@ -4,7 +4,7 @@ import pytest
 
 
 @pytest.mark.integration
-def test_create_product_valid_returns_201_with_initial_stock(client):
+def test_create_product_valid_returns_201_with_initial_stock(client, admin_headers):
     """AC-ERF06-01: crear producto válido → 201 con inventario inicial."""
     response = client.post(
         "/api/v1/products",
@@ -15,6 +15,7 @@ def test_create_product_valid_returns_201_with_initial_stock(client):
             "precio": "25.90",
             "cantidad_inicial": 50,
         },
+        headers=admin_headers,
     )
     assert response.status_code == 201
     body = response.json()
@@ -24,7 +25,7 @@ def test_create_product_valid_returns_201_with_initial_stock(client):
 
 
 @pytest.mark.integration
-def test_create_product_duplicate_codigo_returns_409(client, sample_product):
+def test_create_product_duplicate_codigo_returns_409(client, sample_product, admin_headers):
     """AC-ERF06-02: código duplicado → 409 sin crear registros."""
     response = client.post(
         "/api/v1/products",
@@ -34,16 +35,18 @@ def test_create_product_duplicate_codigo_returns_409(client, sample_product):
             "precio": "5.00",
             "cantidad_inicial": 1,
         },
+        headers=admin_headers,
     )
     assert response.status_code == 409
 
 
 @pytest.mark.integration
-def test_update_product_valid_keeps_stock(client, sample_product):
+def test_update_product_valid_keeps_stock(client, sample_product, admin_headers):
     """AC-ERF06-03: PUT actualiza catálogo sin alterar cantidad."""
     response = client.put(
         f"/api/v1/products/{sample_product['id']}",
         json={"nombre": "Nombre nuevo", "precio": "12.00"},
+        headers=admin_headers,
     )
     assert response.status_code == 200
     body = response.json()
@@ -52,22 +55,22 @@ def test_update_product_valid_keeps_stock(client, sample_product):
 
 
 @pytest.mark.integration
-def test_update_product_unknown_id_returns_404(client):
-    response = client.put("/api/v1/products/9999", json={"nombre": "X"})
+def test_update_product_unknown_id_returns_404(client, admin_headers):
+    response = client.put("/api/v1/products/9999", json={"nombre": "X"}, headers=admin_headers)
     assert response.status_code == 404
 
 
 @pytest.mark.integration
-def test_deactivate_product_marks_inactive(client, sample_product):
+def test_deactivate_product_marks_inactive(client, sample_product, admin_headers):
     """AC-ERF06-04: DELETE lógico → activo=false."""
-    response = client.delete(f"/api/v1/products/{sample_product['id']}")
+    response = client.delete(f"/api/v1/products/{sample_product['id']}", headers=admin_headers)
     assert response.status_code == 200
     assert response.json()["activo"] is False
 
 
 @pytest.mark.integration
-def test_deactivate_unknown_id_returns_404(client):
-    assert client.delete("/api/v1/products/9999").status_code == 404
+def test_deactivate_unknown_id_returns_404(client, admin_headers):
+    assert client.delete("/api/v1/products/9999", headers=admin_headers).status_code == 404
 
 
 @pytest.mark.integration
@@ -82,11 +85,11 @@ def test_deactivate_unknown_id_returns_404(client):
     ],
     ids=["empty-codigo", "empty-nombre", "zero-precio", "negative-precio", "negative-cantidad"],
 )
-def test_create_product_invalid_returns_422(client, payload):
+def test_create_product_invalid_returns_422(client, admin_headers, payload):
     """AC-ERF06-05: validaciones → 422."""
-    assert client.post("/api/v1/products", json=payload).status_code == 422
+    assert client.post("/api/v1/products", json=payload, headers=admin_headers).status_code == 422
 
 
 @pytest.mark.integration
-def test_get_product_unknown_id_returns_404(client):
-    assert client.get("/api/v1/products/9999").status_code == 404
+def test_get_product_unknown_id_returns_404(client, cashier_headers):
+    assert client.get("/api/v1/products/9999", headers=cashier_headers).status_code == 404

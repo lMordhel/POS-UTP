@@ -4,9 +4,9 @@ import pytest
 
 
 @pytest.mark.integration
-def test_get_stock_existing(client, sample_product):
+def test_get_stock_existing(client, sample_product, cashier_headers):
     """AC-ERF04-01: stock existente → 200 con cantidad y updated_at."""
-    response = client.get(f"/api/v1/products/{sample_product['id']}/stock")
+    response = client.get(f"/api/v1/products/{sample_product['id']}/stock", headers=cashier_headers)
     assert response.status_code == 200
     body = response.json()
     assert body["producto_id"] == sample_product["id"]
@@ -14,18 +14,19 @@ def test_get_stock_existing(client, sample_product):
 
 
 @pytest.mark.integration
-def test_get_stock_unknown_id_returns_404(client):
+def test_get_stock_unknown_id_returns_404(client, cashier_headers):
     """AC-ERF04-02."""
-    assert client.get("/api/v1/products/9999/stock").status_code == 404
+    assert client.get("/api/v1/products/9999/stock", headers=cashier_headers).status_code == 404
 
 
 @pytest.mark.integration
-def test_adjust_stock_delta_decrements_and_returns_updated(client, sample_product):
+def test_adjust_stock_delta_decrements_and_returns_updated(client, sample_product, admin_headers):
     """AC-ERF05-01: delta válido → inventario actualizado."""
     start = sample_product["stock"]
     response = client.patch(
         f"/api/v1/products/{sample_product['id']}/stock",
         json={"delta": -30, "motivo": "venta"},
+        headers=admin_headers,
     )
     assert response.status_code == 200
     assert response.json()["cantidad"] == start - 30
@@ -33,35 +34,37 @@ def test_adjust_stock_delta_decrements_and_returns_updated(client, sample_produc
     response = client.patch(
         f"/api/v1/products/{sample_product['id']}/stock",
         json={"delta": 10, "motivo": "ajuste"},
+        headers=admin_headers,
     )
     assert response.json()["cantidad"] == start - 20
 
 
 @pytest.mark.integration
-def test_adjust_stock_unknown_id_returns_404(client):
+def test_adjust_stock_unknown_id_returns_404(client, admin_headers):
     """AC-ERF05-02."""
-    response = client.patch("/api/v1/products/9999/stock", json={"delta": -1})
+    response = client.patch("/api/v1/products/9999/stock", json={"delta": -1}, headers=admin_headers)
     assert response.status_code == 404
 
 
 @pytest.mark.integration
-def test_adjust_stock_below_zero_returns_409_without_changes(client, sample_product):
+def test_adjust_stock_below_zero_returns_409_without_changes(client, sample_product, admin_headers, cashier_headers):
     """AC-ERF05-03: resultado negativo → 409 sin modificar."""
     response = client.patch(
         f"/api/v1/products/{sample_product['id']}/stock",
         json={"delta": -(sample_product["stock"] + 1)},
+        headers=admin_headers,
     )
     assert response.status_code == 409
-    check = client.get(f"/api/v1/products/{sample_product['id']}/stock")
+    check = client.get(f"/api/v1/products/{sample_product['id']}/stock", headers=cashier_headers)
     assert check.json()["cantidad"] == sample_product["stock"]
 
 
 @pytest.mark.integration
 @pytest.mark.parametrize("payload", [{"delta": 0}, {}], ids=["zero-delta", "empty-body"])
-def test_adjust_stock_invalid_returns_422(client, sample_product, payload):
+def test_adjust_stock_invalid_returns_422(client, sample_product, admin_headers, payload):
     assert (
         client.patch(
-            f"/api/v1/products/{sample_product['id']}/stock", json=payload
+            f"/api/v1/products/{sample_product['id']}/stock", json=payload, headers=admin_headers
         ).status_code
         == 422
     )
