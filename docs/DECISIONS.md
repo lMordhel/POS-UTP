@@ -119,6 +119,13 @@
 - Pendientes (OQ-BATCH-01/02/03): encontrados-vs-404, camino único, tope.
 - Afecta a: SPEC-STOCK-006.
 
+## ADR-013 — Observabilidad mínima sin dependencias nuevas
+
+- Status: PROPOSED (la aprobación de SPEC-OPS-002 lo aprueba)
+- Decisión: Access log JSON con `X-Request-ID` (middleware propio); `/metrics` hand-rolled en formato Prometheus (contadores + latencias + `app_info`, en memoria/1 réplica); `/ready` solo DB propia (200/503); `/health` intacto. Sin OTel, sin Prometheus/Grafana, sin propagación profunda del request id en esta fase.
+- Pendientes (OQ-OBS-01/02/03): hand-rolled vs librería, alcance de ready, unificación de logs.
+- Afecta a: SPEC-OPS-002.
+
 ## D-AUTH-SCOPE — Ampliación de alcance: seguridad backend
 
 - Status: DECIDED (2026-10-12, decisión de usuario — Opción 1)
