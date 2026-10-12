@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.product import Product
 from app.repositories.product_repository import inventory_repository, product_repository
+from app.repositories import inventory_movement_repository as movement_repository
 from app.repositories.stock_adjustment_repository import (
     create as record_adjustment,
 )
@@ -99,12 +100,19 @@ class ProductService:
         )
 
     def adjust_stock(
-        self, db: Session, product_id: int, delta: int, idem_key: str | None = None
+        self,
+        db: Session,
+        product_id: int,
+        delta: int,
+        idem_key: str | None = None,
+        actor: dict | None = None,
+        motivo: str = "",
     ) -> StockRead:
         """SPEC-STOCK-003: único punto de escritura del inventario.
 
         SPEC-SALES-004 (FR-07): con clave repetida devuelve lo registrado
         sin re-aplicar el delta (exactamente-una-vez por clave).
+        SPEC-OPS-001 (FR-04): cada aplicación deja un `inventory_movement`.
         """
         if idem_key:
             existing = get_adjustment(db, idem_key)
@@ -119,16 +127,28 @@ class ProductService:
             if product_repository.get(db, product_id) is None:
                 raise StockNotFoundError(f"producto inexistente: {product_id}")
             inv = inventory_repository.create_initial(db, product_id, 0)
-        new_quantity = inv.cantidad + delta
+        cantidad_antes = inv.cantidad
+        new_quantity = cantidad_antes + delta
         if new_quantity < 0:
             raise InsufficientStockError(
-                f"stock insuficiente: disponible={inv.cantidad}, delta={delta}"
+                f"stock insuficiente: disponible={cantidad_antes}, delta={delta}"
             )
         inv.cantidad = new_quantity
         db.flush()
         db.refresh(inv)
         if idem_key:
             record_adjustment(db, idem_key, product_id, delta, inv.cantidad)
+        movement_repository.record(
+            db,
+            producto_id=product_id,
+            delta=delta,
+            cantidad_antes=cantidad_antes,
+            cantidad_despues=inv.cantidad,
+            motivo=motivo,
+            actor_sub=(actor or {}).get("sub", ""),
+            actor_rol=(actor or {}).get("rol", ""),
+            clave=idem_key,
+        )
         return StockRead(
             producto_id=product_id, cantidad=inv.cantidad, updated_at=inv.updated_at
         )

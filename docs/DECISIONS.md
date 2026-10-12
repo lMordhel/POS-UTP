@@ -103,6 +103,14 @@
 - Pendientes (OQ-SAGA-01/02/03): código del replay, expiración de claves, misma-clave-distinto-cuerpo.
 - Afecta a: SPEC-SALES-004.
 
+## ADR-011 — Migraciones Alembic + auditoría de inventario
+
+- Status: APPROVED (2026-10-12, con SPEC-OPS-001 1.0.0)
+- Decisión: Alembic por servicio con baseline autogenerada (upgrade + downgrade); `init_db` adopta-o-migra (stamp head si hay tablas sin versión, upgrade si no); bootstrap admin preservado. Auditoría: tabla `inventory_movements` por cada ajuste aplicado (actor desde claims, motivo, antes/después, clave nullable; replays no auditan); eventos de seguridad en logs estructurados (sin tablas extra).
+- Fundamento: `create_all` no versiona y no puede evolucionar el esquema con datos; los ajustes manuales de admin hoy no dejan traza con actor.
+- Pendientes (OQ-AUD-01/02/03): alcance de auditoría, upgrade-head en todo vs solo prod, baseline+seed mínimo.
+- Afecta a: SPEC-OPS-001.
+
 ## D-AUTH-SCOPE — Ampliación de alcance: seguridad backend
 
 - Status: DECIDED (2026-10-12, decisión de usuario — Opción 1)
@@ -117,6 +125,7 @@
 | 2026-10-12 | SPEC-AUTH-002 0.1.0 DRAFT (Fase 2: CORS, rate limiting, config segura); ADR-009 PROPOSED |
 | 2026-10-12 | SPEC-AUTH-002 1.0.0 VALIDATED (79/79 pytest + E2E; OQ-HARD-01/02 sí, sí) |
 | 2026-10-12 | SPEC-SALES-004 1.0.0 VALIDATED (86/86 pytest + E2E con replay; OQ-SAGA 200/sin-exp/422) |
+| 2026-10-12 | SPEC-OPS-001 1.0.0 VALIDATED (97/97 pytest + E2E; OQ-AUD tabla+logs/todo/sí) |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 APPROVED (usuario conforme; autoriza desarrollo); ADR-006/007/008 → APPROVED |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 VALIDATED (67/67 pytest + E2E con login); identidad de servicio Sales→Stock (addendum ADR-008) |
 | 2026-10-12 | SPEC-AUTH-001 0.1.0 DRAFT (Opción 1: admin/cajero, sin registro público); ADR-006/007/008 PROPOSED; D-AUTH-SCOPE DECIDED (ampliación de alcance a seguridad backend) |

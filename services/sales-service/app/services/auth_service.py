@@ -1,4 +1,5 @@
 """Login y refresh con rotación (SPEC-AUTH-001, FR-02/07)."""
+import logging
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
@@ -9,6 +10,8 @@ from app.core import security
 from app.models.user import User
 from app.repositories import user_repository
 from app.schemas.auth import TokenPair
+
+logger = logging.getLogger(__name__)
 
 
 class InvalidCredentialsError(Exception):
@@ -26,8 +29,10 @@ class RefreshReuseError(Exception):
 def authenticate(db: Session, username: str, password: str) -> User:
     user = user_repository.get_by_username(db, username)
     if user is None or not user.activo:
+        logger.warning("login fallido username=%s motivo=no-existe-o-inactivo", username)
         raise InvalidCredentialsError("credenciales inválidas")
     if not security.verify_password(password, user.password_hash):
+        logger.warning("login fallido username=%s motivo=password", username)
         raise InvalidCredentialsError("credenciales inválidas")
     return user
 
@@ -49,6 +54,7 @@ def _pair_for(db: Session, user: User, family: str) -> TokenPair:
 
 def login(db: Session, username: str, password: str) -> TokenPair:
     user = authenticate(db, username, password)
+    logger.info("login ok username=%s rol=%s", user.username, user.rol)
     return _pair_for(db, user, family=str(uuid4()))
 
 
@@ -69,6 +75,7 @@ def refresh_pair(db: Session, token: str) -> TokenPair:
         if record.rotado:
             user_repository.revoke_family(db, record.family)
             db.commit()  # persiste la revocación aunque se lance 401 (el get_db haría rollback)
+            logger.warning("refresh reutilizado user_id=%s familia revocada", record.user_id)
             raise RefreshReuseError("refresh reutilizado: familia revocada")
         raise RefreshInvalidError("refresh revocado")
     record.revocado = True
