@@ -42,7 +42,7 @@ con request id) y diga si está listo (readiness), sin dependencias nuevas.
 * FR-01: Cada respuesta debe traer `X-Request-ID` (recibido o generado UUID4); el access log debe incluirlo junto a `method`, `route`, `status` y `duration_ms` en JSON de una línea.
 * FR-02: `GET /metrics` debe exponer contadores por `{method, route, status}` y suma/conteo de duraciones, más `app_info{version="1.0.0"}`; `Content-Type: text/plain; version=0.0.4`. Sin autenticación (igual que `/health`).
 * FR-03: `GET /ready` debe ejecutar `SELECT 1` en la DB propia: ok → 200; fallo → 503 `{status:"unready"}`. Sin autenticación.
-* FR-04: La etiqueta `route` debe usar la plantilla (sin IDs reales); rutas no encontradas → `route="unknown"`.
+* FR-04: La etiqueta `route` debe identificar el endpoint sin valores reales (`modulo.funcion`, ej. `app.api.v1.endpoints.products.get_product`); rutas no encontradas → `route="unknown"`. (Decisión de implementación: las rutas anidadas no exponen path completo fiable según versión; el identificador es único y acotado igual.)
 * FR-05: Los logs de negocio existentes (auth, saga, compensación) siguen en texto; el JSON aplica al access log (convivencia documentada, unificación futura).
 
 ## Business Rules
@@ -110,7 +110,7 @@ Tests: Pendiente (futuros: `test_request_id_echo`, `test_metrics_groups_by_templ
 
 ## Technical Notes
 
-* Middleware propio (Starlette `BaseHTTPMiddleware`, como el de headers): mide con `perf_counter`, resuelve plantilla vía `request.scope["route"].path` con fallback, actualiza contadores en módulo `core/metrics.py` (dicts + Lock), log JSON con `json.dumps`.
+* Middleware propio (Starlette `BaseHTTPMiddleware`, como el de headers): mide con `perf_counter`, resuelve etiqueta vía `scope["endpoint"]` (`modulo.funcion`, acotado y agnóstico a la versión de Starlette), actualiza contadores en módulo `core/metrics.py` (dicts + Lock), log JSON con `json.dumps`.
 * `check_db()` testeable en `core/database.py` (SELECT 1 con engine propio/timeout corto); endpoint delgado.
 * Tests: TestClient emite requests reales (métricas suben); `X-Request-ID` custom; 503 con monkeypatch del check o engine inválido; caplog en `app.access`.
 * E2E sin cambios (pasa por el middleware y suma métricas, sin assertions nuevas salvo 200 en `/ready`).

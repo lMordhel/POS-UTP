@@ -3,12 +3,19 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, PlainTextResponse
 from slowapi.errors import RateLimitExceeded
 
 from app.api.v1.router import api_router
 from app.core.config import get_settings
-from app.core.database import init_db
-from app.core.middleware import SecurityHeadersMiddleware, limiter, rate_limit_handler
+from app.core.database import check_db, get_db, init_db
+from app.core.metrics import render as render_metrics
+from app.core.middleware import (
+    ObservabilityMiddleware,
+    SecurityHeadersMiddleware,
+    limiter,
+    rate_limit_handler,
+)
 
 PROD = os.getenv("POS_ENV", "dev") == "prod"
 
@@ -38,9 +45,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(ObservabilityMiddleware)
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "sales"}
+
+
+@app.get("/metrics")
+def metrics():
+    """SPEC-OPS-002: contadores y latencias en formato Prometheus."""
+    return PlainTextResponse(render_metrics(), media_type="text/plain; version=0.0.4")
+
+
+@app.get("/ready")
+def ready():
+    """SPEC-OPS-002: readiness con chequeo real de DB propia."""
+    if not check_db():
+        return JSONResponse({"status": "unready"}, status_code=503)
+    return {"status": "ok"}

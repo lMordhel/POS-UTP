@@ -71,6 +71,8 @@ def main() -> int:
     try:
         _wait("http://127.0.0.1:8002/health")
         _wait("http://127.0.0.1:8001/health")
+        _wait("http://127.0.0.1:8002/ready")
+        _wait("http://127.0.0.1:8001/ready")
 
         s, tok, _h = _call("POST", "http://127.0.0.1:8001/api/v1/auth/login", {
             "username": "admin", "password": "change-me-admin"})
