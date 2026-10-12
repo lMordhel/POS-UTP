@@ -95,6 +95,14 @@
 - Pendientes (OQ-HARD-01/02): confirmar cierre de docs en prod y alcance del rate limit.
 - Afecta a: SPEC-AUTH-002.
 
+## ADR-010 — Idempotencia extremo a extremo en la saga de venta
+
+- Status: PROPOSED (la aprobación de SPEC-SALES-004 lo aprueba)
+- Decisión: Doble nivel de claves opacas: `Idempotency-Key` por venta en `POST /sales` (tabla `idempotency_keys` + hash de cuerpo + guarda concurrente por restricción única) y clave por línea `{K}:{producto_id}` hacia Stock (tabla `stock_adjustments`; replay no re-aplica). Compensación con 3 intentos + log estructurado ante fallo final; timeout ambiguo resoluble por reintento con la misma clave.
+- Fundamento medido: `adjust_stock` es read-check-write sin lock y la compensación actual traga excepciones (`except Exception: pass` en `sale_service.py`).
+- Pendientes (OQ-SAGA-01/02/03): código del replay, expiración de claves, misma-clave-distinto-cuerpo.
+- Afecta a: SPEC-SALES-004.
+
 ## D-AUTH-SCOPE — Ampliación de alcance: seguridad backend
 
 - Status: DECIDED (2026-10-12, decisión de usuario — Opción 1)
