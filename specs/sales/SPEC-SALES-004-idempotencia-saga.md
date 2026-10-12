@@ -5,8 +5,8 @@
 - ID: SPEC-SALES-004
 - Requirement: Plan de seguridad Fase 3 — endurece ERF-01/ERF-03 (sin ERF nuevo; no amplía funcionalidad, elimina duplicados y fugas ante fallos).
 - Service: Sales (clave de venta) + Stock (clave por línea)
-- Status: DRAFT
-- Version: 0.1.0
+- Status: APPROVED
+- Version: 1.0.0
 - Priority: Muy alta
 
 ## Objective
@@ -124,9 +124,9 @@ Then el comportamiento y códigos deben ser los actuales (201/404/409/502).
 
 ## Open Questions
 
-* OQ-SAGA-01: ¿Qué código devuelve el replay: `200` + header `Idempotent-Replayed: true` (propuesta, convención común) o repetir `201`?
-* OQ-SAGA-02: ¿Las claves expiran? Propuesta: sin expiración en esta fase (nota futura para purga).
-* OQ-SAGA-03: ¿Misma clave con cuerpo distinto → `422` (propuesta) o tratarla como venta nueva? La propuesta protege contra bugs de cliente que reutilizan claves.
+* OQ-SAGA-01: DECIDED 2026-10-12 → `200` + header `Idempotent-Replayed: true` (convención Stripe/PayPal: distingue "creado ahora" de "ya existía", facilita debugging y cliente).
+* OQ-SAGA-02: DECIDED 2026-10-12 → sin expiración en esta fase (simple, sin edge de "expiró al reintentar"; purga futura sin cambiar contrato).
+* OQ-SAGA-03: DECIDED 2026-10-12 → `422` (misma clave + mismo request = mismo resultado; protege contra bugs/reúso malicioso).
 
 ## Traceability
 
@@ -146,5 +146,7 @@ Tests: Pendiente (futuros: `test_replay_returns_same_sale`, `test_same_key_diffe
 ## Change History
 
 | Version | Date | Change | Reason |
+|---|---|---|---|
+| 1.0.0 | 2026-10-12 | OQ-SAGA-01/02/03 DECIDED (200+header, sin expiración, 422); DRAFT → APPROVED (autoriza desarrollo) | User approval: 200, sin expiración, 422 |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Plan de seguridad Fase 3 |
