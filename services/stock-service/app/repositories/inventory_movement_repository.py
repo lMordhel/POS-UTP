@@ -28,7 +28,3 @@ def record(
     db.add(movement)
     db.flush()
     return movement
-
-
-def list_all(db: Session) -> list[InventoryMovement]:
-    return db.query(InventoryMovement).order_by(InventoryMovement.id).all()

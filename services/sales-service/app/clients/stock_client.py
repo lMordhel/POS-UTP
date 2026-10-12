@@ -67,40 +67,6 @@ class StockClient:
                 last_exc = exc
         raise StockUnavailableError(f"stock no disponible: {last_exc}")
 
-    def get_product(self, product_id: int) -> StockProduct:
-        try:
-            resp = self._request("GET", f"/api/v1/products/{product_id}")
-        except StockUnavailableError:
-            raise
-        except httpx.HTTPError as exc:
-            raise StockUnavailableError(f"stock no disponible: {exc}")
-        if resp.status_code == 404:
-            raise StockProductNotFoundError(f"producto inexistente: {product_id}")
-        if resp.status_code >= 500:
-            raise StockUnavailableError(f"stock falló: HTTP {resp.status_code}")
-        resp.raise_for_status()
-        body = resp.json()
-        return StockProduct(
-            id=body["id"],
-            codigo=body["codigo"],
-            nombre=body["nombre"],
-            precio=Decimal(str(body["precio"])),
-            activo=body["activo"],
-            stock=body["stock"],
-        )
-
-    def get_stock(self, product_id: int) -> int:
-        try:
-            resp = self._request("GET", f"/api/v1/products/{product_id}/stock")
-        except httpx.HTTPError as exc:
-            raise StockUnavailableError(f"stock no disponible: {exc}")
-        if resp.status_code == 404:
-            raise StockProductNotFoundError(f"producto inexistente: {product_id}")
-        if resp.status_code >= 500:
-            raise StockUnavailableError(f"stock falló: HTTP {resp.status_code}")
-        resp.raise_for_status()
-        return int(resp.json()["cantidad"])
-
     def batch_get_products(self, ids: list[int]) -> list[StockProduct]:
         """SPEC-STOCK-006: una lectura por lote (precios + stock)."""
         try:
