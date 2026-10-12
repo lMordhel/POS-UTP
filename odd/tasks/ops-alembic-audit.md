@@ -35,8 +35,8 @@ OQ-AUD-01/02/03 DECIDED (tabla+logs, un solo camino, sí baseline).
 
 - [x] F4-T1 — SPEC-OPS-001 DRAFT + rama + ADR-011 PROPOSED
 - [x] F4-T2 — SPEC-OPS-001 → APPROVED 1.0.0 (OQ tabla+logs/todo/sí)
-- [ ] F4-T3 — Implementar migraciones + auditoría con TDD
-- [ ] F4-T4 — Verificación completa + SPEC VALIDATED + reporte
+- [x] F4-T3 — Migraciones + auditoría con TDD (Alembic, movements, logs)
+- [x] F4-T4 — Verificación completa + SPEC VALIDATED
 
 ## Authorized scope
 
@@ -62,7 +62,18 @@ TDD ROJO→VERDE donde haya RED ejecutable.
 
 ## Progress
 
-- SPEC aprobada; alembic 1.20.0 instalado; pendiente implementar.
+- Feature completa y validada en `feature/ops-alembic-audit` (4/4 tareas).
+
+## Verification evidence
+
+- Stock: 47 passed (42 previos + 3 migraciones + 2 auditoría). Sales: 50 passed (44 + 3 migraciones + 3 logs).
+- `py infra/e2e_check.py` → OK (ejerce migrate en DBs temporales).
+- SPEC-OPS-001 1.0.0 VALIDATED; ADR-011 APPROVED; `docs/MIGRATIONS.md` creada.
+- Commits: 7af6564 (SPEC DRAFT), d28d92d (SPEC APPROVED), 8626382 (implementación), + cierre.
+
+## Next step
+
+- Decisión del usuario: merge a `main`. Luego Fase 5 (SPEC optimización) o Fase 6 (observabilidad) cuando quiera.
 
 ## Verification evidence
 

@@ -5,7 +5,7 @@
 - ID: SPEC-OPS-001
 - Requirement: Plan de seguridad Fase 4, transversal (toca ERF-02/05/06 en Stock y ERF-09 en Sales sin cambiar endpoints; sin ERF nuevo).
 - Service: Stock + Sales
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Alta
 
@@ -136,5 +136,6 @@ Tests: Pendiente (futuros: `test_baseline_upgrades_clean`, `test_init_db_adopts_
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 1.0.0 | 2026-10-12 | OQ-AUD-01/02/03 DECIDED (tabla+logs, un solo camino, sí baseline); DRAFT → APPROVED (autoriza desarrollo) | User approval: tabla+logs, todo, sí |
+| 1.0.0 | 2026-10-12 | APPROVED → VALIDATED (97/97 pytest + E2E en verde) | Tests confirman AC-OPS01-01..06 |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Plan de seguridad Fase 4 |
