@@ -88,6 +88,13 @@
 - Identidad de servicio DECIDED 2026-10-12 (addendum de implementación, gap detectado por E2E): las llamadas internas Sales→Stock usan credencial de servicio (`create_service_token`: secreto compartido, rol `admin`, `type=service`, fresca por llamada sin estado). El rol del usuario final no se propaga a Stock; la atribución viaja en `motivo=venta:{id}`. La matriz RBAC rige llamadas directas de usuarios.
 - Afecta a: SPEC-AUTH-001.
 
+## ADR-009 — Hardening HTTP (CORS, rate limiting, config segura)
+
+- Status: APPROVED (2026-10-12, con SPEC-AUTH-002 1.0.0)
+- Decisión: CORS por env (default dev `http://localhost:5173`, fin de `*`); rate limit por IP en auth+escrituras con `slowapi` en memoria (login 5/min propuesto; lecturas sin límite); cabeceras `nosniff`/`DENY`/`no-referrer` + `Server` genérico; fail-fast en prod ante secretos/CORS de ejemplo; `/docs` desactivado en prod.
+- Pendientes (OQ-HARD-01/02): confirmar cierre de docs en prod y alcance del rate limit.
+- Afecta a: SPEC-AUTH-002.
+
 ## D-AUTH-SCOPE — Ampliación de alcance: seguridad backend
 
 - Status: DECIDED (2026-10-12, decisión de usuario — Opción 1)
@@ -99,13 +106,10 @@
 
 | Fecha | Cambio |
 |---|---|
+| 2026-10-12 | SPEC-AUTH-002 0.1.0 DRAFT (Fase 2: CORS, rate limiting, config segura); ADR-009 PROPOSED |
+| 2026-10-12 | SPEC-AUTH-002 1.0.0 VALIDATED (79/79 pytest + E2E; OQ-HARD-01/02 sí, sí) |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 APPROVED (usuario conforme; autoriza desarrollo); ADR-006/007/008 → APPROVED |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 VALIDATED (67/67 pytest + E2E con login); identidad de servicio Sales→Stock (addendum ADR-008) |
-
-## Historial
-
-| Fecha | Cambio |
-|---|---|
 | 2026-10-12 | SPEC-AUTH-001 0.1.0 DRAFT (Opción 1: admin/cajero, sin registro público); ADR-006/007/008 PROPOSED; D-AUTH-SCOPE DECIDED (ampliación de alcance a seguridad backend) |
 
 | Fecha | Cambio |

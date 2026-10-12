@@ -78,6 +78,18 @@ def fake_stock():
     return FakeStockClient()
 
 
+@pytest.fixture(autouse=True)
+def _fresh_limiter():
+    """Aísla el rate limiting entre tests (SPEC-AUTH-002)."""
+    try:
+        from app.core import middleware as middleware_module
+    except ImportError:
+        yield
+        return
+    middleware_module.limiter.reset()
+    yield
+
+
 @pytest.fixture()
 def seed_users(db_engine):
     """Usuarios fijos para pruebas de auth (SPEC-AUTH-001)."""
