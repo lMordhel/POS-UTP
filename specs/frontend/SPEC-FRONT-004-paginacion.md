@@ -5,8 +5,8 @@
 - ID: SPEC-FRONT-004
 - Requirement: UX en listados (sin ERF nuevo; usa paginación backend existente `skip/limit`).
 - Service: Frontend (Productos y Ventas; Usuarios fuera salvo decisión)
-- Status: DRAFT
-- Version: 0.1.0
+- Status: APPROVED
+- Version: 1.0.0
 - Priority: Media
 
 ## Objective
@@ -80,8 +80,8 @@ Then vuelve a página 0 con resultados filtrados.
 
 ## Open Questions
 
-* OQ-PAG-01: ¿Tamaño fijo 20 (propuesta, igual al default backend) o selector 10/20/50?
-* OQ-PAG-02: ¿Productos + Ventas (propuesta; Usuarios es bajo volumen) o las tres vistas?
+* OQ-PAG-01: DECIDED 2026-10-13 → fijo 20 (igual al default backend).
+* OQ-PAG-02: DECIDED 2026-10-13 → las tres vistas (incluida Usuarios).
 
 ## Traceability
 
@@ -99,5 +99,7 @@ Tests: Pendiente (propuesta: demo manual por AC + `npm run build`, precedente)
 ## Change History
 
 | Version | Date | Change | Reason |
+|---|---|---|---|
+| 1.0.0 | 2026-10-13 | OQ-PAG-01/02 DECIDED (fijo 20 / tres vistas); DRAFT → APPROVED (autoriza desarrollo) | User approval: fijo, usuarios también |
 |---|---|---|---|
 | 0.1.0 | 2026-10-13 | Initial specification (DRAFT, no autoriza implementar) | Paginación UI |

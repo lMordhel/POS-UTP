@@ -142,7 +142,7 @@
 
 ## ADR-016 — Paginación en UI con truco limit+1
 
-- Status: PROPOSED (la aprobación de SPEC-FRONT-004 lo aprueba)
+- Status: APPROVED (2026-10-13, con SPEC-FRONT-004 1.0.0)
 - Decisión: Sin backend nuevo: pedir `limit+1` para detectar siguiente; tamaño y vistas por OQ; búsqueda reinicia a página 0.
 - Pendientes (OQ-PAG-01/02): tamaño fijo o selector; vistas incluidas.
 - Afecta a: SPEC-FRONT-004.
