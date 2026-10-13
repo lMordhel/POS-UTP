@@ -56,9 +56,22 @@ export function ProductsView({ isAdmin }) {
   }
 
   async function handleDeactivate(id) {
+    const target = products.find((p) => p.id === id)
+    const name = target ? target.nombre : `#${id}`
+    if (!window.confirm(`¿Desactivar ${name}? No se podrá vender hasta reactivarlo.`)) return
     setError('')
     try {
       await stockApi.deactivate(id)
+      await load()
+    } catch (err) {
+      setError(apiErrorMessage(err))
+    }
+  }
+
+  async function handleReactivate(id) {
+    setError('')
+    try {
+      await stockApi.update(id, { activo: true })
       await load()
     } catch (err) {
       setError(apiErrorMessage(err))
@@ -183,9 +196,9 @@ export function ProductsView({ isAdmin }) {
             </thead>
             <tbody>
               {products.map((p) => (
-                <ProductRow key={p.id} product={p} canDeactivate={isAdmin}
-                  onDeactivate={handleDeactivate} canManage={isAdmin}
-                  onEdit={startEdit} onAdjust={startAdjust} />
+              <ProductRow key={p.id} product={p} canDeactivate={isAdmin}
+                onDeactivate={handleDeactivate} canManage={isAdmin}
+                onEdit={startEdit} onAdjust={startAdjust} onReactivate={handleReactivate} />
               ))}
             </tbody>
           </table>
