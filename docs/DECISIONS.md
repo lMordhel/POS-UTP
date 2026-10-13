@@ -158,6 +158,7 @@
 | 2026-10-12 | SPEC-STOCK-006 1.0.0 VALIDATED (106/106 pytest + E2E; OQ-BATCH encontrados/siempre/100) |
 | 2026-10-12 | SPEC-OPS-002 1.0.0 VALIDATED (116/116 pytest + E2E; OQ-OBS hand-rolled/propia/ya) |
 | 2026-10-12 | SPEC-FRONT-002 1.0.0 VALIDATED (build verde + demo manual por usuario: todo OK) |
+| 2026-10-12 | SPEC-FRONT-003 1.0.0 VALIDATED (build verde + demo manual por usuario: todo OK) |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 APPROVED (usuario conforme; autoriza desarrollo); ADR-006/007/008 → APPROVED |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 VALIDATED (67/67 pytest + E2E con login); identidad de servicio Sales→Stock (addendum ADR-008) |
 | 2026-10-12 | SPEC-AUTH-001 0.1.0 DRAFT (Opción 1: admin/cajero, sin registro público); ADR-006/007/008 PROPOSED; D-AUTH-SCOPE DECIDED (ampliación de alcance a seguridad backend) |

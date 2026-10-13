@@ -31,8 +31,8 @@ SPEC-FRONT-003 APPROVED 1.0.0. OQ-FADM-01/02 DECIDED
 
 - [x] SPEC-FRONT-003 DRAFT + rama + ADR-015 PROPOSED
 - [x] SPEC-FRONT-003 → APPROVED 1.0.0 (OQ campos/motivo)
-- [ ] Implementar gestión admin (build + demo manual)
-- [ ] VALIDATED + merge + reporte
+- [x] Gestión admin + UX + cambio de clave (build verde)
+- [x] Demo manual OK + VALIDATED + merge
 
 ## Authorized scope
 

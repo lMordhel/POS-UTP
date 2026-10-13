@@ -5,7 +5,7 @@
 - ID: SPEC-FRONT-003
 - Requirement: ERF-02/ERF-06 (extensión UI; consume endpoints existentes, sin backend nuevo).
 - Service: Frontend (requiere sesión `admin`)
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Media
 
@@ -117,5 +117,6 @@ Tests: Pendiente (propuesta: demo manual por AC + `npm run build`, precedente FR
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 1.0.0 | 2026-10-12 | OQ-FADM-01/02 DECIDED (nombre+precio+desc / motivo opcional); DRAFT → APPROVED (autoriza desarrollo) | User approval: campos propuestos, opcional |
+| 1.0.0 | 2026-10-12 | APPROVED → VALIDATED (build verde + demo manual por usuario: todo OK, incl. cambio de clave y UX mejorada) | Sign-off usuario |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Gestión admin UI (ideas 1+2) |
