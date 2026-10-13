@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.core.database import get_db
 from app.core.middleware import limiter
 from app.core.security import require_role
+from app.schemas.movement import MovementRead
 from app.schemas.stock import StockAdjust, StockRead
 from app.services.product_service import (
     InsufficientStockError,
@@ -57,3 +58,15 @@ def adjust_stock(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail=str(exc)
         )
+
+
+@router.get("/stock/movements", response_model=list[MovementRead])
+def list_movements(
+    producto_id: int | None = Query(default=None, gt=0),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db),
+    _claims: dict = Depends(admin_only),
+):
+    """SPEC-STOCK-007: lectura de auditoría (solo admin, nuevos primero)."""
+    return product_service.list_movements(db, producto_id, skip, limit)

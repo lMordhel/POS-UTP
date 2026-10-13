@@ -91,6 +91,13 @@ export const stockApi = {
       body: JSON.stringify(motivo ? { delta, motivo } : { delta }),
     }),
   deactivate: (id) => request(STOCK, `/products/${id}`, { method: 'DELETE' }),
+  movements: ({ producto_id = null, skip = 0, limit = PAGE_SIZE + 1 } = {}) => {
+    const params = new URLSearchParams()
+    if (producto_id) params.set('producto_id', String(producto_id))
+    params.set('skip', String(skip))
+    params.set('limit', String(limit))
+    return request(STOCK, `/stock/movements?${params}`)
+  },
 }
 
 export const salesApi = {

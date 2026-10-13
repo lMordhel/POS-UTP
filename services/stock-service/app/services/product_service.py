@@ -140,6 +140,7 @@ class ProductService:
             if product_repository.get(db, product_id) is None:
                 raise StockNotFoundError(f"producto inexistente: {product_id}")
             inv = inventory_repository.create_initial(db, product_id, 0)
+        product = product_repository.get(db, product_id)
         cantidad_antes = inv.cantidad
         new_quantity = cantidad_antes + delta
         if new_quantity < 0:
@@ -161,10 +162,20 @@ class ProductService:
             actor_sub=(actor or {}).get("sub", ""),
             actor_rol=(actor or {}).get("rol", ""),
             clave=idem_key,
+            codigo=product.codigo if product else None,
+            nombre=product.nombre if product else None,
         )
         return StockRead(
             producto_id=product_id, cantidad=inv.cantidad, updated_at=inv.updated_at
         )
+
+    def list_movements(
+        self, db: Session, producto_id: int | None = None, skip: int = 0, limit: int = 20
+    ) -> list:
+        """SPEC-STOCK-007: lectura de auditoría (nuevos primero)."""
+        from app.repositories import inventory_movement_repository
+
+        return inventory_movement_repository.list_movements(db, producto_id, skip, limit)
 
 
 product_service = ProductService()
