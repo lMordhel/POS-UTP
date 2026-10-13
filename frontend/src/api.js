@@ -75,6 +75,12 @@ export const authApi = {
 export const stockApi = {
   list: (q = '') => request(STOCK, `/products${q ? `?q=${encodeURIComponent(q)}` : ''}`),
   create: (body) => request(STOCK, '/products', { method: 'POST', body: JSON.stringify(body) }),
+  update: (id, body) => request(STOCK, `/products/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
+  adjust: (id, delta, motivo) =>
+    request(STOCK, `/products/${id}/stock`, {
+      method: 'PATCH',
+      body: JSON.stringify(motivo ? { delta, motivo } : { delta }),
+    }),
   deactivate: (id) => request(STOCK, `/products/${id}`, { method: 'DELETE' }),
 }
 

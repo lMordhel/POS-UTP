@@ -11,6 +11,8 @@ export function ProductsView({ isAdmin }) {
   const [form, setForm] = useState(EMPTY_FORM)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [editing, setEditing] = useState(null)
+  const [adjusting, setAdjusting] = useState(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -55,6 +57,51 @@ export function ProductsView({ isAdmin }) {
     }
   }
 
+  function startEdit(product) {
+    setAdjusting(null)
+    setError('')
+    setEditing({ id: product.id, nombre: product.nombre, precio: product.precio, descripcion: product.descripcion ?? '' })
+  }
+
+  async function handleUpdate(e) {
+    e.preventDefault()
+    setError('')
+    try {
+      await stockApi.update(editing.id, {
+        nombre: editing.nombre,
+        precio: editing.precio,
+        descripcion: editing.descripcion,
+      })
+      setEditing(null)
+      await load()
+    } catch (err) {
+      setError(apiErrorMessage(err))
+    }
+  }
+
+  function startAdjust(product) {
+    setEditing(null)
+    setError('')
+    setAdjusting({ id: product.id, nombre: product.nombre, delta: '', motivo: '' })
+  }
+
+  async function handleAdjust(e) {
+    e.preventDefault()
+    const delta = Number(adjusting.delta)
+    if (!Number.isInteger(delta) || delta === 0) {
+      setError('Delta inválido (entero distinto de 0).')
+      return
+    }
+    setError('')
+    try {
+      await stockApi.adjust(adjusting.id, delta, adjusting.motivo.trim() || undefined)
+      setAdjusting(null)
+      await load()
+    } catch (err) {
+      setError(apiErrorMessage(err))
+    }
+  }
+
   return (
     <section>
       <h2>Productos</h2>
@@ -72,6 +119,30 @@ export function ProductsView({ isAdmin }) {
           <button type="submit">Crear</button>
         </form>
       ) : null}
+      {isAdmin && editing ? (
+        <form onSubmit={handleUpdate}>
+          <h3>Editando #{editing.id}</h3>
+          <input placeholder="Nombre" value={editing.nombre}
+            onChange={(e) => setEditing((s) => ({ ...s, nombre: e.target.value }))} required />
+          <input placeholder="Precio" type="number" step="0.01" min="0.01" value={editing.precio}
+            onChange={(e) => setEditing((s) => ({ ...s, precio: e.target.value }))} required />
+          <input placeholder="Descripción" value={editing.descripcion}
+            onChange={(e) => setEditing((s) => ({ ...s, descripcion: e.target.value }))} />
+          <button type="submit">Guardar</button>
+          <button type="button" onClick={() => setEditing(null)}>Cancelar</button>
+        </form>
+      ) : null}
+      {isAdmin && adjusting ? (
+        <form onSubmit={handleAdjust}>
+          <h3>Ajustando {adjusting.nombre} (#{adjusting.id})</h3>
+          <input placeholder="Delta (ej. 5 o -3)" type="number" step="1" value={adjusting.delta}
+            onChange={(e) => setAdjusting((s) => ({ ...s, delta: e.target.value }))} required />
+          <input placeholder="Motivo (ej. merma, ajuste de inventario...)" value={adjusting.motivo}
+            onChange={(e) => setAdjusting((s) => ({ ...s, motivo: e.target.value }))} />
+          <button type="submit">Aplicar</button>
+          <button type="button" onClick={() => setAdjusting(null)}>Cancelar</button>
+        </form>
+      ) : null}
       <input placeholder="Buscar..." value={q} onChange={(e) => setQ(e.target.value)} />
       {loading ? (
         <Loading />
@@ -82,7 +153,9 @@ export function ProductsView({ isAdmin }) {
           </thead>
           <tbody>
             {products.map((p) => (
-              <ProductRow key={p.id} product={p} canDeactivate={isAdmin} onDeactivate={handleDeactivate} />
+              <ProductRow key={p.id} product={p} canDeactivate={isAdmin}
+                onDeactivate={handleDeactivate} canManage={isAdmin}
+                onEdit={startEdit} onAdjust={startAdjust} />
             ))}
           </tbody>
         </table>
