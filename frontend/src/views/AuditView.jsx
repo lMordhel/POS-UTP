@@ -5,20 +5,35 @@ import { ErrorBanner, Loading, Pager } from '../components.jsx'
 
 export function AuditView() {
   const [rows, setRows] = useState([])
-  const [filter, setFilter] = useState('')
+  const [products, setProducts] = useState([])
   const [applied, setApplied] = useState('')
   const [page, setPage] = useState(0)
   const [hasNext, setHasNext] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  useEffect(() => {
+    let cancelled = false
+    async function loadCatalog() {
+      try {
+        const items = await stockApi.list('', { limit: 100 })
+        if (!cancelled) setProducts(items)
+      } catch {
+        // El filtro sigue usable por ID si el catálogo falla.
+      }
+    }
+    loadCatalog()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const load = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      const pid = applied.trim() === '' ? null : Number(applied)
       const items = await stockApi.movements({
-        producto_id: pid,
+        producto_id: applied === '' ? null : Number(applied),
         skip: page * PAGE_SIZE,
       })
       if (items.length === 0 && page > 0) {
@@ -38,28 +53,21 @@ export function AuditView() {
     load()
   }, [load])
 
-  function applyFilter(e) {
-    e.preventDefault()
-    if (filter.trim() !== '' && (!Number.isInteger(Number(filter)) || Number(filter) <= 0)) {
-      setError('Filtro inválido (ID de producto entero mayor a 0, o vacío).')
-      return
-    }
-    setApplied(filter.trim())
-    setPage(0)
-  }
-
   return (
     <section>
       <h2>Auditoría de inventario</h2>
       <ErrorBanner message={error} />
-      <form onSubmit={applyFilter}>
-        <label>
-          ID de producto (lo ves en la columna # de Productos; vacío = todos)
-          <input placeholder="Ej: 3 (vacío = todos)" value={filter}
-            onChange={(e) => setFilter(e.target.value)} />
-        </label>
-        <button type="submit">Filtrar</button>
-      </form>
+      <label>
+        Producto
+        <select value={applied} onChange={(e) => { setApplied(e.target.value); setPage(0) }}>
+          <option value="">Todos los productos</option>
+          {products.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.codigo} — {p.nombre}
+            </option>
+          ))}
+        </select>
+      </label>
       {loading ? (
         <Loading />
       ) : rows.length === 0 ? (
