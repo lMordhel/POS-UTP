@@ -82,7 +82,7 @@ export function ProductsView({ isAdmin }) {
   function startAdjust(product) {
     setEditing(null)
     setError('')
-    setAdjusting({ id: product.id, nombre: product.nombre, delta: '', motivo: '' })
+    setAdjusting({ id: product.id, nombre: product.nombre, stock: product.stock, delta: '', motivo: '' })
   }
 
   async function handleAdjust(e) {
@@ -121,25 +121,45 @@ export function ProductsView({ isAdmin }) {
       ) : null}
       {isAdmin && editing ? (
         <form onSubmit={handleUpdate}>
-          <h3>Editando #{editing.id}</h3>
-          <input placeholder="Nombre" value={editing.nombre}
-            onChange={(e) => setEditing((s) => ({ ...s, nombre: e.target.value }))} required />
-          <input placeholder="Precio" type="number" step="0.01" min="0.01" value={editing.precio}
-            onChange={(e) => setEditing((s) => ({ ...s, precio: e.target.value }))} required />
-          <input placeholder="Descripción" value={editing.descripcion}
-            onChange={(e) => setEditing((s) => ({ ...s, descripcion: e.target.value }))} />
-          <button type="submit">Guardar</button>
+          <h3>Editando {editing.nombre} (#{editing.id})</h3>
+          <label>
+            Nombre
+            <input value={editing.nombre}
+              onChange={(e) => setEditing((s) => ({ ...s, nombre: e.target.value }))} required />
+          </label>
+          <label>
+            Precio
+            <input type="number" step="0.01" min="0.01" value={editing.precio}
+              onChange={(e) => setEditing((s) => ({ ...s, precio: e.target.value }))} required />
+          </label>
+          <label>
+            Descripción
+            <input value={editing.descripcion}
+              onChange={(e) => setEditing((s) => ({ ...s, descripcion: e.target.value }))} />
+          </label>
+          <button type="submit">Guardar cambios</button>
           <button type="button" onClick={() => setEditing(null)}>Cancelar</button>
         </form>
       ) : null}
       {isAdmin && adjusting ? (
         <form onSubmit={handleAdjust}>
-          <h3>Ajustando {adjusting.nombre} (#{adjusting.id})</h3>
-          <input placeholder="Delta (ej. 5 o -3)" type="number" step="1" value={adjusting.delta}
-            onChange={(e) => setAdjusting((s) => ({ ...s, delta: e.target.value }))} required />
-          <input placeholder="Motivo (ej. merma, ajuste de inventario...)" value={adjusting.motivo}
-            onChange={(e) => setAdjusting((s) => ({ ...s, motivo: e.target.value }))} />
-          <button type="submit">Aplicar</button>
+          <h3>Ajustar stock de {adjusting.nombre}</h3>
+          <p>
+            Stock actual: <strong>{adjusting.stock}</strong> — el ajuste lo suma o lo resta.
+          </p>
+          <label>
+            Cantidad (usa número negativo para restar)
+            <input type="number" step="1" placeholder="Ej: 5 para sumar, -3 para restar"
+              value={adjusting.delta}
+              onChange={(e) => setAdjusting((s) => ({ ...s, delta: e.target.value }))} required />
+          </label>
+          <label>
+            Motivo del ajuste (opcional)
+            <input placeholder="Ej: conteo físico, merma, devolución de cliente..."
+              value={adjusting.motivo}
+              onChange={(e) => setAdjusting((s) => ({ ...s, motivo: e.target.value }))} />
+          </label>
+          <button type="submit">Aplicar ajuste</button>
           <button type="button" onClick={() => setAdjusting(null)}>Cancelar</button>
         </form>
       ) : null}
