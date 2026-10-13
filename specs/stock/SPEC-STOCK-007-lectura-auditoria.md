@@ -5,8 +5,8 @@
 - ID: SPEC-STOCK-007
 - Requirement: ERF-05/ERF-06 (extensión de lectura; sin ERF nuevo, sin cambiar escrituras).
 - Service: Stock (endpoint) + Frontend (vista Auditoría, solo admin)
-- Status: DRAFT
-- Version: 0.1.0
+- Status: APPROVED
+- Version: 1.0.0
 - Priority: Media
 
 ## Objective
@@ -42,7 +42,7 @@ delta y antes/después, filtrables por producto y paginados.
 * FR-02: Filtros según OQ-AUDV-01 (propuesta: `producto_id` + paginado).
 * FR-03: Solo `admin` (401 sin token, 403 otro rol); rate limit de lectura: sin límite (OQ-HARD-02 vigente).
 * FR-04: La vista debe pedir paginado (truco limit+1, `Pager`), mostrar actor/motivo/antes→después y filtrar sin recargar la página entera.
-* FR-05: Join de lectura con productos (propuesta OQ-AUDV-02); si el producto se desactiva, la fila histórica conserva codigo/nombre copiados (snapshot, no FK viva).
+* FR-05: Snapshot al registrar: se copian `codigo`/`nombre` vigentes a la fila (columnas nuevas vía migración incremental); filas viejas quedan con NULL y la UI muestra "—".
 
 ## Business Rules
 
@@ -86,8 +86,8 @@ Given cajero → sin pestaña Auditoría; Given admin → tabla con filtro y pag
 
 ## Open Questions
 
-* OQ-AUDV-01: ¿Filtro por producto + paginado (propuesta) o lista plana de últimos N sin filtros?
-* OQ-AUDV-02: ¿Incluye `codigo`/`nombre` por join con snapshot (propuesta sí) o solo IDs y la UI cruza con catálogo?
+* OQ-AUDV-01: DECIDED 2026-10-13 → filtro por producto + paginado.
+* OQ-AUDV-02: DECIDED 2026-10-13 → snapshot de `codigo`/`nombre` copiados al registrar.
 
 ## Traceability
 
@@ -106,5 +106,7 @@ Tests: Pendiente (futuros: `test_movements_list_filter_paging`, `test_movements_
 ## Change History
 
 | Version | Date | Change | Reason |
+|---|---|---|---|
+| 1.0.0 | 2026-10-13 | OQ-AUDV-01/02 DECIDED (filtro/snapshot); DRAFT → APPROVED (autoriza desarrollo) | User approval: filtro, codigo/nombre |
 |---|---|---|---|
 | 0.1.0 | 2026-10-13 | Initial specification (DRAFT, no autoriza implementar) | Auditoría visible (idea #3) |
