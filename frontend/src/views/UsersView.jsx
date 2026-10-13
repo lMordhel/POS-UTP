@@ -10,6 +10,8 @@ export function UsersView() {
   const [form, setForm] = useState(EMPTY_FORM)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
+  const [resetting, setResetting] = useState(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -30,6 +32,7 @@ export function UsersView() {
   async function handleCreate(e) {
     e.preventDefault()
     setError('')
+    setNotice('')
     try {
       await authApi.users.create(form)
       setForm(EMPTY_FORM)
@@ -41,8 +44,33 @@ export function UsersView() {
 
   async function handleToggle(user) {
     setError('')
+    setNotice('')
     try {
       await authApi.users.update(user.id, { activo: !user.activo })
+      await load()
+    } catch (err) {
+      setError(apiErrorMessage(err))
+    }
+  }
+
+  function startReset(user) {
+    setError('')
+    setNotice('')
+    setResetting({ id: user.id, username: user.username, password: '' })
+  }
+
+  async function handleReset(e) {
+    e.preventDefault()
+    if (!resetting.password || resetting.password.length < 8) {
+      setError('La nueva clave debe tener al menos 8 caracteres.')
+      return
+    }
+    setError('')
+    setNotice('')
+    try {
+      await authApi.users.update(resetting.id, { password: resetting.password })
+      setResetting(null)
+      setNotice(`Clave de ${resetting.username} actualizada.`)
       await load()
     } catch (err) {
       setError(apiErrorMessage(err))
@@ -53,6 +81,7 @@ export function UsersView() {
     <section>
       <h2>Usuarios</h2>
       <ErrorBanner message={error} />
+      {notice ? <p style={{ color: 'green' }}>{notice}</p> : null}
       <form onSubmit={handleCreate}>
         <input placeholder="Usuario" value={form.username}
           onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))} required />
@@ -64,6 +93,18 @@ export function UsersView() {
         </select>
         <button type="submit">Crear</button>
       </form>
+      {resetting ? (
+        <form onSubmit={handleReset}>
+          <h3>Cambiar clave de {resetting.username}</h3>
+          <label>
+            Nueva contraseña (mín. 8 caracteres)
+            <input type="password" value={resetting.password}
+              onChange={(e) => setResetting((s) => ({ ...s, password: e.target.value }))} required />
+          </label>
+          <button type="submit">Guardar clave</button>
+          <button type="button" onClick={() => setResetting(null)}>Cancelar</button>
+        </form>
+      ) : null}
       {loading ? (
         <Loading />
       ) : (
@@ -81,6 +122,7 @@ export function UsersView() {
                   <button onClick={() => handleToggle(u)}>
                     {u.activo ? 'Desactivar' : 'Activar'}
                   </button>
+                  <button onClick={() => startReset(u)}>Cambiar clave</button>
                 </td>
               </tr>
             ))}
