@@ -9,7 +9,7 @@ export function Loading({ label }) {
   return <p>{label ?? 'Cargando...'}</p>
 }
 
-export function ProductRow({ product, onDeactivate }) {
+export function ProductRow({ product, canDeactivate, onDeactivate }) {
   return (
     <tr>
       <td>{product.codigo}</td>
@@ -18,7 +18,7 @@ export function ProductRow({ product, onDeactivate }) {
       <td>{product.stock}</td>
       <td>{product.activo ? 'Sí' : 'No'}</td>
       <td>
-        {product.activo ? (
+        {product.activo && canDeactivate ? (
           <button onClick={() => onDeactivate(product.id)}>Desactivar</button>
         ) : null}
       </td>

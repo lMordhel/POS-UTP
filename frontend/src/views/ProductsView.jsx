@@ -5,7 +5,7 @@ import { ErrorBanner, Loading, ProductRow } from '../components.jsx'
 
 const EMPTY_FORM = { codigo: '', nombre: '', precio: '', cantidad_inicial: '' }
 
-export function ProductsView() {
+export function ProductsView({ isAdmin }) {
   const [products, setProducts] = useState([])
   const [q, setQ] = useState('')
   const [form, setForm] = useState(EMPTY_FORM)
@@ -59,17 +59,19 @@ export function ProductsView() {
     <section>
       <h2>Productos</h2>
       <ErrorBanner message={error} />
-      <form onSubmit={handleCreate}>
-        <input placeholder="Código" value={form.codigo}
-          onChange={(e) => setForm((f) => ({ ...f, codigo: e.target.value }))} required />
-        <input placeholder="Nombre" value={form.nombre}
-          onChange={(e) => setForm((f) => ({ ...f, nombre: e.target.value }))} required />
-        <input placeholder="Precio" type="number" step="0.01" min="0.01" value={form.precio}
-          onChange={(e) => setForm((f) => ({ ...f, precio: e.target.value }))} required />
-        <input placeholder="Stock inicial" type="number" min="0" step="1" value={form.cantidad_inicial}
-          onChange={(e) => setForm((f) => ({ ...f, cantidad_inicial: e.target.value }))} />
-        <button type="submit">Crear</button>
-      </form>
+      {isAdmin ? (
+        <form onSubmit={handleCreate}>
+          <input placeholder="Código" value={form.codigo}
+            onChange={(e) => setForm((f) => ({ ...f, codigo: e.target.value }))} required />
+          <input placeholder="Nombre" value={form.nombre}
+            onChange={(e) => setForm((f) => ({ ...f, nombre: e.target.value }))} required />
+          <input placeholder="Precio" type="number" step="0.01" min="0.01" value={form.precio}
+            onChange={(e) => setForm((f) => ({ ...f, precio: e.target.value }))} required />
+          <input placeholder="Stock inicial" type="number" min="0" step="1" value={form.cantidad_inicial}
+            onChange={(e) => setForm((f) => ({ ...f, cantidad_inicial: e.target.value }))} />
+          <button type="submit">Crear</button>
+        </form>
+      ) : null}
       <input placeholder="Buscar..." value={q} onChange={(e) => setQ(e.target.value)} />
       {loading ? (
         <Loading />
@@ -80,7 +82,7 @@ export function ProductsView() {
           </thead>
           <tbody>
             {products.map((p) => (
-              <ProductRow key={p.id} product={p} onDeactivate={handleDeactivate} />
+              <ProductRow key={p.id} product={p} canDeactivate={isAdmin} onDeactivate={handleDeactivate} />
             ))}
           </tbody>
         </table>

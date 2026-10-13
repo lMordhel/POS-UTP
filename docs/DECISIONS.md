@@ -126,6 +126,13 @@
 - Pendientes (OQ-OBS-01/02/03): hand-rolled vs librería, alcance de ready, unificación de logs.
 - Afecta a: SPEC-OPS-002.
 
+## ADR-014 — Frontend con autenticación y roles
+
+- Status: APPROVED (2026-10-12, con SPEC-FRONT-002 1.0.0)
+- Decisión: Login + sesión con refresh ante 401, puertas de UI por rol (matriz ERF-10), vista Usuarios para admin, errores mapeados por código; `api.js` como único canal HTTP. Sin registro/MFA/tests-UI en esta fase.
+- Pendientes (OQ-FRONT-01/02/03): almacenamiento de tokens, alcance de vista Usuarios, estrategia de verificación.
+- Afecta a: SPEC-FRONT-002.
+
 ## D-AUTH-SCOPE — Ampliación de alcance: seguridad backend
 
 - Status: DECIDED (2026-10-12, decisión de usuario — Opción 1)
@@ -143,6 +150,7 @@
 | 2026-10-12 | SPEC-OPS-001 1.0.0 VALIDATED (97/97 pytest + E2E; OQ-AUD tabla+logs/todo/sí) |
 | 2026-10-12 | SPEC-STOCK-006 1.0.0 VALIDATED (106/106 pytest + E2E; OQ-BATCH encontrados/siempre/100) |
 | 2026-10-12 | SPEC-OPS-002 1.0.0 VALIDATED (116/116 pytest + E2E; OQ-OBS hand-rolled/propia/ya) |
+| 2026-10-12 | SPEC-FRONT-002 1.0.0 VALIDATED (build verde + demo manual por usuario: todo OK) |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 APPROVED (usuario conforme; autoriza desarrollo); ADR-006/007/008 → APPROVED |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 VALIDATED (67/67 pytest + E2E con login); identidad de servicio Sales→Stock (addendum ADR-008) |
 | 2026-10-12 | SPEC-AUTH-001 0.1.0 DRAFT (Opción 1: admin/cajero, sin registro público); ADR-006/007/008 PROPOSED; D-AUTH-SCOPE DECIDED (ampliación de alcance a seguridad backend) |
