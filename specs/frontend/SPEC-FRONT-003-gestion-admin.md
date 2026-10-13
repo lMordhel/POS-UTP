@@ -5,8 +5,8 @@
 - ID: SPEC-FRONT-003
 - Requirement: ERF-02/ERF-06 (extensión UI; consume endpoints existentes, sin backend nuevo).
 - Service: Frontend (requiere sesión `admin`)
-- Status: DRAFT
-- Version: 0.1.0
+- Status: APPROVED
+- Version: 1.0.0
 - Priority: Media
 
 ## Objective
@@ -96,8 +96,8 @@ Then ni Editar ni Ajustar deben renderizarse.
 
 ## Open Questions
 
-* OQ-FADM-01: ¿Qué campos edita la UI? Propuesta: nombre, precio y descripción (no `codigo` por estabilidad del identificador, no `activo` porque ya existe el flujo Desactivar).
-* OQ-FADM-02: ¿Motivo obligatorio en la UI aunque el backend lo admita opcional? Propuesta: opcional con placeholder que lo sugiera (fiel al backend, menos fricción).
+* OQ-FADM-01: DECIDED 2026-10-12 → nombre, precio y descripción (codigo estable fuera; activo vía Desactivar).
+* OQ-FADM-02: DECIDED 2026-10-12 → motivo opcional con placeholder que lo sugiera (fiel al backend).
 
 ## Traceability
 
@@ -115,5 +115,7 @@ Tests: Pendiente (propuesta: demo manual por AC + `npm run build`, precedente FR
 ## Change History
 
 | Version | Date | Change | Reason |
+|---|---|---|---|
+| 1.0.0 | 2026-10-12 | OQ-FADM-01/02 DECIDED (nombre+precio+desc / motivo opcional); DRAFT → APPROVED (autoriza desarrollo) | User approval: campos propuestos, opcional |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Gestión admin UI (ideas 1+2) |

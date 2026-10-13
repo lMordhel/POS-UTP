@@ -135,7 +135,7 @@
 
 ## ADR-015 — Gestión admin en UI (editar + ajuste con motivo)
 
-- Status: PROPOSED (la aprobación de SPEC-FRONT-003 lo aprueba)
+- Status: APPROVED (2026-10-12, con SPEC-FRONT-003 1.0.0)
 - Decisión: Edición inline y ajuste manual con motivo solo admin, vía endpoints existentes; reload tras operar; sin auditoría visible ni tests-UI en esta fase.
 - Pendientes (OQ-FADM-01/02): campos editables, obligatoriedad del motivo en UI.
 - Afecta a: SPEC-FRONT-003.
