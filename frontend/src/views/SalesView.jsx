@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { salesApi } from '../api.js'
-import { apiErrorMessage, money } from '../utils.js'
-import { ErrorBanner, Loading, SaleRow } from '../components.jsx'
+import { PAGE_SIZE, apiErrorMessage, money } from '../utils.js'
+import { ErrorBanner, Loading, Pager, SaleRow } from '../components.jsx'
 
 export function SalesView({ refreshKey }) {
   const [sales, setSales] = useState([])
   const [detail, setDetail] = useState(null)
+  const [page, setPage] = useState(0)
+  const [hasNext, setHasNext] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -13,13 +15,19 @@ export function SalesView({ refreshKey }) {
     setLoading(true)
     setError('')
     try {
-      setSales(await salesApi.list())
+      const items = await salesApi.list({ skip: page * PAGE_SIZE })
+      if (items.length === 0 && page > 0) {
+        setPage((p) => p - 1)
+        return
+      }
+      setHasNext(items.length > PAGE_SIZE)
+      setSales(items.slice(0, PAGE_SIZE))
     } catch (err) {
       setError(apiErrorMessage(err))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [page])
 
   useEffect(() => {
     load()
@@ -41,16 +49,21 @@ export function SalesView({ refreshKey }) {
       {loading ? (
         <Loading />
       ) : (
-        <table>
-          <thead>
-            <tr><th>#</th><th>Fecha</th><th>Total</th><th>Estado</th><th /></tr>
-          </thead>
-          <tbody>
-            {sales.map((s) => (
-              <SaleRow key={s.id} sale={s} onSelect={select} />
-            ))}
-          </tbody>
-        </table>
+        <>
+          <table>
+            <thead>
+              <tr><th>#</th><th>Fecha</th><th>Total</th><th>Estado</th><th /></tr>
+            </thead>
+            <tbody>
+              {sales.map((s) => (
+                <SaleRow key={s.id} sale={s} onSelect={select} />
+              ))}
+            </tbody>
+          </table>
+          <Pager page={page} hasNext={hasNext}
+            onPrev={() => setPage((p) => Math.max(0, p - 1))}
+            onNext={() => setPage((p) => p + 1)} />
+        </>
       )}
       {detail ? (
         <div>

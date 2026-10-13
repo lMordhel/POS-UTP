@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
 import { stockApi } from '../api.js'
-import { apiErrorMessage } from '../utils.js'
-import { ErrorBanner, Loading, ProductRow } from '../components.jsx'
+import { PAGE_SIZE, apiErrorMessage } from '../utils.js'
+import { ErrorBanner, Loading, Pager, ProductRow } from '../components.jsx'
 
 const EMPTY_FORM = { codigo: '', nombre: '', precio: '', cantidad_inicial: '' }
 
 export function ProductsView({ isAdmin }) {
   const [products, setProducts] = useState([])
   const [q, setQ] = useState('')
+  const [page, setPage] = useState(0)
+  const [hasNext, setHasNext] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -18,13 +20,19 @@ export function ProductsView({ isAdmin }) {
     setLoading(true)
     setError('')
     try {
-      setProducts(await stockApi.list(q))
+      const items = await stockApi.list(q, { skip: page * PAGE_SIZE })
+      if (items.length === 0 && page > 0) {
+        setPage((p) => p - 1)
+        return
+      }
+      setHasNext(items.length > PAGE_SIZE)
+      setProducts(items.slice(0, PAGE_SIZE))
     } catch (err) {
       setError(apiErrorMessage(err))
     } finally {
       setLoading(false)
     }
-  }, [q])
+  }, [q, page])
 
   useEffect(() => {
     load()
@@ -163,22 +171,28 @@ export function ProductsView({ isAdmin }) {
           <button type="button" onClick={() => setAdjusting(null)}>Cancelar</button>
         </form>
       ) : null}
-      <input placeholder="Buscar..." value={q} onChange={(e) => setQ(e.target.value)} />
+      <input placeholder="Buscar..." value={q}
+        onChange={(e) => { setQ(e.target.value); setPage(0) }} />
       {loading ? (
         <Loading />
       ) : (
-        <table>
-          <thead>
-            <tr><th>Código</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Activo</th><th /></tr>
-          </thead>
-          <tbody>
-            {products.map((p) => (
-              <ProductRow key={p.id} product={p} canDeactivate={isAdmin}
-                onDeactivate={handleDeactivate} canManage={isAdmin}
-                onEdit={startEdit} onAdjust={startAdjust} />
-            ))}
-          </tbody>
-        </table>
+        <>
+          <table>
+            <thead>
+              <tr><th>Código</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Activo</th><th /></tr>
+            </thead>
+            <tbody>
+              {products.map((p) => (
+                <ProductRow key={p.id} product={p} canDeactivate={isAdmin}
+                  onDeactivate={handleDeactivate} canManage={isAdmin}
+                  onEdit={startEdit} onAdjust={startAdjust} />
+              ))}
+            </tbody>
+          </table>
+          <Pager page={page} hasNext={hasNext}
+            onPrev={() => setPage((p) => Math.max(0, p - 1))}
+            onNext={() => setPage((p) => p + 1)} />
+        </>
       )}
     </section>
   )

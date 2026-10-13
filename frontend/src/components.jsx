@@ -45,3 +45,13 @@ export function SaleRow({ sale, onSelect }) {
     </tr>
   )
 }
+
+export function Pager({ page, hasNext, onPrev, onNext }) {
+  return (
+    <div>
+      <button onClick={onPrev} disabled={page === 0}>Anterior</button>
+      <span>Página {page + 1}</span>
+      <button onClick={onNext} disabled={!hasNext}>Siguiente</button>
+    </div>
+  )
+}

@@ -1,3 +1,5 @@
+export const PAGE_SIZE = 20
+
 export function money(value) {
   const n = Number(value)
   return Number.isFinite(n) ? n.toFixed(2) : String(value)
