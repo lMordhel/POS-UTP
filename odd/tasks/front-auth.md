@@ -35,8 +35,8 @@ SPEC-FRONT-002 APPROVED 1.0.0. OQ-FRONT-01/02/03 DECIDED
 
 - [x] F7-T1 — SPEC-FRONT-002 DRAFT + rama + ADR-014 PROPOSED
 - [x] F7-T2 — SPEC-FRONT-002 → APPROVED 1.0.0 (OQ localStorage/sí/manual)
-- [ ] F7-T3 — Implementar login/sesión/RBAC en frontend
-- [ ] F7-T4 — Verificación (build + demo manual) + VALIDATED + reporte
+- [x] F7-T3 — Login/sesión/RBAC en frontend (build verde; bug atob corregido)
+- [x] F7-T4 — Demo manual por usuario OK + SPEC VALIDATED
 
 ## Authorized scope
 
@@ -58,7 +58,18 @@ Prohibido: backend, compose, deps nuevas, push/PR sin pedir.
 
 ## Progress
 
-- SPEC aprobada; pendiente implementar.
+- Feature completa y validada en `feature/front-auth` (4/4 tareas).
+
+## Verification evidence
+
+- `npm run build` verde (35 módulos).
+- Demo manual por usuario: todo OK (sign-off 2026-10-12, AC-FRONT02-01..06).
+- SPEC-FRONT-002 1.0.0 VALIDATED; ADR-014 APPROVED.
+- Commits: 5a39a31 (SPEC DRAFT), 4c6c7d8 (SPEC APPROVED), 4b4add6 (implementación), + cierre.
+
+## Next step
+
+- Merge a `main` (este turno).
 
 ## Verification evidence
 

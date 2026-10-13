@@ -5,7 +5,7 @@
 - ID: SPEC-FRONT-002
 - Requirement: ERF-09/ERF-10 (extensión al frontend) + decisión de usuario (fase frontend).
 - Service: Frontend (consume Sales + Stock autenticados)
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Alta
 
@@ -140,5 +140,6 @@ Tests: Pendiente (propuesta: demo manual por AC + `npm run build`; decidir en OQ
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 1.0.0 | 2026-10-12 | OQ-FRONT-01/02/03 DECIDED (localStorage/sí/manual); DRAFT → APPROVED (autoriza desarrollo) | User approval: localStorage, sí, manual |
+| 1.0.0 | 2026-10-12 | APPROVED → VALIDATED (build verde + demo manual por usuario: todo OK) | Sign-off usuario en AC-FRONT02-01..06 |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Fase frontend con auth |
