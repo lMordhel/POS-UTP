@@ -53,12 +53,17 @@ export function AuditView() {
       <h2>Auditoría de inventario</h2>
       <ErrorBanner message={error} />
       <form onSubmit={applyFilter}>
-        <input placeholder="ID producto (vacío = todos)" value={filter}
-          onChange={(e) => setFilter(e.target.value)} />
+        <label>
+          ID de producto (lo ves en la columna # de Productos; vacío = todos)
+          <input placeholder="Ej: 3 (vacío = todos)" value={filter}
+            onChange={(e) => setFilter(e.target.value)} />
+        </label>
         <button type="submit">Filtrar</button>
       </form>
       {loading ? (
         <Loading />
+      ) : rows.length === 0 ? (
+        <p>Sin movimientos todavía. Registra una venta o ajusta stock y vuelve.</p>
       ) : (
         <>
           <table>
