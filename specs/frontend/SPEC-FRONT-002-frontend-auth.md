@@ -5,8 +5,8 @@
 - ID: SPEC-FRONT-002
 - Requirement: ERF-09/ERF-10 (extensión al frontend) + decisión de usuario (fase frontend).
 - Service: Frontend (consume Sales + Stock autenticados)
-- Status: DRAFT
-- Version: 0.1.0
+- Status: APPROVED
+- Version: 1.0.0
 - Priority: Alta
 
 ## Objective
@@ -116,9 +116,9 @@ Then la lista debe reflejarlo y el nuevo usuario debe poder entrar.
 
 ## Open Questions
 
-* OQ-FRONT-01: ¿Tokens en `localStorage` (propuesta: persiste recarga; tradeoff XSS documentado) o solo en memoria (se pierden al recargar)? Sin backend de sesión no hay alternativa mejor en este alcance.
-* OQ-FRONT-02: ¿Vista Usuarios incluida en esta fase (propuesta sí: listar/crear/desactivar), o el admin gestiona por Swagger y el front solo oculta botones?
-* OQ-FRONT-03: ¿Verificación con demo manual + `build` verde (propuesta, precedente SPEC-FRONT-001) o se monta Vitest/Testing-Library en esta fase?
+* OQ-FRONT-01: DECIDED 2026-10-12 → `localStorage` (persiste recarga; tradeoff XSS documentado, sin tokens en URLs).
+* OQ-FRONT-02: DECIDED 2026-10-12 → sí, vista Usuarios incluida (listar/crear/desactivar).
+* OQ-FRONT-03: DECIDED 2026-10-12 → demo manual + `build` verde (precedente FRONT-001; Vitest en fase posterior si hace falta).
 
 ## Traceability
 
@@ -138,5 +138,7 @@ Tests: Pendiente (propuesta: demo manual por AC + `npm run build`; decidir en OQ
 ## Change History
 
 | Version | Date | Change | Reason |
+|---|---|---|---|
+| 1.0.0 | 2026-10-12 | OQ-FRONT-01/02/03 DECIDED (localStorage/sí/manual); DRAFT → APPROVED (autoriza desarrollo) | User approval: localStorage, sí, manual |
 |---|---|---|---|
 | 0.1.0 | 2026-10-12 | Initial specification (DRAFT, no autoriza implementar) | Fase frontend con auth |

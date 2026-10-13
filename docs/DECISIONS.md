@@ -128,7 +128,7 @@
 
 ## ADR-014 — Frontend con autenticación y roles
 
-- Status: PROPOSED (la aprobación de SPEC-FRONT-002 lo aprueba)
+- Status: APPROVED (2026-10-12, con SPEC-FRONT-002 1.0.0)
 - Decisión: Login + sesión con refresh ante 401, puertas de UI por rol (matriz ERF-10), vista Usuarios para admin, errores mapeados por código; `api.js` como único canal HTTP. Sin registro/MFA/tests-UI en esta fase.
 - Pendientes (OQ-FRONT-01/02/03): almacenamiento de tokens, alcance de vista Usuarios, estrategia de verificación.
 - Afecta a: SPEC-FRONT-002.
