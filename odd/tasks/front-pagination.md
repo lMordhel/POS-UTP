@@ -31,8 +31,8 @@ SPEC-FRONT-004 APPROVED 1.0.0. OQ-PAG-01/02 DECIDED (fijo 20 / tres vistas).
 
 - [x] SPEC-FRONT-004 DRAFT + rama + ADR-016 PROPOSED
 - [x] SPEC-FRONT-004 → APPROVED 1.0.0 (OQ fijo/tres vistas)
-- [ ] Implementar paginación (build + demo manual)
-- [ ] VALIDATED + merge + reporte
+- [x] Paginación en 3 vistas + fix CORS compose (build verde)
+- [x] Demo manual OK + VALIDATED + merge + push
 
 ## Authorized scope
 
@@ -52,7 +52,14 @@ Prohibido: backend, compose, push/PR sin pedir.
 
 ## Progress
 
-- SPEC aprobada; pendiente implementar.
+- Feature completa y validada en `feature/front-pagination` (4/4 tareas + fix CORS).
+
+## Verification evidence
+
+- `npm run build` verde.
+- Demo manual por usuario: todo OK (pager en 3 vistas tras recarga forzada).
+- SPEC-FRONT-004 1.0.0 VALIDATED; ADR-016 APPROVED.
+- 25 productos P-PAG sembrados para la demo (limpiar cuando quieran).
 
 ## Verification evidence
 

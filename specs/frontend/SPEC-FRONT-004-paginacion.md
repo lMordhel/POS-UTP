@@ -5,7 +5,7 @@
 - ID: SPEC-FRONT-004
 - Requirement: UX en listados (sin ERF nuevo; usa paginación backend existente `skip/limit`).
 - Service: Frontend (Productos y Ventas; Usuarios fuera salvo decisión)
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Media
 
@@ -101,5 +101,6 @@ Tests: Pendiente (propuesta: demo manual por AC + `npm run build`, precedente)
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 1.0.0 | 2026-10-13 | OQ-PAG-01/02 DECIDED (fijo 20 / tres vistas); DRAFT → APPROVED (autoriza desarrollo) | User approval: fijo, usuarios también |
+| 1.0.0 | 2026-10-13 | APPROVED → VALIDATED (build verde + demo manual por usuario: todo OK) | Sign-off usuario |
 |---|---|---|---|
 | 0.1.0 | 2026-10-13 | Initial specification (DRAFT, no autoriza implementar) | Paginación UI |
