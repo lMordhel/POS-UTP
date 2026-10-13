@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
 import { authApi } from '../api.js'
-import { apiErrorMessage } from '../utils.js'
-import { ErrorBanner, Loading } from '../components.jsx'
+import { PAGE_SIZE, apiErrorMessage } from '../utils.js'
+import { ErrorBanner, Loading, Pager } from '../components.jsx'
 
 const EMPTY_FORM = { username: '', password: '', rol: 'cajero' }
 
 export function UsersView() {
   const [users, setUsers] = useState([])
   const [form, setForm] = useState(EMPTY_FORM)
+  const [page, setPage] = useState(0)
+  const [hasNext, setHasNext] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -17,13 +19,19 @@ export function UsersView() {
     setLoading(true)
     setError('')
     try {
-      setUsers(await authApi.users.list())
+      const items = await authApi.users.list({ skip: page * PAGE_SIZE })
+      if (items.length === 0 && page > 0) {
+        setPage((p) => p - 1)
+        return
+      }
+      setHasNext(items.length > PAGE_SIZE)
+      setUsers(items.slice(0, PAGE_SIZE))
     } catch (err) {
       setError(apiErrorMessage(err))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [page])
 
   useEffect(() => {
     load()
@@ -108,26 +116,31 @@ export function UsersView() {
       {loading ? (
         <Loading />
       ) : (
-        <table>
-          <thead>
-            <tr><th>Usuario</th><th>Rol</th><th>Activo</th><th /></tr>
-          </thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u.id}>
-                <td>{u.username}</td>
-                <td>{u.rol}</td>
-                <td>{u.activo ? 'Sí' : 'No'}</td>
-                <td>
-                  <button onClick={() => handleToggle(u)}>
-                    {u.activo ? 'Desactivar' : 'Activar'}
-                  </button>
-                  <button onClick={() => startReset(u)}>Cambiar clave</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <>
+          <table>
+            <thead>
+              <tr><th>Usuario</th><th>Rol</th><th>Activo</th><th /></tr>
+            </thead>
+            <tbody>
+              {users.map((u) => (
+                <tr key={u.id}>
+                  <td>{u.username}</td>
+                  <td>{u.rol}</td>
+                  <td>{u.activo ? 'Sí' : 'No'}</td>
+                  <td>
+                    <button onClick={() => handleToggle(u)}>
+                      {u.activo ? 'Desactivar' : 'Activar'}
+                    </button>
+                    <button onClick={() => startReset(u)}>Cambiar clave</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <Pager page={page} hasNext={hasNext}
+            onPrev={() => setPage((p) => Math.max(0, p - 1))}
+            onNext={() => setPage((p) => p + 1)} />
+        </>
       )}
     </section>
   )

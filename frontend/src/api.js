@@ -1,3 +1,5 @@
+import { PAGE_SIZE } from './utils.js'
+
 const STOCK = import.meta.env.VITE_STOCK_URL ?? 'http://localhost:8002'
 const SALES = import.meta.env.VITE_SALES_URL ?? 'http://localhost:8001'
 
@@ -65,7 +67,8 @@ export const authApi = {
     return res.json()
   },
   users: {
-    list: () => request(SALES, '/users'),
+    list: ({ skip = 0, limit = PAGE_SIZE + 1 } = {}) =>
+      request(SALES, `/users?skip=${skip}&limit=${limit}`),
     create: (body) => request(SALES, '/users', { method: 'POST', body: JSON.stringify(body) }),
     update: (id, body) =>
       request(SALES, `/users/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
@@ -73,7 +76,13 @@ export const authApi = {
 }
 
 export const stockApi = {
-  list: (q = '') => request(STOCK, `/products${q ? `?q=${encodeURIComponent(q)}` : ''}`),
+  list: (q = '', { skip = 0, limit = PAGE_SIZE + 1 } = {}) => {
+    const params = new URLSearchParams()
+    if (q) params.set('q', q)
+    params.set('skip', String(skip))
+    params.set('limit', String(limit))
+    return request(STOCK, `/products?${params}`)
+  },
   create: (body) => request(STOCK, '/products', { method: 'POST', body: JSON.stringify(body) }),
   update: (id, body) => request(STOCK, `/products/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
   adjust: (id, delta, motivo) =>
@@ -86,6 +95,7 @@ export const stockApi = {
 
 export const salesApi = {
   create: (items) => request(SALES, '/sales', { method: 'POST', body: JSON.stringify({ items }) }),
-  list: () => request(SALES, '/sales'),
+  list: ({ skip = 0, limit = PAGE_SIZE + 1 } = {}) =>
+    request(SALES, `/sales?skip=${skip}&limit=${limit}`),
   get: (id) => request(SALES, `/sales/${id}`),
 }

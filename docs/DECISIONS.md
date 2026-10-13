@@ -140,6 +140,13 @@
 - Pendientes (OQ-FADM-01/02): campos editables, obligatoriedad del motivo en UI.
 - Afecta a: SPEC-FRONT-003.
 
+## ADR-016 — Paginación en UI con truco limit+1
+
+- Status: APPROVED (2026-10-13, con SPEC-FRONT-004 1.0.0)
+- Decisión: Sin backend nuevo: pedir `limit+1` para detectar siguiente; tamaño y vistas por OQ; búsqueda reinicia a página 0.
+- Pendientes (OQ-PAG-01/02): tamaño fijo o selector; vistas incluidas.
+- Afecta a: SPEC-FRONT-004.
+
 ## D-AUTH-SCOPE — Ampliación de alcance: seguridad backend
 
 - Status: DECIDED (2026-10-12, decisión de usuario — Opción 1)
@@ -158,6 +165,7 @@
 | 2026-10-12 | SPEC-STOCK-006 1.0.0 VALIDATED (106/106 pytest + E2E; OQ-BATCH encontrados/siempre/100) |
 | 2026-10-12 | SPEC-OPS-002 1.0.0 VALIDATED (116/116 pytest + E2E; OQ-OBS hand-rolled/propia/ya) |
 | 2026-10-12 | SPEC-FRONT-002 1.0.0 VALIDATED (build verde + demo manual por usuario: todo OK) |
+| 2026-10-13 | SPEC-FRONT-004 1.0.0 VALIDATED (build verde + demo manual por usuario: todo OK) |
 | 2026-10-12 | SPEC-FRONT-003 1.0.0 VALIDATED (build verde + demo manual por usuario: todo OK) |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 APPROVED (usuario conforme; autoriza desarrollo); ADR-006/007/008 → APPROVED |
 | 2026-10-12 | SPEC-AUTH-001 1.0.0 VALIDATED (67/67 pytest + E2E con login); identidad de servicio Sales→Stock (addendum ADR-008) |
