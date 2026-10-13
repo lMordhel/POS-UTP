@@ -29,8 +29,8 @@ SPEC-STOCK-007 APPROVED 1.0.0. OQ-AUDV-01/02 DECIDED (filtro/snapshot).
 
 - [x] SPEC-STOCK-007 DRAFT + rama + ADR-017 PROPOSED
 - [x] SPEC-STOCK-007 → APPROVED 1.0.0 (OQ filtro/snapshot)
-- [ ] Implementar endpoint + UI con TDD/demo manual
-- [ ] VALIDATED + merge + reporte
+- [x] Endpoint + UI + UX (dropdown, reactivar, confirm) con tests/build
+- [x] Uso real por usuario + VALIDATED + merge + push
 
 ## Authorized scope
 
@@ -52,7 +52,13 @@ Prohibido: saga, RBAC, hardening, frontend fuera de Auditoría, compose, push/PR
 
 ## Progress
 
-- SPEC aprobada; pendiente implementar.
+- Feature completa y validada en `feature/audit-view` (mergeada + pusheada).
+
+## Verification evidence
+
+- Stock: 63 passed + Sales 56 + E2E OK + build verde.
+- SPEC-STOCK-007 1.0.0 VALIDATED; ADR-017 APPROVED.
+- Uso real: filtro dropdown, reactivar/confirmar verificados por el usuario en :4173.
 
 ## Verification evidence
 

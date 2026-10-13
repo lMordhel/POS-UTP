@@ -5,7 +5,7 @@
 - ID: SPEC-STOCK-007
 - Requirement: ERF-05/ERF-06 (extensión de lectura; sin ERF nuevo, sin cambiar escrituras).
 - Service: Stock (endpoint) + Frontend (vista Auditoría, solo admin)
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Media
 
@@ -108,5 +108,6 @@ Tests: Pendiente (futuros: `test_movements_list_filter_paging`, `test_movements_
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 1.0.0 | 2026-10-13 | OQ-AUDV-01/02 DECIDED (filtro/snapshot); DRAFT → APPROVED (autoriza desarrollo) | User approval: filtro, codigo/nombre |
+| 1.0.0 | 2026-10-13 | APPROVED → VALIDATED (tests backend + build + uso real: filtro, UX, reactivar) | Usuario operó la vista y pidió ajustes (dropdown, reactivar) |
 |---|---|---|---|
 | 0.1.0 | 2026-10-13 | Initial specification (DRAFT, no autoriza implementar) | Auditoría visible (idea #3) |
