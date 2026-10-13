@@ -45,9 +45,19 @@ export function NewSaleView({ onSold }) {
           l.producto_id === product.id ? { ...l, cantidad: l.cantidad + cantidad } : l,
         )
       }
-      return [...prev, { producto_id: product.id, nombre: product.nombre, cantidad }]
+      return [...prev, {
+        producto_id: product.id,
+        nombre: product.nombre,
+        precio_unitario: product.precio,
+        cantidad,
+      }]
     })
   }
+
+  const estimatedTotal = lines.reduce(
+    (sum, l) => sum + Number(l.cantidad) * Number(l.precio_unitario),
+    0,
+  )
 
   async function confirm() {
     if (lines.length === 0) {
@@ -105,9 +115,17 @@ export function NewSaleView({ onSold }) {
       <h3>Líneas ({lines.length})</h3>
       <ul>
         {lines.map((l) => (
-          <li key={l.producto_id}>{l.nombre} × {l.cantidad}</li>
+          <li key={l.producto_id}>
+            {l.nombre} × {l.cantidad} @ {money(l.precio_unitario)} = {money(Number(l.cantidad) * Number(l.precio_unitario))}
+          </li>
         ))}
       </ul>
+      {lines.length > 0 ? (
+        <p>
+          Total estimado: <strong>{money(estimatedTotal)}</strong>{' '}
+          (lo confirma el servidor al vender)
+        </p>
+      ) : null}
       <button onClick={confirm} disabled={sending || lines.length === 0}>
         {sending ? 'Confirmando...' : 'Confirmar venta'}
       </button>
