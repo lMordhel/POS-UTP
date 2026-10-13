@@ -147,6 +147,13 @@
 - Pendientes (OQ-PAG-01/02): tamaño fijo o selector; vistas incluidas.
 - Afecta a: SPEC-FRONT-004.
 
+## ADR-017 — Auditoría visible (endpoint + UI solo admin)
+
+- Status: PROPOSED (la aprobación de SPEC-STOCK-007 lo aprueba)
+- Decisión: `GET /api/v1/stock/movements` (solo admin, con codigo/nombre por snapshot, paginado) + vista Auditoría con filtro y `Pager`; migraciones incrementales (no se reescribe la baseline).
+- Pendientes (OQ-AUDV-01/02): filtros vs lista plana; snapshot vs solo IDs.
+- Afecta a: SPEC-STOCK-007.
+
 ## D-AUTH-SCOPE — Ampliación de alcance: seguridad backend
 
 - Status: DECIDED (2026-10-12, decisión de usuario — Opción 1)
