@@ -55,7 +55,7 @@ def list_products(
     _claims: dict = Depends(reader),
 ):
     """ERF-02/08. ERF-10: admin y cajero."""
-    return product_service.list(db, skip, limit, q, activo)
+    return product_service.list_products(db, skip, limit, q, activo)
 
 
 @router.get("/{product_id}", response_model=ProductRead)

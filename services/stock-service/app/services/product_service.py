@@ -52,7 +52,7 @@ class ProductService:
         inv = inventory_repository.create_initial(db, product.id, data.cantidad_inicial)
         return _to_read(product, inv.cantidad)
 
-    def list(
+    def list_products(
         self,
         db: Session,
         skip: int,
