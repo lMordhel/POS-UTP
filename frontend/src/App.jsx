@@ -5,6 +5,7 @@ import { NewSaleView } from './views/NewSaleView.jsx'
 import { SalesView } from './views/SalesView.jsx'
 import { LoginView } from './views/LoginView.jsx'
 import { UsersView } from './views/UsersView.jsx'
+import { AuditView } from './views/AuditView.jsx'
 
 function Shell() {
   const { user, logout } = useAuth()
@@ -18,7 +19,7 @@ function Shell() {
     { id: 'sale', label: 'Nueva venta' },
     { id: 'products', label: 'Productos' },
     { id: 'sales', label: 'Ventas' },
-    ...(isAdmin ? [{ id: 'users', label: 'Usuarios' }] : []),
+    ...(isAdmin ? [{ id: 'users', label: 'Usuarios' }, { id: 'audit', label: 'Auditoría' }] : []),
   ]
   const active = TABS.some((t) => t.id === tab) ? tab : 'sale'
 
@@ -40,6 +41,8 @@ function Shell() {
         <ProductsView isAdmin={isAdmin} />
       ) : active === 'users' && isAdmin ? (
         <UsersView />
+      ) : active === 'audit' && isAdmin ? (
+        <AuditView />
       ) : (
         <SalesView refreshKey={salesRefresh} />
       )}

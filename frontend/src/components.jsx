@@ -9,7 +9,7 @@ export function Loading({ label }) {
   return <p>{label ?? 'Cargando...'}</p>
 }
 
-export function ProductRow({ product, canDeactivate, onDeactivate, canManage, onEdit, onAdjust }) {
+export function ProductRow({ product, canDeactivate, onDeactivate, canManage, onEdit, onAdjust, onReactivate }) {
   return (
     <tr>
       <td>{product.codigo}</td>
@@ -20,6 +20,9 @@ export function ProductRow({ product, canDeactivate, onDeactivate, canManage, on
       <td>
         {product.activo && canDeactivate ? (
           <button onClick={() => onDeactivate(product.id)}>Desactivar</button>
+        ) : null}
+        {!product.activo && canManage ? (
+          <button onClick={() => onReactivate(product.id)}>Reactivar</button>
         ) : null}
         {product.activo && canManage ? (
           <>

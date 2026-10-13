@@ -17,6 +17,8 @@ class InventoryMovement(Base):
     cantidad_antes: Mapped[int] = mapped_column(Integer, nullable=False)
     cantidad_despues: Mapped[int] = mapped_column(Integer, nullable=False)
     motivo: Mapped[str] = mapped_column(String(255), nullable=False, default="")
+    codigo: Mapped[str | None] = mapped_column(String(32), nullable=True, default=None)
+    nombre: Mapped[str | None] = mapped_column(String(120), nullable=True, default=None)
     actor_sub: Mapped[str] = mapped_column(String(100), nullable=False, default="")
     actor_rol: Mapped[str] = mapped_column(String(20), nullable=False, default="")
     clave: Mapped[str | None] = mapped_column(String(128), nullable=True, index=True)

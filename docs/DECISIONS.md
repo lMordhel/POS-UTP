@@ -147,6 +147,13 @@
 - Pendientes (OQ-PAG-01/02): tamaño fijo o selector; vistas incluidas.
 - Afecta a: SPEC-FRONT-004.
 
+## ADR-017 — Auditoría visible (endpoint + UI solo admin)
+
+- Status: APPROVED (2026-10-13, con SPEC-STOCK-007 1.0.0)
+- Decisión: `GET /api/v1/stock/movements` (solo admin, con codigo/nombre por snapshot, paginado) + vista Auditoría con filtro y `Pager`; migraciones incrementales (no se reescribe la baseline).
+- Pendientes (OQ-AUDV-01/02): filtros vs lista plana; snapshot vs solo IDs.
+- Afecta a: SPEC-STOCK-007.
+
 ## D-AUTH-SCOPE — Ampliación de alcance: seguridad backend
 
 - Status: DECIDED (2026-10-12, decisión de usuario — Opción 1)
@@ -163,6 +170,7 @@
 | 2026-10-12 | SPEC-SALES-004 1.0.0 VALIDATED (86/86 pytest + E2E con replay; OQ-SAGA 200/sin-exp/422) |
 | 2026-10-12 | SPEC-OPS-001 1.0.0 VALIDATED (97/97 pytest + E2E; OQ-AUD tabla+logs/todo/sí) |
 | 2026-10-12 | SPEC-STOCK-006 1.0.0 VALIDATED (106/106 pytest + E2E; OQ-BATCH encontrados/siempre/100) |
+| 2026-10-13 | SPEC-STOCK-007 1.0.0 VALIDATED (tests backend + build + uso real por usuario) |
 | 2026-10-12 | SPEC-OPS-002 1.0.0 VALIDATED (116/116 pytest + E2E; OQ-OBS hand-rolled/propia/ya) |
 | 2026-10-12 | SPEC-FRONT-002 1.0.0 VALIDATED (build verde + demo manual por usuario: todo OK) |
 | 2026-10-13 | SPEC-FRONT-004 1.0.0 VALIDATED (build verde + demo manual por usuario: todo OK) |
