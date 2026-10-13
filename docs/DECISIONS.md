@@ -126,6 +126,13 @@
 - Pendientes (OQ-OBS-01/02/03): hand-rolled vs librería, alcance de ready, unificación de logs.
 - Afecta a: SPEC-OPS-002.
 
+## ADR-014 — Frontend con autenticación y roles
+
+- Status: PROPOSED (la aprobación de SPEC-FRONT-002 lo aprueba)
+- Decisión: Login + sesión con refresh ante 401, puertas de UI por rol (matriz ERF-10), vista Usuarios para admin, errores mapeados por código; `api.js` como único canal HTTP. Sin registro/MFA/tests-UI en esta fase.
+- Pendientes (OQ-FRONT-01/02/03): almacenamiento de tokens, alcance de vista Usuarios, estrategia de verificación.
+- Afecta a: SPEC-FRONT-002.
+
 ## D-AUTH-SCOPE — Ampliación de alcance: seguridad backend
 
 - Status: DECIDED (2026-10-12, decisión de usuario — Opción 1)
