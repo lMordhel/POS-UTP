@@ -161,10 +161,6 @@ body {
   flex: 1 1 220px;
 }
 
-.pos-search-field--qty {
-  flex: 0 1 130px;
-}
-
 .pos-search-input {
   max-width: none;
   width: 100%;

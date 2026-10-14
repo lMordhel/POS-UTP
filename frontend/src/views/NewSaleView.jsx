@@ -17,7 +17,6 @@ export function NewSaleView({ onSold }) {
   const [lines, setLines] = useState([])
   const [qty, setQty] = useState({})
   const [searchTerm, setSearchTerm] = useState('')
-  const [searchQty, setSearchQty] = useState('1')
   const [loading, setLoading] = useState(true)
   const [searching, setSearching] = useState(false)
   const [sending, setSending] = useState(false)
@@ -115,7 +114,7 @@ export function NewSaleView({ onSold }) {
       return
     }
     const first = products[0]
-    if (addProduct(first, searchQty)) {
+    if (addProduct(first, 1)) {
       searchInputRef.current?.focus()
     }
   }
@@ -213,7 +212,6 @@ export function NewSaleView({ onSold }) {
     setTicket(null)
     setError('')
     setSearchTerm('')
-    setSearchQty('1')
     setQty({})
     searchInputRef.current?.focus()
   }
@@ -276,20 +274,6 @@ export function NewSaleView({ onSold }) {
                 addFirstResult()
               }
             }}
-          />
-        </div>
-        <div className="pos-search-field pos-search-field--qty">
-          <label className="pos-label" htmlFor="sale-search-qty">
-            Cantidad para Enter
-          </label>
-          <input
-            id="sale-search-qty"
-            className="pos-input"
-            type="number"
-            min="1"
-            step="1"
-            value={searchQty}
-            onChange={(e) => setSearchQty(e.target.value)}
           />
         </div>
       </div>
