@@ -38,8 +38,8 @@ entendible y claro. Skills instaladas: `web-design-guidelines` (revisión UI)
 
 ## Checklist
 
-- [ ] SALE-POL-01 SPEC-FRONT-005 DRAFT + rama `feature/front-sale-polish`
-- [ ] SALE-POL-02 SPEC-FRONT-005 → APPROVED 1.0.0 (gate del usuario, OQs)
+- [x] SALE-POL-01 SPEC-FRONT-005 DRAFT + rama `feature/front-sale-polish` (commit 59613bd)
+- [x] SALE-POL-02 SPEC-FRONT-005 → APPROVED 1.0.0 (gate del usuario, OQs)
 - [ ] SALE-POL-03 Implementación polish + `npm run build` verde
 - [ ] SALE-POL-04 Demo manual por AC + VALIDATED + merge (+ push si se pide)
 
@@ -71,12 +71,17 @@ verificación vigente = build + demo manual por AC. No inventar RED/GREEN.
 
 ## Progress
 
-- Handoff del explorer recibido (flujo, helpers, hallazgos a11y, gaps).
+- SALE-POL-01 cerrada: SPEC DRAFT v0.1.0 en rama `feature/front-sale-polish`
+  (commit 59613bd).
+- SALE-POL-02 cerrada: OQ-POL-01 claro acorde al POS, OQ-POL-02 base mínima
+  reutilizable. SPEC APPROVED 1.0.0.
 
 ## Verification evidence
 
-- (pendiente)
+- SALE-POL-01: SPEC existe y está en DRAFT (spot check líneas 1-50);
+  `git status` confirma rama y solo el `.md` nuevo. Sin código tocado.
+- SALE-POL-02: SPEC en APPROVED 1.0.0, OQs DECIDED (spot check OQs + history).
 
 ## Next step
 
-- SALE-POL-01: redactar SPEC-FRONT-005 DRAFT.
+- SALE-POL-03: implementar el polish (writer delegado).

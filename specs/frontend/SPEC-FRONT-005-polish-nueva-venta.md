@@ -5,8 +5,8 @@
 - ID: SPEC-FRONT-005
 - Requirement: Transversal (polish de SPEC-FRONT-001, vista Nueva venta; sin ERF nuevo)
 - Service: Frontend
-- Status: DRAFT
-- Version: 0.1.0
+- Status: APPROVED
+- Version: 1.0.0
 - Priority: Media
 
 ## Objective
@@ -140,8 +140,8 @@ And `npm run build` está en verde.
 
 ## Open Questions
 
-* OQ-POL-01: OPEN → tono/paleta del polish (¿claro u oscuro acorde al POS actual?).
-* OQ-POL-02: OPEN → alcance del `index.css`: ¿solo Nueva venta o base mínima reutilizable?
+* OQ-POL-01: DECIDED → tono claro acorde al POS actual.
+* OQ-POL-02: DECIDED → `index.css` como base mínima reutilizable (tokens, foco, touch, reduced-motion) + clases de Nueva venta.
 
 ## Traceability
 
@@ -168,18 +168,19 @@ documentada: frontend sin framework de tests, precedente `odd/tasks/front-*.md`)
 
 ## Checklist
 
-* [ ] OQ-POL-01/OQ-POL-02 decididas por el usuario.
-* [ ] Status → APPROVED 1.0.0 (autoriza SALE-POL-03).
+* [x] OQ-POL-01/OQ-POL-02 decididas por el usuario.
+* [x] Status → APPROVED 1.0.0 (autoriza SALE-POL-03).
 * [ ] Implementación toca solo archivos del scope.
 * [ ] `npm run build` verde + demo manual por cada AC.
 * [ ] Status → VALIDATED + merge (SALE-POL-04).
 
 ## Next step
 
-Gate del usuario (SALE-POL-02): decidir OQs → APPROVED 1.0.0.
+SALE-POL-03: implementar el polish según esta SPEC aprobada.
 
 ## Change History
 
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 0.1.0 | 2026-10-14 | Initial specification (DRAFT, no autoriza implementar) | Polish visual Nueva venta (SALE-POL-01) |
+| 1.0.0 | 2026-10-14 | APPROVED: OQ-POL-01 claro acorde al POS, OQ-POL-02 base mínima reutilizable | Gate del usuario (SALE-POL-02) |
