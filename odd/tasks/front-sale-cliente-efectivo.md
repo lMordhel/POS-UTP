@@ -36,7 +36,7 @@ Decisión del usuario (2026-10-14): UI de cobro tras el backend de Fase 2.
 
 ## Checklist
 
-- [ ] PAGO-01 SPEC-FRONT-007 DRAFT + rama
+- [x] PAGO-01 SPEC-FRONT-007 DRAFT + rama (commit 9a7cd34)
 - [ ] PAGO-02 SPEC-FRONT-007 → APPROVED 1.0.0 (gate del usuario)
 - [ ] PAGO-03 Implementación + `npm run build` verde
 - [ ] PAGO-04 Demo manual por AC + VALIDATED + merge (+ push si se pide)
@@ -70,13 +70,15 @@ RED/GREEN.
 
 ## Progress
 
-- Exploración parent: `salesApi.create` solo envía `{items}` (api.js:104);
-  vista con buscador/Enter/líneas/ticket vigente.
+- PAGO-01 cerrada: SPEC-FRONT-007 DRAFT v0.1.0 en rama
+  `feature/front-sale-cliente-efectivo` (commit 9a7cd34). 7 ACs, 3 OQs
+  abiertas.
 
 ## Verification evidence
 
-- (pendiente)
+- PAGO-01: SPEC existe en DRAFT (spot check metadata); rama y commit
+  verificados por parent. Solo la SPEC tocada, sin push.
 
 ## Next step
 
-- PAGO-01: redactar SPEC-FRONT-007 DRAFT.
+- PAGO-02: gate del usuario (OQ-PAG07-01..03) → APPROVED 1.0.0.
