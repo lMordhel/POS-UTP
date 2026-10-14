@@ -77,7 +77,10 @@ RED/GREEN.
 - PAGO-03 cerrada parcial: writer implementó AC-01..07 + build verde
   (commit ac62b1f, sin push). Demo manual pendiente.
 - PAGO-04 en curso: demo manual OK del usuario 2026-10-14 ("todo bien",
-  AC-01..07); SPEC-007 1.1.0 en VALIDATED. Falta review nativa + merge.
+  AC-01..07); SPEC-007 1.1.0 en VALIDATED. RDD assess del slice (base
+  09c117a): medium, 5 paths, 386 líneas, `review_due: false`
+  (`under_budget`) → sin ciclo de revisión; el slice queda pendiente.
+  Merge a `main` bajo política ordinaria.
 
 ## Verification evidence
 
