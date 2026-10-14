@@ -37,7 +37,7 @@ Decisión del usuario (2026-10-14): UI de cobro tras el backend de Fase 2.
 ## Checklist
 
 - [x] PAGO-01 SPEC-FRONT-007 DRAFT + rama (commit 9a7cd34)
-- [ ] PAGO-02 SPEC-FRONT-007 → APPROVED 1.0.0 (gate del usuario)
+- [x] PAGO-02 SPEC-FRONT-007 → APPROVED 1.0.0 (gate del usuario)
 - [ ] PAGO-03 Implementación + `npm run build` verde
 - [ ] PAGO-04 Demo manual por AC + VALIDATED + merge (+ push si se pide)
 
@@ -73,12 +73,15 @@ RED/GREEN.
 - PAGO-01 cerrada: SPEC-FRONT-007 DRAFT v0.1.0 en rama
   `feature/front-sale-cliente-efectivo` (commit 9a7cd34). 7 ACs, 3 OQs
   abiertas.
+- PAGO-02 cerrada: 3 OQs decididas (recomendadas). SPEC APPROVED 1.0.0.
 
 ## Verification evidence
 
 - PAGO-01: SPEC existe en DRAFT (spot check metadata); rama y commit
   verificados por parent. Solo la SPEC tocada, sin push.
+- PAGO-02: SPEC en APPROVED 1.0.0, OQs DECIDED (spot check OQs + history +
+  checklist).
 
 ## Next step
 
-- PAGO-02: gate del usuario (OQ-PAG07-01..03) → APPROVED 1.0.0.
+- PAGO-03: implementar la UI de cobro (writer delegado).

@@ -5,8 +5,8 @@
 - ID: SPEC-FRONT-007
 - Requirement: Extensión de SPEC-FRONT-006 (vista Nueva venta; sin ERF nuevo; backend SPEC-SALES-005 VALIDATED)
 - Service: Frontend
-- Status: DRAFT
-- Version: 0.1.0
+- Status: APPROVED
+- Version: 1.0.0
 - Priority: Alta
 
 ## Objective
@@ -147,9 +147,9 @@ And `npm run build` está en verde.
 
 ## Open Questions
 
-* OQ-PAG07-01: ¿Monto con formato/validación local antes de enviar? — OPEN. Recomendación: validación local mínima no agresiva (numérico ≥ 0, hasta 2 decimales; vacío = omitir) + mensajes inline; sin formateo en vivo con separadores de miles (rompe edición y `Intl`); el servidor es la autoridad (422 si M < T). Input con `type="text" inputMode="decimal"`, `name`/`autocomplete="off"`, placeholder con ejemplo terminado en `…`. Decidir en gate PAGO-02.
-* OQ-PAG07-02: ¿Ticket muestra vuelto 0 cuando no hay pago? — OPEN. Recomendación: no confundir `null` con `0` (contrato SPEC-SALES-005 FR-06): `vuelto: null` → ocultar fila de pago (venta sin pago registrado); `vuelto: 0` → mostrar "Vuelto: 0,00 (pago exacto)". Decidir en gate PAGO-02.
-* OQ-PAG07-03: ¿Limpiar cliente/monto con Nueva venta? — OPEN. Recomendación: sí, limpiar todo (cliente, monto, líneas, ticket, buscador) para no arrastrar datos del comprador anterior al siguiente cobro; es lo que AC-PAG07-06 especifica salvo que el gate indique conservar el cliente. Decidir en gate PAGO-02.
+* OQ-PAG07-01: ¿Monto con formato/validación local antes de enviar? — DECIDED: validación local mínima (numérico ≥ 0, hasta 2 decimales; vacío = omitir); el servidor es la autoridad.
+* OQ-PAG07-02: ¿Ticket muestra vuelto 0 cuando no hay pago? — DECIDED: `vuelto: null` → ocultar fila de pago; `vuelto: 0` → mostrar "Vuelto: 0,00 (pago exacto)".
+* OQ-PAG07-03: ¿Limpiar cliente/monto con Nueva venta? — DECIDED: limpiar todo.
 
 ## Traceability
 
@@ -166,18 +166,19 @@ Tests: `cd frontend && npm run build` + demo manual por AC (excepción TDD docum
 
 ## Checklist
 
-* [ ] OQ-PAG07-01..03 resueltas por el usuario.
-* [ ] Status → APPROVED 1.0.0 (autoriza PAGO-03).
+* [x] OQ-PAG07-01..03 resueltas por el usuario.
+* [x] Status → APPROVED 1.0.0 (autoriza PAGO-03).
 * [ ] Implementación toca solo archivos del scope.
 * [ ] `npm run build` verde + demo manual por cada AC.
 * [ ] Status → VALIDATED + merge (PAGO-04).
 
 ## Next step
 
-Resolver OQs en gate PAGO-02; luego APPROVED 1.0.0 e implementación (PAGO-03).
+PAGO-03: implementar la UI de cobro según esta SPEC aprobada.
 
 ## Change History
 
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 0.1.0 | 2026-10-14 | Initial specification (DRAFT, no autoriza implementar) | PAGO-01: UI de cobro cliente + efectivo |
+| 1.0.0 | 2026-10-14 | APPROVED: 3 OQs decididas (recomendadas) | Gate del usuario (PAGO-02) |
