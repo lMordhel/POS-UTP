@@ -40,7 +40,7 @@ el backend ya expone (`ilike` en código/nombre) — sin cambios backend.
 
 ## Checklist
 
-- [ ] SALE-PRO-01 SPEC-FRONT-006 DRAFT + rama `feature/front-sale-fase1`
+- [x] SALE-PRO-01 SPEC-FRONT-006 DRAFT + rama `feature/front-sale-fase1` (commit 2d6b596)
 - [ ] SALE-PRO-02 SPEC-FRONT-006 → APPROVED 1.0.0 (gate del usuario)
 - [ ] SALE-PRO-03 Implementación Fase 1 + `npm run build` verde
 - [ ] SALE-PRO-04 Demo manual por AC + VALIDATED + merge (+ push si se pide)
@@ -74,12 +74,15 @@ RED/GREEN.
 
 ## Progress
 
-- (inicia con SALE-PRO-01)
+- SALE-PRO-01 cerrada: SPEC-FRONT-006 DRAFT v0.1.0 en rama
+  `feature/front-sale-fase1` apilada sobre polish (commit 2d6b596). 8 ACs,
+  4 OQs abiertas.
 
 ## Verification evidence
 
-- (pendiente)
+- SALE-PRO-01: SPEC existe en DRAFT (spot check metadata); rama y commit
+  verificados por parent. Solo la SPEC tocada, sin push.
 
 ## Next step
 
-- SALE-PRO-01: redactar SPEC-FRONT-006 DRAFT.
+- SALE-PRO-02: gate del usuario (OQ-PRO-01..04) → APPROVED 1.0.0.
