@@ -96,6 +96,9 @@ RED/GREEN.
   `slice_budget_reached`); el boundary no avanzó (sin review reconocida) así
   que el resultado cubre este commit. Revisión fresca + merge en SALE-PRO-04
   tras la demo (evita re-revisar si la demo pide corrección).
+- Ajuste demo 2026-10-14: removido "Cantidad para Enter" (commit f19b1d3,
+  build re-verificado en verde por parent); SPEC 1.0.1 con FR-02/OQ-PRO-02
+  actualizados.
 
 ## Next step
 

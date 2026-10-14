@@ -59,7 +59,7 @@ otra venta. Solo frontend, sin cambios de API ni dependencias nuevas.
 | # | Requisito |
 |---|---|
 | FR-01 | El buscador debe filtrar el catálogo con `stockApi.list(q)` server-side (ilike en código/nombre) con debounce, sin recargar la página. |
-| FR-02 | Enter en el buscador debe agregar el primer resultado (o el único) con cantidad 1 o la cantidad del input, según OQ-PRO-02. |
+| FR-02 | Enter en el buscador agrega el primer resultado (o el único) con cantidad 1. Sin campo de cantidad previo (removido por demo 2026-10-14: redundante con corrección inline). |
 | FR-03 | Cada línea agregada debe poder quitarse y su cantidad debe poder corregirse antes de confirmar. |
 | FR-04 | La cantidad de una línea no debe poder superar el `stock` visible del producto, ni al agregar ni al confirmar. |
 | FR-05 | El ticket tras confirmar debe mostrar desglose por línea (producto, cantidad, subtotal) + total del servidor + botón "Nueva venta" que limpia el estado para otra venta. |
@@ -106,7 +106,7 @@ And muestra solo los coincidentes por código o nombre.
 
 Given un término con resultados visibles
 When el cajero pulsa Enter en el buscador
-Then se agrega el resultado según OQ-PRO-02 con su cantidad
+Then se agrega el primer resultado con cantidad 1
 And el foco permanece en un lugar útil para seguir vendiendo.
 
 ### AC-PRO06-03 — Quitar línea
@@ -153,7 +153,8 @@ And `npm run build` está en verde.
 
 * OQ-PRO-01: Debounce del buscador — DECIDED: 300 ms.
 * OQ-PRO-02: Qué agrega Enter con varios resultados — DECIDED:
-  el primer resultado con la cantidad del input (defecto 1).
+  el primer resultado con cantidad 1 (campo previo removido en demo:
+  redundante con corrección inline).
 * OQ-PRO-03: Cómo se corrige la cantidad — DECIDED: input numérico
   inline por línea (misma fila, sin modal).
 * OQ-PRO-04: Desglose del ticket — DECIDED: producto, cantidad,
@@ -201,3 +202,4 @@ SALE-PRO-03: implementar la Fase 1 según esta SPEC aprobada.
 |---|---|---|---|
 | 0.1.0 | 2026-10-14 | Initial specification (DRAFT, no autoriza implementar) | Nueva venta profesional Fase 1 (SALE-PRO-01) |
 | 1.0.0 | 2026-10-14 | APPROVED: OQ-PRO-01 300ms, OQ-PRO-02 primer resultado, OQ-PRO-03 inline+quitar, OQ-PRO-04 completo sin cliente | Gate del usuario (SALE-PRO-02) |
+| 1.0.1 | 2026-10-14 | Ajuste demo: removido campo Cantidad para Enter; Enter agrega 1 (corrección inline) | Demo usuario SALE-PRO-04 |
