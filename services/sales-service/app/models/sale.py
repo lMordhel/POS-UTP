@@ -16,6 +16,9 @@ class Sale(Base):
     fecha: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     total: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     estado: Mapped[str] = mapped_column(String(20), default="confirmada", nullable=False)
+    cliente: Mapped[str | None] = mapped_column(String(120), nullable=True, default=None)
+    monto_recibido: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), nullable=True, default=None)
+    vuelto: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), nullable=True, default=None)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     items: Mapped[list["SaleDetail"]] = relationship(

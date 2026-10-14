@@ -17,7 +17,7 @@ from app.models.sale import Sale
 from app.models.sale_detail import SaleDetail
 from app.repositories import idempotency_repository
 from app.repositories.sale_repository import sale_repository
-from app.schemas.sale import SaleCreate, SaleRead
+from app.schemas.sale import SaleCreate, SaleRead, _normalize_cliente, _normalize_monto
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +33,12 @@ class SaleInsufficientStockError(ValueError):
     pass
 
 
+class SaleInsufficientPaymentError(ValueError):
+    """SPEC-SALES-005 FR-04: monto_recibido < total (→ 422, antes de persistir)."""
+
+    pass
+
+
 class IdempotencyKeyInvalidError(ValueError):
     pass
 
@@ -45,12 +51,17 @@ class IdempotencyConflictError(Exception):
     pass
 
 
-def _body_hash(items: list) -> str:
+def _body_hash(items: list, cliente: str | None = None, monto: Decimal | None = None) -> str:
+    """SPEC-SALES-005 FR-08: el hash cubre items + cliente normalizado + monto."""
     canonical = json.dumps(
-        [
-            {"producto_id": i.producto_id, "cantidad": i.cantidad}
-            for i in sorted(items, key=lambda x: x.producto_id)
-        ],
+        {
+            "items": [
+                {"producto_id": i.producto_id, "cantidad": i.cantidad}
+                for i in sorted(items, key=lambda x: x.producto_id)
+            ],
+            "cliente": cliente,
+            "monto_recibido": str(monto) if monto is not None else None,
+        },
         sort_keys=True,
         separators=(",", ":"),
     )
@@ -58,7 +69,7 @@ def _body_hash(items: list) -> str:
 
 
 class SaleService:
-    """Saga registrar-venta (SPEC-SALES-001/002 + SPEC-SALES-004).
+    """Saga registrar-venta (SPEC-SALES-001/002 + SPEC-SALES-004/005).
 
     1. Fusiona líneas duplicadas (OQ-ERF03-01 DECIDED).
     2. Resuelve precios oficiales desde Stock (snapshot).
@@ -124,7 +135,11 @@ class SaleService:
             return None, None, False
         if not idempotency_key or len(idempotency_key) > MAX_KEY_LEN:
             raise IdempotencyKeyInvalidError("clave de idempotencia inválida")
-        body_hash = _body_hash(data.items)
+        body_hash = _body_hash(
+            data.items,
+            _normalize_cliente(data.cliente),
+            _normalize_monto(data.monto_recibido),
+        )
         record = None
         fresh = False
         for _ in range(2):
@@ -180,9 +195,25 @@ class SaleService:
                     f"disponible={product.stock}, solicitado={cantidad}"
                 )
 
-        # 4. Persistir venta + detalles.
+        # 4. Pago en efectivo (SPEC-SALES-005 FR-03/04/05/06): validar ANTES
+        # de persistir; vuelto = recibido − total server-side, jamás del request.
+        cliente = _normalize_cliente(data.cliente)
+        monto = _normalize_monto(data.monto_recibido)
         total = sum(prices[pid] * qty for pid, qty in merged.items())
-        sale = Sale(total=total, estado="confirmada")
+        if monto is not None and monto < total:
+            raise SaleInsufficientPaymentError(
+                f"pago insuficiente: recibido={monto}, total={total}"
+            )
+        vuelto = (monto - total).quantize(Decimal("0.00")) if monto is not None else None
+
+        # 5. Persistir venta + detalles.
+        sale = Sale(
+            total=total,
+            estado="confirmada",
+            cliente=cliente,
+            monto_recibido=monto,
+            vuelto=vuelto,
+        )
         db.add(sale)
         db.flush()
         for producto_id, cantidad in merged.items():
@@ -198,7 +229,7 @@ class SaleService:
             )
         db.flush()
 
-        # 5. Descontar stock con compensación ante fallo parcial.
+        # 6. Descontar stock con compensación ante fallo parcial.
         discounted: list[int] = []
         try:
             for producto_id, cantidad in merged.items():
