@@ -5,8 +5,8 @@
 - ID: SPEC-FRONT-006
 - Requirement: Extensión de SPEC-FRONT-001 (vista Nueva venta; sin ERF nuevo)
 - Service: Frontend
-- Status: DRAFT
-- Version: 0.1.0
+- Status: APPROVED
+- Version: 1.0.0
 - Priority: Alta
 
 ## Objective
@@ -151,15 +151,13 @@ And `npm run build` está en verde.
 
 ## Open Questions
 
-* OQ-PRO-01: Debounce del buscador — OPEN. Recomendación: 300 ms (equilibrio
-  entre carga al servidor y sensación instantánea; sin dependencia nueva).
-* OQ-PRO-02: Qué agrega Enter con varios resultados — OPEN. Recomendación:
-  el primer resultado con la cantidad del input (defecto 1); documentar en la SPEC.
-* OQ-PRO-03: Cómo se corrige la cantidad — OPEN. Recomendación: input numérico
-  inline por línea (misma fila, sin modal), coherente con tono claro y 44px.
-* OQ-PRO-04: Desglose del ticket — OPEN. Recomendación: producto, cantidad,
-  precio unitario, subtotal + total del servidor (reutiliza `money()` con
-  `Intl.NumberFormat`); sin cliente (Fase 2).
+* OQ-PRO-01: Debounce del buscador — DECIDED: 300 ms.
+* OQ-PRO-02: Qué agrega Enter con varios resultados — DECIDED:
+  el primer resultado con la cantidad del input (defecto 1).
+* OQ-PRO-03: Cómo se corrige la cantidad — DECIDED: input numérico
+  inline por línea (misma fila, sin modal).
+* OQ-PRO-04: Desglose del ticket — DECIDED: producto, cantidad,
+  precio unitario, subtotal + total del servidor; sin cliente (Fase 2).
 
 ## Traceability
 
@@ -187,18 +185,19 @@ documentada: frontend sin framework de tests, precedente `odd/tasks/front-*.md`)
 
 ## Checklist
 
-* [ ] OQ-PRO-01..04 resueltas por el usuario.
-* [ ] Status → APPROVED 1.0.0 (autoriza SALE-PRO-03).
+* [x] OQ-PRO-01..04 resueltas por el usuario.
+* [x] Status → APPROVED 1.0.0 (autoriza SALE-PRO-03).
 * [ ] Implementación toca solo archivos del scope.
 * [ ] `npm run build` verde + demo manual por cada AC.
 * [ ] Status → VALIDATED + merge (SALE-PRO-04; absorbe demo pendiente SALE-POL-04).
 
 ## Next step
 
-SALE-PRO-02: gate del usuario (resolver OQs → APPROVED 1.0.0).
+SALE-PRO-03: implementar la Fase 1 según esta SPEC aprobada.
 
 ## Change History
 
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 0.1.0 | 2026-10-14 | Initial specification (DRAFT, no autoriza implementar) | Nueva venta profesional Fase 1 (SALE-PRO-01) |
+| 1.0.0 | 2026-10-14 | APPROVED: OQ-PRO-01 300ms, OQ-PRO-02 primer resultado, OQ-PRO-03 inline+quitar, OQ-PRO-04 completo sin cliente | Gate del usuario (SALE-PRO-02) |
