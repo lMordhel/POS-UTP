@@ -38,7 +38,7 @@ Decisión del usuario (2026-10-14): UI de cobro tras el backend de Fase 2.
 
 - [x] PAGO-01 SPEC-FRONT-007 DRAFT + rama (commit 9a7cd34)
 - [x] PAGO-02 SPEC-FRONT-007 → APPROVED 1.0.0 (gate del usuario)
-- [ ] PAGO-03 Implementación + `npm run build` verde
+- [x] PAGO-03 Implementación + `npm run build` verde (AC demo pendiente → PAGO-04; commit ac62b1f, sin push)
 - [ ] PAGO-04 Demo manual por AC + VALIDATED + merge (+ push si se pide)
 
 ## Authorized scope
@@ -74,6 +74,8 @@ RED/GREEN.
   `feature/front-sale-cliente-efectivo` (commit 9a7cd34). 7 ACs, 3 OQs
   abiertas.
 - PAGO-02 cerrada: 3 OQs decididas (recomendadas). SPEC APPROVED 1.0.0.
+- PAGO-03 cerrada parcial: writer implementó AC-01..07 + build verde
+  (commit ac62b1f, sin push). Demo manual pendiente.
 
 ## Verification evidence
 
@@ -81,7 +83,10 @@ RED/GREEN.
   verificados por parent. Solo la SPEC tocada, sin push.
 - PAGO-02: SPEC en APPROVED 1.0.0, OQs DECIDED (spot check OQs + history +
   checklist).
+- PAGO-03: writer reportó `npm run build: éxito` (37 módulos, 909ms);
+  parent spot check repitió el build en verde (CSS 3.69 kB, JS 171.99 kB,
+  903ms). Payload sin `vuelto`; 422 conserva líneas; ticket server-driven.
 
 ## Next step
 
-- PAGO-03: implementar la UI de cobro (writer delegado).
+- PAGO-04: demo manual del usuario → VALIDATED → review → merge.
