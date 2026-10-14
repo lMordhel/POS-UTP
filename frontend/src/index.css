@@ -204,6 +204,36 @@ body {
   margin: 12px 0;
 }
 
+/* Zona de cobro (SPEC-FRONT-007): cliente + efectivo */
+.pos-pay {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pos-pay-field {
+  display: grid;
+  gap: 4px;
+  flex: 1 1 220px;
+  align-content: start;
+}
+
+.pos-pay-input {
+  max-width: none;
+  width: 100%;
+}
+
+.pos-field-error {
+  color: var(--pos-danger);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.pos-ticket-client {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 /* Solo visible para lectores de pantalla */
 .sr-only {
   position: absolute;

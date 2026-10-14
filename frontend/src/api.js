@@ -101,7 +101,14 @@ export const stockApi = {
 }
 
 export const salesApi = {
-  create: (items) => request(SALES, '/sales', { method: 'POST', body: JSON.stringify({ items }) }),
+  create: (items, { cliente, monto_recibido } = {}) => {
+    const body = { items }
+    if (cliente !== undefined && cliente !== null && cliente !== '') body.cliente = cliente
+    if (monto_recibido !== undefined && monto_recibido !== null && monto_recibido !== '') {
+      body.monto_recibido = monto_recibido
+    }
+    return request(SALES, '/sales', { method: 'POST', body: JSON.stringify(body) })
+  },
   list: ({ skip = 0, limit = PAGE_SIZE + 1 } = {}) =>
     request(SALES, `/sales?skip=${skip}&limit=${limit}`),
   get: (id) => request(SALES, `/sales/${id}`),

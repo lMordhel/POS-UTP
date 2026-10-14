@@ -36,9 +36,9 @@ Decisión del usuario (2026-10-14): UI de cobro tras el backend de Fase 2.
 
 ## Checklist
 
-- [ ] PAGO-01 SPEC-FRONT-007 DRAFT + rama
-- [ ] PAGO-02 SPEC-FRONT-007 → APPROVED 1.0.0 (gate del usuario)
-- [ ] PAGO-03 Implementación + `npm run build` verde
+- [x] PAGO-01 SPEC-FRONT-007 DRAFT + rama (commit 9a7cd34)
+- [x] PAGO-02 SPEC-FRONT-007 → APPROVED 1.0.0 (gate del usuario)
+- [x] PAGO-03 Implementación + `npm run build` verde (AC demo pendiente → PAGO-04; commit ac62b1f, sin push)
 - [ ] PAGO-04 Demo manual por AC + VALIDATED + merge (+ push si se pide)
 
 ## Authorized scope
@@ -70,13 +70,28 @@ RED/GREEN.
 
 ## Progress
 
-- Exploración parent: `salesApi.create` solo envía `{items}` (api.js:104);
-  vista con buscador/Enter/líneas/ticket vigente.
+- PAGO-01 cerrada: SPEC-FRONT-007 DRAFT v0.1.0 en rama
+  `feature/front-sale-cliente-efectivo` (commit 9a7cd34). 7 ACs, 3 OQs
+  abiertas.
+- PAGO-02 cerrada: 3 OQs decididas (recomendadas). SPEC APPROVED 1.0.0.
+- PAGO-03 cerrada parcial: writer implementó AC-01..07 + build verde
+  (commit ac62b1f, sin push). Demo manual pendiente.
+- PAGO-04 en curso: demo manual OK del usuario 2026-10-14 ("todo bien",
+  AC-01..07); SPEC-007 1.1.0 en VALIDATED. RDD assess del slice (base
+  09c117a): medium, 5 paths, 386 líneas, `review_due: false`
+  (`under_budget`) → sin ciclo de revisión; el slice queda pendiente.
+  Merge a `main` bajo política ordinaria.
 
 ## Verification evidence
 
-- (pendiente)
+- PAGO-01: SPEC existe en DRAFT (spot check metadata); rama y commit
+  verificados por parent. Solo la SPEC tocada, sin push.
+- PAGO-02: SPEC en APPROVED 1.0.0, OQs DECIDED (spot check OQs + history +
+  checklist).
+- PAGO-03: writer reportó `npm run build: éxito` (37 módulos, 909ms);
+  parent spot check repitió el build en verde (CSS 3.69 kB, JS 171.99 kB,
+  903ms). Payload sin `vuelto`; 422 conserva líneas; ticket server-driven.
 
 ## Next step
 
-- PAGO-01: redactar SPEC-FRONT-007 DRAFT.
+- PAGO-04: demo manual del usuario → VALIDATED → review → merge.

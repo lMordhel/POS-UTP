@@ -4,12 +4,32 @@ import { apiErrorMessage, money } from '../utils.js'
 import { ErrorBanner, Loading } from '../components.jsx'
 
 const SEARCH_DEBOUNCE_MS = 300
+const CLIENTE_MAX = 120
+const MONTO_RE = /^\d+(\.\d{1,2})?$/
 
 function parseQty(raw) {
   const cantidad = Number(raw)
   if (raw === '' || raw === null || raw === undefined) return { ok: false, cantidad: NaN }
   if (!Number.isInteger(cantidad) || cantidad <= 0) return { ok: false, cantidad }
   return { ok: true, cantidad }
+}
+
+function normalizeCliente(raw) {
+  const value = (raw ?? '').trim()
+  if (value === '') return { ok: true, value: undefined }
+  if (value.length > CLIENTE_MAX) {
+    return { ok: false, error: `El cliente admite máximo ${CLIENTE_MAX} caracteres.` }
+  }
+  return { ok: true, value }
+}
+
+function parseMonto(raw) {
+  const text = (raw ?? '').trim()
+  if (text === '') return { ok: true, value: undefined }
+  if (!MONTO_RE.test(text)) {
+    return { ok: false, error: 'Monto inválido (número mayor o igual a 0, hasta 2 decimales).' }
+  }
+  return { ok: true, value: Number(text) }
 }
 
 export function NewSaleView({ onSold }) {
@@ -23,9 +43,14 @@ export function NewSaleView({ onSold }) {
   const [error, setError] = useState('')
   const [lineErrors, setLineErrors] = useState({})
   const [ticket, setTicket] = useState(null)
+  const [cliente, setCliente] = useState('')
+  const [monto, setMonto] = useState('')
+  const [payErrors, setPayErrors] = useState({ cliente: '', monto: '' })
   const requestSeq = useRef(0)
   const knownStock = useRef(new Map())
   const searchInputRef = useRef(null)
+  const clienteInputRef = useRef(null)
+  const montoInputRef = useRef(null)
 
   function rememberStock(items) {
     for (const p of items) knownStock.current.set(p.id, p)
@@ -179,11 +204,27 @@ export function NewSaleView({ onSold }) {
       setError(blocked)
       return
     }
+    const normCliente = normalizeCliente(cliente)
+    const normMonto = parseMonto(monto)
+    const nextPayErrors = {
+      cliente: normCliente.ok ? '' : normCliente.error,
+      monto: normMonto.ok ? '' : normMonto.error,
+    }
+    setPayErrors(nextPayErrors)
+    if (!normCliente.ok) {
+      clienteInputRef.current?.focus()
+      return
+    }
+    if (!normMonto.ok) {
+      montoInputRef.current?.focus()
+      return
+    }
     setSending(true)
     setError('')
     try {
       const sale = await salesApi.create(
         lines.map((l) => ({ producto_id: l.producto_id, cantidad: l.cantidad })),
+        { cliente: normCliente.value, monto_recibido: normMonto.value },
       )
       const names = new Map(lines.map((l) => [l.producto_id, l.nombre]))
       setTicket({
@@ -195,15 +236,44 @@ export function NewSaleView({ onSold }) {
       })
       setLines([])
       setLineErrors({})
+      setCliente('')
+      setMonto('')
+      setPayErrors({ cliente: '', monto: '' })
       const items = await stockApi.list(searchTerm.trim())
       rememberStock(items)
       setProducts(items.filter((p) => p.activo))
       onSold()
     } catch (err) {
-      setError(apiErrorMessage(err))
+      handleConfirmError(err)
     } finally {
       setSending(false)
     }
+  }
+
+  function handleConfirmError(err) {
+    const detail = typeof err?.message === 'string' && err.message ? err.message : ''
+    if (err?.status === 422) {
+      const lower = detail.toLowerCase()
+      const isMonto = lower.includes('monto') || lower.includes('insuficiente')
+        || lower.includes('cubre') || lower.includes('recibido')
+      if (isMonto || lower === '') {
+        const msg = detail && lower !== ''
+          ? `Monto insuficiente: ${detail}`
+          : 'El monto recibido no cubre el total.'
+        setPayErrors((prev) => ({ ...prev, monto: msg }))
+        setError(msg)
+        montoInputRef.current?.focus()
+        return
+      }
+      if (lower.includes('cliente')) {
+        const msg = detail || 'Cliente inválido. Revisa el campo.'
+        setPayErrors((prev) => ({ ...prev, cliente: msg }))
+        setError(msg)
+        clienteInputRef.current?.focus()
+        return
+      }
+    }
+    setError(apiErrorMessage(err))
   }
 
   function newSale() {
@@ -213,6 +283,9 @@ export function NewSaleView({ onSold }) {
     setError('')
     setSearchTerm('')
     setQty({})
+    setCliente('')
+    setMonto('')
+    setPayErrors({ cliente: '', monto: '' })
     searchInputRef.current?.focus()
   }
 
@@ -228,6 +301,15 @@ export function NewSaleView({ onSold }) {
       {ticket ? (
         <div role="status" aria-live="polite" className="pos-ticket animate-pop">
           <p><strong>Venta #{ticket.sale.id} confirmada — Total: {money(ticket.sale.total)}</strong></p>
+          {ticket.sale.cliente ? (
+            <p className="pos-ticket-client">Cliente: {ticket.sale.cliente}</p>
+          ) : null}
+          {ticket.sale.monto_recibido !== null && ticket.sale.monto_recibido !== undefined ? (
+            <p>Monto recibido: {money(ticket.sale.monto_recibido)}</p>
+          ) : null}
+          {ticket.sale.vuelto !== null && ticket.sale.vuelto !== undefined ? (
+            <p>Vuelto: {money(ticket.sale.vuelto)}{Number(ticket.sale.vuelto) === 0 ? ' (pago exacto)' : ''}</p>
+          ) : null}
           <table className="pos-table pos-ticket-table">
             <caption>Desglose de la venta #{ticket.sale.id}</caption>
             <thead>
@@ -359,6 +441,58 @@ export function NewSaleView({ onSold }) {
           (lo confirma el servidor al vender)
         </p>
       ) : null}
+      <div className="pos-pay">
+        <div className="pos-pay-field">
+          <label className="pos-label" htmlFor="sale-cliente">
+            Cliente (opcional)
+          </label>
+          <input
+            id="sale-cliente"
+            ref={clienteInputRef}
+            name="cliente"
+            className="pos-input pos-pay-input"
+            type="text"
+            autoComplete="off"
+            maxLength={CLIENTE_MAX + 1}
+            placeholder="Ej. Juan Pérez…"
+            value={cliente}
+            aria-invalid={payErrors.cliente ? 'true' : undefined}
+            aria-describedby={payErrors.cliente ? 'sale-cliente-error' : undefined}
+            onChange={(e) => {
+              setCliente(e.target.value)
+              setPayErrors((prev) => (prev.cliente ? { ...prev, cliente: '' } : prev))
+            }}
+          />
+          {payErrors.cliente ? (
+            <span role="alert" id="sale-cliente-error" className="pos-field-error">{payErrors.cliente}</span>
+          ) : null}
+        </div>
+        <div className="pos-pay-field">
+          <label className="pos-label" htmlFor="sale-monto">
+            Monto recibido en efectivo (opcional)
+          </label>
+          <input
+            id="sale-monto"
+            ref={montoInputRef}
+            name="monto_recibido"
+            className="pos-input pos-pay-input"
+            type="text"
+            inputMode="decimal"
+            autoComplete="off"
+            placeholder="Ej. 100.00…"
+            value={monto}
+            aria-invalid={payErrors.monto ? 'true' : undefined}
+            aria-describedby={payErrors.monto ? 'sale-monto-error' : undefined}
+            onChange={(e) => {
+              setMonto(e.target.value)
+              setPayErrors((prev) => (prev.monto ? { ...prev, monto: '' } : prev))
+            }}
+          />
+          {payErrors.monto ? (
+            <span role="alert" id="sale-monto-error" className="pos-field-error">{payErrors.monto}</span>
+          ) : null}
+        </div>
+      </div>
       <button type="button" className="pos-btn pos-btn--primary" onClick={confirm} disabled={sending || lines.length === 0}>
         {sending ? 'Confirmando...' : 'Confirmar venta'}
       </button>
