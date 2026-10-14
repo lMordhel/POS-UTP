@@ -1,8 +1,14 @@
 export const PAGE_SIZE = 20
 
+const moneyFormatter = new Intl.NumberFormat('es-PE', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+  useGrouping: false,
+})
+
 export function money(value) {
   const n = Number(value)
-  return Number.isFinite(n) ? n.toFixed(2) : String(value)
+  return Number.isFinite(n) ? moneyFormatter.format(n) : String(value)
 }
 
 export function apiErrorMessage(err) {

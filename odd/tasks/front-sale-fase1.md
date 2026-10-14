@@ -1,0 +1,113 @@
+# Feature: front-sale-fase1 (SPEC-FRONT-006)
+
+## Objective
+
+Nueva venta profesional para el cajero: buscador de productos, líneas
+corregibles, validación de stock antes de confirmar y ticket con desglose.
+Solo frontend, sin cambios de API ni dependencias nuevas.
+
+## Problem
+
+La venta es vaga: catálogo en scroll infinito sin buscador (con 100 productos
+es tedioso), una línea agregada no se puede quitar ni corregir, se puede pedir
+más que el stock y recién falla al confirmar, y el ticket es una línea de
+texto sin desglose ni forma de empezar otra venta.
+
+## Why
+
+Decisión del usuario (2026-10-14): Fase 1 primero. Usa el `q` de búsqueda que
+el backend ya expone (`ilike` en código/nombre) — sin cambios backend.
+
+## Scope
+
+- SPEC `SPEC-FRONT-006-*` (DRAFT → APPROVED → VALIDATED).
+- Frontend: `views/NewSaleView.jsx` (+ `components.jsx`/`index.css` si hace
+  falta para el buscador y el ticket).
+  1. Buscador con debounce (usa `stockApi.list(q)`) + Enter agrega.
+  2. Quitar línea y corregir cantidad en líneas agregadas.
+  3. Validar cantidad contra `stock` antes de agregar/confirmar.
+  4. Ticket con desglose + total + botón "Nueva venta".
+- Docs: SPEC + este documento.
+
+## Constraints
+
+- Rama `feature/front-sale-fase1` apilada sobre `feature/front-sale-polish`
+  (el polish no está mergeado; mismo archivo).
+- Sin cambios de comportamiento del servidor ni de contrato API.
+- Sin dependencias nuevas; CSS puro con `prefers-reduced-motion`.
+- Sin push/PR sin pedir. La demo de esta fase absorbe la demo pendiente de
+  SALE-POL-04 (misma vista).
+
+## Checklist
+
+- [x] SALE-PRO-01 SPEC-FRONT-006 DRAFT + rama `feature/front-sale-fase1` (commit 2d6b596)
+- [x] SALE-PRO-02 SPEC-FRONT-006 → APPROVED 1.0.0 (gate del usuario)
+- [x] SALE-PRO-03 Implementación Fase 1 + `npm run build` verde (AC-08 demo
+  manual pendiente → SALE-PRO-04; commit 686968d, sin push)
+- [ ] SALE-PRO-04 Demo manual por AC + VALIDATED + merge (+ push si se pide)
+
+## Authorized scope
+
+Rama `feature/front-sale-fase1`. Archivos: `specs/frontend/SPEC-FRONT-006*`,
+`odd/tasks/front-sale-fase1.md`,
+`frontend/src/{views/NewSaleView.jsx,components.jsx,index.css}`.
+Prohibido: backend, cambios de API, nuevas dependencias, otros views,
+compose, cliente/pagos (Fase 2), push/PR sin pedir.
+
+## Acceptance criteria
+
+- ACs `Given/When/Then` de la SPEC verificados (build + demo manual UI).
+- Flujo vender sin regresiones (estimado, confirmación, ticket).
+
+## Checks aplicables
+
+`cd frontend && npm run build` + demo manual por AC. Excepción TDD
+documentada: frontend sin framework de tests (precedente
+`odd/tasks/front-*.md`); verificación = build + demo manual. No inventar
+RED/GREEN.
+
+## Route declaration
+
+- SALE-PRO-01: delegated spec-draft (preparation trigger: SPECs modelo).
+- SALE-PRO-03: delegated writer (2+ archivos no triviales).
+- Verificación: writer self-report (`npm run build` observado) + parent spot
+  check. RDD assess por work-unit commit como en el feature anterior.
+
+## Progress
+
+- SALE-PRO-01 cerrada: SPEC-FRONT-006 DRAFT v0.1.0 en rama
+  `feature/front-sale-fase1` apilada sobre polish (commit 2d6b596). 8 ACs,
+  4 OQs abiertas.
+- SALE-PRO-02 cerrada: las 4 OQs decididas (recomendadas). SPEC APPROVED 1.0.0.
+- SALE-PRO-03 cerrada parcial: writer implementó AC-01..07 + build verde
+  (commit 686968d, sin push). AC-08 demo manual pendiente.
+
+## Verification evidence
+
+- SALE-PRO-01: SPEC existe en DRAFT (spot check metadata); rama y commit
+  verificados por parent. Solo la SPEC tocada, sin push.
+- SALE-PRO-02: SPEC en APPROVED 1.0.0, OQs DECIDED (spot check sección OQs +
+  history).
+- SALE-PRO-03: writer reportó `npm run build: éxito` (37 módulos, 814ms);
+  parent spot check repitió el build en verde (CSS 3.43 kB, JS 169.04 kB,
+  785ms). Ticket mapea nombres desde líneas locales (POST no devuelve
+  nombres). Sin cambios de API ni dependencias.
+- RDD: sigue vigente el assess del slice (base bf261d3, `review_due: true`,
+  `slice_budget_reached`); el boundary no avanzó (sin review reconocida) así
+  que el resultado cubre este commit. Revisión fresca + merge en SALE-PRO-04
+  tras la demo (evita re-revisar si la demo pide corrección).
+- Ajuste demo 2026-10-14: removido "Cantidad para Enter" (commit f19b1d3,
+  build re-verificado en verde por parent); SPEC 1.0.1 con FR-02/OQ-PRO-02
+  actualizados.
+- SALE-PRO-04 en curso: demo manual OK del usuario 2026-10-14 (AC-01..08 +
+  polish); SPEC-005 1.1.0 y SPEC-006 1.1.0 en VALIDATED. Review nativa:
+  lineage review-fe2d2e68e566f695 con consent granted, slot único
+  review-reliability declarado unachievable (este runtime CLI no tiene agente
+  revisor invocable; copiarlo exacto es imposible) → stop
+  `unachievable_lens_slot` estructural (no transient: reintentarlo repite el
+  muro). Sin autoridad quemada, candidato intacto, RDD sigue on. Merge bajo
+  política ordinaria del repo.
+
+## Next step
+
+- SALE-PRO-04: review nativa del slice → merge a `main`.

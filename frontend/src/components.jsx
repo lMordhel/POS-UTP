@@ -2,11 +2,11 @@ import { money } from './utils.js'
 
 export function ErrorBanner({ message }) {
   if (!message) return null
-  return <p role="alert" style={{ color: 'crimson' }}>{message}</p>
+  return <p role="alert" className="pos-error">{message}</p>
 }
 
 export function Loading({ label }) {
-  return <p>{label ?? 'Cargando...'}</p>
+  return <p role="status" aria-live="polite" aria-busy="true" className="pos-loading">{label ?? 'Cargando...'}</p>
 }
 
 export function ProductRow({ product, canDeactivate, onDeactivate, canManage, onEdit, onAdjust, onReactivate }) {
