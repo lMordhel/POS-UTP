@@ -5,7 +5,7 @@
 - ID: SPEC-FRONT-006
 - Requirement: Extensión de SPEC-FRONT-001 (vista Nueva venta; sin ERF nuevo)
 - Service: Frontend
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Alta
 
@@ -188,13 +188,13 @@ documentada: frontend sin framework de tests, precedente `odd/tasks/front-*.md`)
 
 * [x] OQ-PRO-01..04 resueltas por el usuario.
 * [x] Status → APPROVED 1.0.0 (autoriza SALE-PRO-03).
-* [ ] Implementación toca solo archivos del scope.
-* [ ] `npm run build` verde + demo manual por cada AC.
-* [ ] Status → VALIDATED + merge (SALE-PRO-04; absorbe demo pendiente SALE-POL-04).
+* [x] Implementación toca solo archivos del scope.
+* [x] `npm run build` verde + demo manual por cada AC (demo OK usuario).
+* [x] Status → VALIDATED + merge (SALE-PRO-04; absorbe demo pendiente SALE-POL-04).
 
 ## Next step
 
-SALE-PRO-03: implementar la Fase 1 según esta SPEC aprobada.
+VALIDATED: review nativa del slice y merge a `main` (SALE-PRO-04).
 
 ## Change History
 
@@ -203,3 +203,4 @@ SALE-PRO-03: implementar la Fase 1 según esta SPEC aprobada.
 | 0.1.0 | 2026-10-14 | Initial specification (DRAFT, no autoriza implementar) | Nueva venta profesional Fase 1 (SALE-PRO-01) |
 | 1.0.0 | 2026-10-14 | APPROVED: OQ-PRO-01 300ms, OQ-PRO-02 primer resultado, OQ-PRO-03 inline+quitar, OQ-PRO-04 completo sin cliente | Gate del usuario (SALE-PRO-02) |
 | 1.0.1 | 2026-10-14 | Ajuste demo: removido campo Cantidad para Enter; Enter agrega 1 (corrección inline) | Demo usuario SALE-PRO-04 |
+| 1.1.0 | 2026-10-14 | VALIDATED: demo manual OK del usuario (AC-01..08 + polish) | Demo usuario SALE-PRO-04 |

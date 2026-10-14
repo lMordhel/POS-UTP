@@ -99,8 +99,10 @@ RED/GREEN.
 - Ajuste demo 2026-10-14: removido "Cantidad para Enter" (commit f19b1d3,
   build re-verificado en verde por parent); SPEC 1.0.1 con FR-02/OQ-PRO-02
   actualizados.
+- SALE-PRO-04 en curso: demo manual OK del usuario 2026-10-14 (AC-01..08 +
+  polish); SPEC-005 1.1.0 y SPEC-006 1.1.0 en VALIDATED. Falta review nativa
+  + merge.
 
 ## Next step
 
-- SALE-PRO-04: demo manual del usuario (AC-08 + SALE-POL-04) → VALIDATED →
-  review → merge.
+- SALE-PRO-04: review nativa del slice → merge a `main`.

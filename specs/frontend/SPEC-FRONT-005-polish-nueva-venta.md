@@ -5,7 +5,7 @@
 - ID: SPEC-FRONT-005
 - Requirement: Transversal (polish de SPEC-FRONT-001, vista Nueva venta; sin ERF nuevo)
 - Service: Frontend
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Media
 
@@ -170,13 +170,13 @@ documentada: frontend sin framework de tests, precedente `odd/tasks/front-*.md`)
 
 * [x] OQ-POL-01/OQ-POL-02 decididas por el usuario.
 * [x] Status → APPROVED 1.0.0 (autoriza SALE-POL-03).
-* [ ] Implementación toca solo archivos del scope.
-* [ ] `npm run build` verde + demo manual por cada AC.
-* [ ] Status → VALIDATED + merge (SALE-POL-04).
+* [x] Implementación toca solo archivos del scope.
+* [x] `npm run build` verde + demo manual por cada AC (demo absorbida en Fase 1).
+* [x] Status → VALIDATED + merge (SALE-POL-04).
 
 ## Next step
 
-SALE-POL-03: implementar el polish según esta SPEC aprobada.
+VALIDATED: merge a `main` con la rama apilada de Fase 1 (incluye este polish).
 
 ## Change History
 
@@ -184,3 +184,4 @@ SALE-POL-03: implementar el polish según esta SPEC aprobada.
 |---|---|---|---|
 | 0.1.0 | 2026-10-14 | Initial specification (DRAFT, no autoriza implementar) | Polish visual Nueva venta (SALE-POL-01) |
 | 1.0.0 | 2026-10-14 | APPROVED: OQ-POL-01 claro acorde al POS, OQ-POL-02 base mínima reutilizable | Gate del usuario (SALE-POL-02) |
+| 1.1.0 | 2026-10-14 | VALIDATED: demo manual OK absorbida en Fase 1 (SALE-PRO-04) | Demo usuario |
