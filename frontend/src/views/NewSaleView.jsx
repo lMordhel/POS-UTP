@@ -83,30 +83,46 @@ export function NewSaleView({ onSold }) {
   }
 
   return (
-    <section>
-      <h2>Nueva venta</h2>
+    <section className="new-sale" aria-labelledby="new-sale-title">
+      <h2 id="new-sale-title">Nueva venta</h2>
       <ErrorBanner message={error} />
       {ticket ? (
-        <p>Venta #{ticket.id} confirmada — Total: {money(ticket.total)}</p>
+        <p role="status" aria-live="polite" className="pos-ticket animate-pop">
+          Venta #{ticket.id} confirmada — Total: {money(ticket.total)}
+        </p>
       ) : null}
       {loading ? (
         <Loading />
       ) : (
-        <table>
+        <table className="pos-table">
+          <caption>Catálogo disponible para agregar a la venta</caption>
           <thead>
-            <tr><th>Producto</th><th>Precio</th><th>Stock</th><th>Cant.</th><th /></tr>
+            <tr>
+              <th scope="col">Producto</th>
+              <th scope="col">Precio</th>
+              <th scope="col">Stock</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col"><span className="sr-only">Acciones</span></th>
+            </tr>
           </thead>
           <tbody>
             {products.map((p) => (
-              <tr key={p.id}>
+              <tr key={p.id} className="animate-row">
                 <td>{p.nombre}</td>
                 <td>{money(p.precio)}</td>
                 <td>{p.stock}</td>
                 <td>
-                  <input type="number" min="1" step="1" defaultValue={1}
+                  <label className="pos-label" htmlFor={`qty-${p.id}`}>
+                    Cantidad de {p.nombre}
+                  </label>
+                  <input id={`qty-${p.id}`} className="pos-input" type="number" min="1" step="1" defaultValue={1}
                     onChange={(e) => setQty((m) => ({ ...m, [p.id]: e.target.value }))} />
                 </td>
-                <td><button onClick={() => addLine(p)}>Agregar</button></td>
+                <td>
+                  <button type="button" className="pos-btn" aria-label={`Agregar ${p.nombre} a la venta`} onClick={() => addLine(p)}>
+                    Agregar
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -121,12 +137,12 @@ export function NewSaleView({ onSold }) {
         ))}
       </ul>
       {lines.length > 0 ? (
-        <p>
+        <p role="status" aria-live="polite" className="pos-estimate">
           Total estimado: <strong>{money(estimatedTotal)}</strong>{' '}
           (lo confirma el servidor al vender)
         </p>
       ) : null}
-      <button onClick={confirm} disabled={sending || lines.length === 0}>
+      <button type="button" className="pos-btn pos-btn--primary" onClick={confirm} disabled={sending || lines.length === 0}>
         {sending ? 'Confirmando...' : 'Confirmar venta'}
       </button>
     </section>
