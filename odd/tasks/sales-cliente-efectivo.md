@@ -38,7 +38,7 @@ clásico (SPEC + gate + TDD) para que nada se rompa.
 
 - [x] SALE-EFE-01 SPEC-SALES-005 DRAFT (+ ERF) + rama (commit 2e49024)
 - [x] SALE-EFE-02 SPEC-SALES-005 → APPROVED 1.0.0 (gate del usuario, OQs)
-- [ ] SALE-EFE-03 Implementación TDD (RED observado → GREEN → REFACTOR) + pytest verde
+- [x] SALE-EFE-03 Implementación TDD (RED observado → GREEN → REFACTOR) + pytest verde (commit ccfb9c8, sin push)
 - [ ] SALE-EFE-04 Smoke contra compose/Postgres + VALIDATED + merge (+ push si se pide)
 
 ## Authorized scope
@@ -75,6 +75,8 @@ REFACTOR con tests en verde. Nunca inventar evidencia RED/GREEN ni el runner.
   `feature/sales-cliente-efectivo` (commit 2e49024). 7 ACs, 5 OQs abiertas.
 - SALE-EFE-02 cerrada: 6 OQs decididas (todas recomendadas). SPEC-SALES-005
   1.0.0 + ERF-11 APPROVED.
+- SALE-EFE-03 cerrada: writer con TDD observado RED (9 failed) → GREEN
+  (9 passed) → REFACTOR; suite 65 passed (commit ccfb9c8, sin push).
 
 ## Verification evidence
 
@@ -82,7 +84,12 @@ REFACTOR con tests en verde. Nunca inventar evidencia RED/GREEN ni el runner.
   verificados por parent. Solo SPEC+ERF tocados, sin push.
 - SALE-EFE-02: SPEC en APPROVED 1.0.0, OQs DECIDED, ERF-11 APPROVED
   (spot check OQs + history + ERF).
+- SALE-EFE-03: writer reportó RED 9 failed → GREEN 9 passed → suite
+  65 passed; parent spot check repitió la suite: 65 passed en 33.8s
+  (solo warnings preexistentes). Ojo entorno: usar el intérprete real
+  `C:\Users\Swat\AppData\Local\Python\bin\python.exe` (el `python` del PATH
+  es stub de MS Store).
 
 ## Next step
 
-- SALE-EFE-03: implementación TDD estricta (writer delegado).
+- SALE-EFE-04: smoke contra compose + VALIDATED + review + merge.
