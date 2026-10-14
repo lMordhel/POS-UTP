@@ -12,6 +12,7 @@ from app.services.sale_service import (
     IdempotencyConflictError,
     IdempotencyKeyInvalidError,
     IdempotencyMismatchError,
+    SaleInsufficientPaymentError,
     SaleInsufficientStockError,
     SaleProductNotFoundError,
     SaleService,
@@ -47,6 +48,8 @@ def register_sale(
         sale, replayed = service.register_sale(db, data, idempotency_key=idempotency_key)
     except SaleProductNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
+    except SaleInsufficientPaymentError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
     except SaleInsufficientStockError as exc:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
     except IdempotencyMismatchError as exc:
