@@ -5,7 +5,7 @@
 - ID: SPEC-FRONT-007
 - Requirement: Extensión de SPEC-FRONT-006 (vista Nueva venta; sin ERF nuevo; backend SPEC-SALES-005 VALIDATED)
 - Service: Frontend
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Alta
 
@@ -168,13 +168,13 @@ Tests: `cd frontend && npm run build` + demo manual por AC (excepción TDD docum
 
 * [x] OQ-PAG07-01..03 resueltas por el usuario.
 * [x] Status → APPROVED 1.0.0 (autoriza PAGO-03).
-* [ ] Implementación toca solo archivos del scope.
-* [ ] `npm run build` verde + demo manual por cada AC.
-* [ ] Status → VALIDATED + merge (PAGO-04).
+* [x] Implementación toca solo archivos del scope.
+* [x] `npm run build` verde + demo manual por cada AC (demo OK usuario).
+* [x] Status → VALIDATED + merge (PAGO-04).
 
 ## Next step
 
-PAGO-03: implementar la UI de cobro según esta SPEC aprobada.
+VALIDATED: review nativa del slice y merge a `main` (PAGO-04).
 
 ## Change History
 
@@ -182,3 +182,4 @@ PAGO-03: implementar la UI de cobro según esta SPEC aprobada.
 |---|---|---|---|
 | 0.1.0 | 2026-10-14 | Initial specification (DRAFT, no autoriza implementar) | PAGO-01: UI de cobro cliente + efectivo |
 | 1.0.0 | 2026-10-14 | APPROVED: 3 OQs decididas (recomendadas) | Gate del usuario (PAGO-02) |
+| 1.1.0 | 2026-10-14 | VALIDATED: demo manual OK del usuario (AC-01..07) | Demo usuario PAGO-04 |

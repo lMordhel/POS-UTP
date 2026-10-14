@@ -76,6 +76,8 @@ RED/GREEN.
 - PAGO-02 cerrada: 3 OQs decididas (recomendadas). SPEC APPROVED 1.0.0.
 - PAGO-03 cerrada parcial: writer implementó AC-01..07 + build verde
   (commit ac62b1f, sin push). Demo manual pendiente.
+- PAGO-04 en curso: demo manual OK del usuario 2026-10-14 ("todo bien",
+  AC-01..07); SPEC-007 1.1.0 en VALIDATED. Falta review nativa + merge.
 
 ## Verification evidence
 
