@@ -147,6 +147,67 @@ body {
   padding: 12px 0;
 }
 
+/* Buscador de Nueva venta (SPEC-FRONT-006) */
+.pos-search {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.pos-search-field {
+  display: grid;
+  gap: 4px;
+  flex: 1 1 220px;
+}
+
+.pos-search-field--qty {
+  flex: 0 1 130px;
+}
+
+.pos-search-input {
+  max-width: none;
+  width: 100%;
+}
+
+.pos-empty {
+  color: var(--pos-muted);
+  padding: 8px 0;
+}
+
+.pos-lines {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pos-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--pos-border);
+  border-radius: var(--pos-radius);
+  background-color: var(--pos-surface);
+}
+
+.pos-line-name {
+  flex: 1 1 220px;
+}
+
+.pos-line-error {
+  flex: 1 1 100%;
+  color: var(--pos-danger);
+  font-weight: 600;
+}
+
+.pos-ticket-table {
+  margin: 12px 0;
+}
+
 /* Solo visible para lectores de pantalla */
 .sr-only {
   position: absolute;
@@ -184,7 +245,9 @@ body {
   .animate-row,
   .animate-pop,
   .pos-btn,
-  .pos-input {
+  .pos-input,
+  .pos-line,
+  .pos-ticket {
     animation: none;
     transition: none;
   }
