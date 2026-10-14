@@ -100,8 +100,13 @@ RED/GREEN.
   build re-verificado en verde por parent); SPEC 1.0.1 con FR-02/OQ-PRO-02
   actualizados.
 - SALE-PRO-04 en curso: demo manual OK del usuario 2026-10-14 (AC-01..08 +
-  polish); SPEC-005 1.1.0 y SPEC-006 1.1.0 en VALIDATED. Falta review nativa
-  + merge.
+  polish); SPEC-005 1.1.0 y SPEC-006 1.1.0 en VALIDATED. Review nativa:
+  lineage review-fe2d2e68e566f695 con consent granted, slot único
+  review-reliability declarado unachievable (este runtime CLI no tiene agente
+  revisor invocable; copiarlo exacto es imposible) → stop
+  `unachievable_lens_slot` estructural (no transient: reintentarlo repite el
+  muro). Sin autoridad quemada, candidato intacto, RDD sigue on. Merge bajo
+  política ordinaria del repo.
 
 ## Next step
 

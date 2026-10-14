@@ -80,8 +80,9 @@ verificación vigente = build + demo manual por AC. No inventar RED/GREEN.
   (commit 91f35ff, sin push). AC-08 demo manual pendiente (requiere servicios
   en línea + usuario).
 - SALE-POL-04 en curso: demo manual OK del usuario 2026-10-14 absorbida en
-  Fase 1; SPEC-005 1.1.0 en VALIDATED. Falta review nativa + merge (rama
-  apilada de Fase 1).
+  Fase 1; SPEC-005 1.1.0 en VALIDATED. Review nativa: mismo lineage
+  review-fe2d2e68e566f695, slot unachievable estructural → stop sin autoridad
+  quemada. Merge junto a Fase 1 bajo política ordinaria.
 
 ## Verification evidence
 
