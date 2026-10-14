@@ -40,7 +40,8 @@ entendible y claro. Skills instaladas: `web-design-guidelines` (revisión UI)
 
 - [x] SALE-POL-01 SPEC-FRONT-005 DRAFT + rama `feature/front-sale-polish` (commit 59613bd)
 - [x] SALE-POL-02 SPEC-FRONT-005 → APPROVED 1.0.0 (gate del usuario, OQs)
-- [ ] SALE-POL-03 Implementación polish + `npm run build` verde
+- [x] SALE-POL-03 Implementación polish + `npm run build` verde (AC-08 demo
+  manual pendiente → SALE-POL-04; commit 91f35ff, sin push)
 - [ ] SALE-POL-04 Demo manual por AC + VALIDATED + merge (+ push si se pide)
 
 ## Authorized scope
@@ -74,14 +75,25 @@ verificación vigente = build + demo manual por AC. No inventar RED/GREEN.
 - SALE-POL-01 cerrada: SPEC DRAFT v0.1.0 en rama `feature/front-sale-polish`
   (commit 59613bd).
 - SALE-POL-02 cerrada: OQ-POL-01 claro acorde al POS, OQ-POL-02 base mínima
-  reutilizable. SPEC APPROVED 1.0.0.
+  reutilizable. SPEC APPROVED 1.0.0 (commit d640c34).
+- SALE-POL-03 cerrada parcial: writer implementó AC-01..07 + build verde
+  (commit 91f35ff, sin push). AC-08 demo manual pendiente (requiere servicios
+  en línea + usuario).
 
 ## Verification evidence
 
 - SALE-POL-01: SPEC existe y está en DRAFT (spot check líneas 1-50);
   `git status` confirma rama y solo el `.md` nuevo. Sin código tocado.
 - SALE-POL-02: SPEC en APPROVED 1.0.0, OQs DECIDED (spot check OQs + history).
+- SALE-POL-03: writer reportó `npm run build: éxito` (37 módulos, CSS 2.77 kB,
+  JS 164.49 kB); parent spot check repitió el build en verde (mismos bytes).
+  Grep sin `transition:all` ni ViewTransition; sin dependencias nuevas.
+- RDD (on por default): assess del work-unit commit → `review_due: true`
+  (`slice_budget_reached`, base bf261d3). Preflight STATUS devolvió collect
+  `intended_untracked_selection_required` por untracked de entorno (skills
+  instaladas); no se fabricó la selección → revisión no iniciada, sin
+  autoridad quemada, candidato intacto. Retomar en SALE-POL-04.
 
 ## Next step
 
-- SALE-POL-03: implementar el polish (writer delegado).
+- SALE-POL-04: demo manual del usuario (AC-08) → VALIDATED → review → merge.
