@@ -13,7 +13,7 @@ Frontend Vite (:5173) ──► Sales (:8001) ──► Stock (:8002)
 ```
 
 * **stock-service** (FastAPI): productos, inventario, consulta/actualización de stock → ERF-02/04/05/06/08.
-* **sales-service** (FastAPI): ventas y detalles; valida precios/stock y descuenta vía HTTP a Stock → ERF-01/03/07.
+* **sales-service** (FastAPI): ventas y detalles; valida precios/stock y descuenta vía HTTP a Stock → ERF-01/03/07; cliente (texto libre) y pago en efectivo con vuelto server-side → ERF-11.
 * Sin API Gateway (YAGNI, 2 servicios). Decisiones en `docs/DECISIONS.md`, trazabilidad en `docs/TRACEABILITY.md`.
 
 ## Requisitos
@@ -54,8 +54,8 @@ docker compose -f infra/docker-compose.yml down
 ## Tests
 
 ```powershell
-cd services/stock-service; py -m pytest tests -q   # 25 tests
-cd ../sales-service; py -m pytest tests -q          # 13 tests
+cd services/stock-service; py -m pytest tests -q   # 63 tests
+cd ../sales-service; py -m pytest tests -q          # 65 tests
 cd ../..; py infra/e2e_check.py                     # E2E real Ventas→Stock
 ```
 
@@ -64,7 +64,7 @@ cd ../..; py infra/e2e_check.py                     # E2E real Ventas→Stock
 ```text
 specs/            # especificaciones SDD (fuente de verdad)
   architecture/ stock/ sales/ frontend/
-docs/             # DECISIONS.md, TRACEABILITY.md
+docs/             # DECISIONS.md, TRACEABILITY.md, ERF-*.md
 services/stock-service | services/sales-service
 frontend/         # React + Vite (VITE_STOCK_URL, VITE_SALES_URL)
 infra/            # docker-compose.yml, postgres/init.sql, e2e_check.py
@@ -73,4 +73,4 @@ infra/            # docker-compose.yml, postgres/init.sql, e2e_check.py
 ## Reglas
 
 * Sin SPEC aprobada no hay funcionalidad nueva (`.agents/rules/spec-driven-development.md`).
-* Fuera de alcance sin ERF: auth, pagos/QR, facturación, descuentos, brokers.
+* Fuera de alcance sin ERF: pagos con tarjeta/QR, facturación electrónica, descuentos, brokers.
