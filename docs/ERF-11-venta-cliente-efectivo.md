@@ -1,7 +1,7 @@
 # ERF-11 — Venta con cliente y pago en efectivo
 
 > Documento de trabajo para trasladar al documento académico (`.docx`).
-> Estado: aprobado junto a SPEC-SALES-005 1.0.0 (APPROVED).
+> Estado: implementado y validado con SPEC-SALES-005 1.1.0 (VALIDATED).
 > Base: SPEC-SALES-001 excluye vuelto/pago/cliente y exige ERF nuevo
 > (OQ-ERF01-01); SPEC-SALES-005 lo especifica (DRAFT, sin implementar).
 

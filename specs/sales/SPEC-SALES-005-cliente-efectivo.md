@@ -5,7 +5,7 @@
 - ID: SPEC-SALES-005
 - Requirement: ERF-11 — Venta con cliente y pago en efectivo (nuevo; SPEC-SALES-001 excluye vuelto/pago/cliente y exige ERF nuevo, ver OQ-ERF01-01)
 - Service: Sales
-- Status: APPROVED
+- Status: VALIDATED
 - Version: 1.0.0
 - Priority: Alta
 
@@ -194,3 +194,4 @@ Tests: Pendiente (futuros: test_venta_cliente_efectivo_vuelto, test_monto_insufi
 |---|---|---|---|
 | 0.1.0 | 2026-10-14 | Initial specification (DRAFT, no autoriza implementar) | SALE-EFE-01: cliente + efectivo Fase 2 |
 | 1.0.0 | 2026-10-14 | APPROVED: 6 OQs decididas (recomendadas); ERF-11 aprobado | Gate del usuario (SALE-EFE-02) |
+| 1.1.0 | 2026-10-14 | VALIDATED: pytest 65 passed + smoke compose/Postgres OK | SALE-EFE-04 |

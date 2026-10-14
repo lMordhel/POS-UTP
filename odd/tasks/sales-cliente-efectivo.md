@@ -71,10 +71,17 @@ REFACTOR con tests en verde. Nunca inventar evidencia RED/GREEN ni el runner.
 
 ## Progress
 
-- SALE-EFE-01 cerrada: SPEC-SALES-005 DRAFT v0.1.0 + ERF-11 nuevo en rama
-  `feature/sales-cliente-efectivo` (commit 2e49024). 7 ACs, 5 OQs abiertas.
-- SALE-EFE-02 cerrada: 6 OQs decididas (todas recomendadas). SPEC-SALES-005
-  1.0.0 + ERF-11 APPROVED.
+- SALE-EFE-01 cerrada: SPEC-SALES-005 DRAFT v0.1.0 + ERF-11 nuevo
+  (commit 2e49024).
+- SALE-EFE-02 cerrada: 6 OQs decididas. SPEC + ERF-11 APPROVED
+  (commit bfdb907).
+- SALE-EFE-03 cerrada: writer con TDD observado RED (9 failed) → GREEN
+  (9 passed) → REFACTOR; suite 65 passed (commit ccfb9c8, sin push).
+- SALE-EFE-04 en curso: smoke OK contra Postgres compose 2026-10-14
+  (exacto vuelto 0, vuelto 30.00, 422 insuficiente con stock intacto, GET
+  expone campos; rebuild imagen sales por migración nueva).
+  SPEC-SALES-005 1.1.0 + ERF-11 en VALIDATED. Falta merge (review nativa
+  unavailable estructural, registrada).
 - SALE-EFE-03 cerrada: writer con TDD observado RED (9 failed) → GREEN
   (9 passed) → REFACTOR; suite 65 passed (commit ccfb9c8, sin push).
 
