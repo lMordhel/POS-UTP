@@ -42,7 +42,8 @@ el backend ya expone (`ilike` en código/nombre) — sin cambios backend.
 
 - [x] SALE-PRO-01 SPEC-FRONT-006 DRAFT + rama `feature/front-sale-fase1` (commit 2d6b596)
 - [x] SALE-PRO-02 SPEC-FRONT-006 → APPROVED 1.0.0 (gate del usuario)
-- [ ] SALE-PRO-03 Implementación Fase 1 + `npm run build` verde
+- [x] SALE-PRO-03 Implementación Fase 1 + `npm run build` verde (AC-08 demo
+  manual pendiente → SALE-PRO-04; commit 686968d, sin push)
 - [ ] SALE-PRO-04 Demo manual por AC + VALIDATED + merge (+ push si se pide)
 
 ## Authorized scope
@@ -78,6 +79,8 @@ RED/GREEN.
   `feature/front-sale-fase1` apilada sobre polish (commit 2d6b596). 8 ACs,
   4 OQs abiertas.
 - SALE-PRO-02 cerrada: las 4 OQs decididas (recomendadas). SPEC APPROVED 1.0.0.
+- SALE-PRO-03 cerrada parcial: writer implementó AC-01..07 + build verde
+  (commit 686968d, sin push). AC-08 demo manual pendiente.
 
 ## Verification evidence
 
@@ -85,7 +88,16 @@ RED/GREEN.
   verificados por parent. Solo la SPEC tocada, sin push.
 - SALE-PRO-02: SPEC en APPROVED 1.0.0, OQs DECIDED (spot check sección OQs +
   history).
+- SALE-PRO-03: writer reportó `npm run build: éxito` (37 módulos, 814ms);
+  parent spot check repitió el build en verde (CSS 3.43 kB, JS 169.04 kB,
+  785ms). Ticket mapea nombres desde líneas locales (POST no devuelve
+  nombres). Sin cambios de API ni dependencias.
+- RDD: sigue vigente el assess del slice (base bf261d3, `review_due: true`,
+  `slice_budget_reached`); el boundary no avanzó (sin review reconocida) así
+  que el resultado cubre este commit. Revisión fresca + merge en SALE-PRO-04
+  tras la demo (evita re-revisar si la demo pide corrección).
 
 ## Next step
 
-- SALE-PRO-03: implementar la Fase 1 (writer delegado).
+- SALE-PRO-04: demo manual del usuario (AC-08 + SALE-POL-04) → VALIDATED →
+  review → merge.
