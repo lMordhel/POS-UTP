@@ -37,7 +37,7 @@ clásico (SPEC + gate + TDD) para que nada se rompa.
 ## Checklist
 
 - [x] SALE-EFE-01 SPEC-SALES-005 DRAFT (+ ERF) + rama (commit 2e49024)
-- [ ] SALE-EFE-02 SPEC-SALES-005 → APPROVED 1.0.0 (gate del usuario, OQs)
+- [x] SALE-EFE-02 SPEC-SALES-005 → APPROVED 1.0.0 (gate del usuario, OQs)
 - [ ] SALE-EFE-03 Implementación TDD (RED observado → GREEN → REFACTOR) + pytest verde
 - [ ] SALE-EFE-04 Smoke contra compose/Postgres + VALIDATED + merge (+ push si se pide)
 
@@ -72,14 +72,17 @@ REFACTOR con tests en verde. Nunca inventar evidencia RED/GREEN ni el runner.
 ## Progress
 
 - SALE-EFE-01 cerrada: SPEC-SALES-005 DRAFT v0.1.0 + ERF-11 nuevo en rama
-  `feature/sales-cliente-efectivo` (commit 2e49024). 7 ACs, 5 OQs abiertas
-  (OQ-CLI05-01 ERF nuevo ya aplicada).
+  `feature/sales-cliente-efectivo` (commit 2e49024). 7 ACs, 5 OQs abiertas.
+- SALE-EFE-02 cerrada: 6 OQs decididas (todas recomendadas). SPEC-SALES-005
+  1.0.0 + ERF-11 APPROVED.
 
 ## Verification evidence
 
 - SALE-EFE-01: SPEC existe en DRAFT (spot check metadata); rama y commit
   verificados por parent. Solo SPEC+ERF tocados, sin push.
+- SALE-EFE-02: SPEC en APPROVED 1.0.0, OQs DECIDED, ERF-11 APPROVED
+  (spot check OQs + history + ERF).
 
 ## Next step
 
-- SALE-EFE-02: gate del usuario (OQ-CLI05-02..06) → APPROVED 1.0.0.
+- SALE-EFE-03: implementación TDD estricta (writer delegado).

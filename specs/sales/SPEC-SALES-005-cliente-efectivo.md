@@ -5,8 +5,8 @@
 - ID: SPEC-SALES-005
 - Requirement: ERF-11 — Venta con cliente y pago en efectivo (nuevo; SPEC-SALES-001 excluye vuelto/pago/cliente y exige ERF nuevo, ver OQ-ERF01-01)
 - Service: Sales
-- Status: DRAFT
-- Version: 0.1.0
+- Status: APPROVED
+- Version: 1.0.0
 - Priority: Alta
 
 ## Objective
@@ -154,31 +154,22 @@ Then debe incluir `cliente`, `monto_recibido` y `vuelto` persistidos.
 
 ## Open Questions
 
-* OQ-CLI05-01 — ERF nuevo vs enmienda de ERF-01. Recomendación: ERF nuevo
-  (ERF-11). SPEC-SALES-001 excluye pago/cliente explícitamente y está
-  VALIDATED; enmendarla reabriría su gate. Requiere decisión en SALE-EFE-02.
+* OQ-CLI05-01 — ERF nuevo vs enmienda de ERF-01. DECIDED: ERF nuevo
+  (ERF-11, aprobado junto a esta SPEC).
 * OQ-CLI05-02 — Cliente: opcional, `strip()`, máx. 120, ¿en hash de
-  idempotencia? Recomendación: sí a todo (opcional; vacío→`null`; 120 cubre
-  nombres compuestos; incluir en hash para que replay distinga negocios).
-  Requiere decisión en SALE-EFE-02.
+  idempotencia? DECIDED: sí a todo (opcional; vacío→`null`; incluir en hash).
 * OQ-CLI05-03 — `monto_recibido`: ¿opcional-nullable o requerido?
-  Recomendación: opcional-nullable (backward compatible con SPEC-SALES-001;
-  Fase 2 es solo efectivo pero hay ventas ya registradas sin pago).
-  Requiere decisión en SALE-EFE-02.
+  DECIDED: opcional-nullable (backward compatible con SPEC-SALES-001).
 * OQ-CLI05-04 — Vuelto: ¿persistido o derivado al leer? ¿permitir pago
-  exacto? Recomendación: persistido `NUMERIC(12,2)` (auditable en caja) y
-  exacto permitido (`vuelto = 0`). Requiere decisión en SALE-EFE-02.
-* OQ-CLI05-05 — Migración: ¿nullable o NOT NULL + default? Recomendación:
-  nullable (lineal, baseline intacta, single head; NOT NULL obligaría a
-  backfill y rompe la regla de prod-solo-adelante). Requiere decisión en
-  SALE-EFE-02.
+  exacto? DECIDED: persistido `NUMERIC(12,2)` y exacto permitido (`vuelto = 0`).
+* OQ-CLI05-05 — Migración: ¿nullable o NOT NULL + default? DECIDED:
+  nullable (lineal, baseline intacta, single head).
 * OQ-CLI05-06 — Alcance: confirmar que impuestos/QR quedan fuera.
-  Recomendación: fuera (Fase 2 solo efectivo; QR/impuestos exigen ERF nuevo).
-  Requiere decisión en SALE-EFE-02.
+  DECIDED: fuera (Fase 2 solo efectivo).
 
 ## Traceability
 
-Requirement: ERF-11 (nuevo, DRAFT)
+Requirement: ERF-11 (nuevo, APPROVED 1.0.0 junto a esta SPEC)
 Endpoint: POST /api/v1/sales (extendido) + GET /sales* (lectura)
 Service: Sales (consume Stock vía HTTP, sin cambios)
 Tests: Pendiente (futuros: test_venta_cliente_efectivo_vuelto, test_monto_insuficiente_422, test_sin_cliente_compat_201, test_cliente_invalido_422, test_idempotencia_con_cliente_monto, test_pago exacto_vuelto_cero, test_lectura_expone_cliente_pago)
@@ -202,3 +193,4 @@ Tests: Pendiente (futuros: test_venta_cliente_efectivo_vuelto, test_monto_insufi
 | Version | Date | Change | Reason |
 |---|---|---|---|
 | 0.1.0 | 2026-10-14 | Initial specification (DRAFT, no autoriza implementar) | SALE-EFE-01: cliente + efectivo Fase 2 |
+| 1.0.0 | 2026-10-14 | APPROVED: 6 OQs decididas (recomendadas); ERF-11 aprobado | Gate del usuario (SALE-EFE-02) |
