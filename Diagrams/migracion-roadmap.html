@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Hoja de ruta de migración · POS-UTP</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:  #f5f5f5;
+      --color-surface:#ffffff;
+      --color-ink:    #2d3142;
+      --color-muted:  #4f5d75;
+      --color-accent: #bf4520;
+      --font-sans:    Arial, 'Segoe UI', system-ui, sans-serif;
+      --font-mono:    Consolas, 'Courier New', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      padding: 28px 24px;
+    }
+    .frame { max-width: 1180px; margin: 0 auto; }
+    .eyebrow {
+      font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-muted);
+      margin-bottom: 6px;
+    }
+    h1 { font-size: 27px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 18px; }
+    svg { width: 100%; display: block; }
+    .note { margin-top: 14px; font-size: 12px; color: var(--color-muted); }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">POS-UTP · Fases E–H del ADM (TOGAF 10)</p>
+    <h1>Hoja de ruta de migración hacia la arquitectura objetivo</h1>
+
+    <svg viewBox="0 0 1180 780" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="rm-title rm-desc">
+      <title id="rm-title">Hoja de ruta de migración del Sistema de Ventas para Microempresas</title>
+      <desc id="rm-desc">Ocho fases ejecutadas entre el 29 de septiembre y el 13 de octubre de 2026: núcleo de servicios e infraestructura, autenticación y RBAC, hardening HTTP, idempotencia y saga, Alembic y auditoría, lectura por lote, observabilidad y cierre de la interfaz.</desc>
+
+        <defs>
+          <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.9" fill="rgba(45,49,66,0.10)"/>
+          </pattern>
+          <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#bf4520"/>
+          </marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f5f5"/>
+        <rect width="100%" height="100%" fill="url(#dots)" opacity="0.55"/>
+
+        <!-- rail -->
+        <line x1="86" y1="70" x2="86" y2="690" stroke="rgba(79,93,117,0.35)" stroke-width="1"/>
+
+        <!-- F0 -->
+        <circle cx="86" cy="86" r="7" fill="#2d3142"/>
+        <text x="86" y="90" fill="#ffffff" font-size="10" font-weight="600" font-family="Arial, sans-serif" text-anchor="middle">0</text>
+        <text x="116" y="80" fill="#2d3142" font-size="15" font-weight="600">Núcleo de servicios e infraestructura</text>
+        <text x="116" y="98" fill="#4f5d75" font-size="11.5">stock-service (ERF-02/04/05/06/08) y sales-service (ERF-01/03/07), Docker Compose con ventas_db y stock_db, frontend Vite</text>
+        <text x="1120" y="80" fill="#bf4520" font-size="11" font-family="Consolas, monospace" text-anchor="end">28–29 SEP 2026</text>
+        <text x="1120" y="98" fill="#4f5d75" font-size="11" font-family="Consolas, monospace" text-anchor="end">25/25 + 13/13 pytest · E2E real</text>
+
+        <!-- F1 -->
+        <circle cx="86" cy="166" r="7" fill="#bf4520"/>
+        <text x="86" y="170" fill="#ffffff" font-size="10" font-weight="600" font-family="Arial, sans-serif" text-anchor="middle">1</text>
+        <text x="116" y="160" fill="#2d3142" font-size="15" font-weight="600">Autenticación y autorización por roles</text>
+        <text x="116" y="178" fill="#4f5d75" font-size="11.5">JWT de corta duración con refresh rotativo, bcrypt, roles admin y cajero con enforcement en backend</text>
+        <text x="1120" y="160" fill="#bf4520" font-size="11" font-family="Consolas, monospace" text-anchor="end">12 OCT 2026</text>
+        <text x="1120" y="178" fill="#4f5d75" font-size="11" font-family="Consolas, monospace" text-anchor="end">SPEC-AUTH-001 · 67/67 pytest</text>
+
+        <!-- F2 -->
+        <circle cx="86" cy="246" r="7" fill="#bf4520"/>
+        <text x="86" y="250" fill="#ffffff" font-size="10" font-weight="600" font-family="Arial, sans-serif" text-anchor="middle">2</text>
+        <text x="116" y="240" fill="#2d3142" font-size="15" font-weight="600">Hardening HTTP</text>
+        <text x="116" y="258" fill="#4f5d75" font-size="11.5">CORS por entorno, rate limiting en autenticación y escrituras, cabeceras de seguridad, fail-fast ante secretos de ejemplo</text>
+        <text x="1120" y="240" fill="#bf4520" font-size="11" font-family="Consolas, monospace" text-anchor="end">12 OCT 2026</text>
+        <text x="1120" y="258" fill="#4f5d75" font-size="11" font-family="Consolas, monospace" text-anchor="end">SPEC-AUTH-002 · 79/79 pytest</text>
+
+        <!-- F3 -->
+        <circle cx="86" cy="326" r="7" fill="#bf4520"/>
+        <text x="86" y="330" fill="#ffffff" font-size="10" font-weight="600" font-family="Arial, sans-serif" text-anchor="middle">3</text>
+        <text x="116" y="320" fill="#2d3142" font-size="15" font-weight="600">Idempotencia y saga de venta</text>
+        <text x="116" y="338" fill="#4f5d75" font-size="11.5">Idempotency-Key por venta y por línea, compensación con reintentos, timeout ambiguo resoluble por replay</text>
+        <text x="1120" y="320" fill="#bf4520" font-size="11" font-family="Consolas, monospace" text-anchor="end">12 OCT 2026</text>
+        <text x="1120" y="338" fill="#4f5d75" font-size="11" font-family="Consolas, monospace" text-anchor="end">SPEC-SALES-004 · 86/86 pytest</text>
+
+        <!-- F4 -->
+        <circle cx="86" cy="406" r="7" fill="#bf4520"/>
+        <text x="86" y="410" fill="#ffffff" font-size="10" font-weight="600" font-family="Arial, sans-serif" text-anchor="middle">4</text>
+        <text x="116" y="400" fill="#2d3142" font-size="15" font-weight="600">Migraciones Alembic y auditoría</text>
+        <text x="116" y="418" fill="#4f5d75" font-size="11.5">Esquema versionado con upgrade y downgrade por servicio; registro de movimientos de inventario con actor y motivo</text>
+        <text x="1120" y="400" fill="#bf4520" font-size="11" font-family="Consolas, monospace" text-anchor="end">12 OCT 2026</text>
+        <text x="1120" y="418" fill="#4f5d75" font-size="11" font-family="Consolas, monospace" text-anchor="end">SPEC-OPS-001 · 97/97 pytest</text>
+
+        <!-- F5 -->
+        <circle cx="86" cy="486" r="7" fill="#bf4520"/>
+        <text x="86" y="490" fill="#ffffff" font-size="10" font-weight="600" font-family="Arial, sans-serif" text-anchor="middle">5</text>
+        <text x="116" y="480" fill="#2d3142" font-size="15" font-weight="600">Lectura por lote entre servicios</text>
+        <text x="116" y="498" fill="#4f5d75" font-size="11.5">Endpoint batch de solo lectura que elimina el patrón N+1 de la saga de venta (antes 3N llamadas)</text>
+        <text x="1120" y="480" fill="#bf4520" font-size="11" font-family="Consolas, monospace" text-anchor="end">12 OCT 2026</text>
+        <text x="1120" y="498" fill="#4f5d75" font-size="11" font-family="Consolas, monospace" text-anchor="end">SPEC-STOCK-006 · 106/106 pytest</text>
+
+        <!-- F6 -->
+        <circle cx="86" cy="566" r="7" fill="#bf4520"/>
+        <text x="86" y="570" fill="#ffffff" font-size="10" font-weight="600" font-family="Arial, sans-serif" text-anchor="middle">6</text>
+        <text x="116" y="560" fill="#2d3142" font-size="15" font-weight="600">Observabilidad</text>
+        <text x="116" y="578" fill="#4f5d75" font-size="11.5">Access log JSON con X-Request-ID, métricas en formato Prometheus y sonda de disponibilidad por base de datos</text>
+        <text x="1120" y="560" fill="#bf4520" font-size="11" font-family="Consolas, monospace" text-anchor="end">12 OCT 2026</text>
+        <text x="1120" y="578" fill="#4f5d75" font-size="11" font-family="Consolas, monospace" text-anchor="end">SPEC-OPS-002 · 116/116 pytest</text>
+
+        <!-- Cierre -->
+        <circle cx="86" cy="646" r="7" fill="#2d3142"/>
+        <text x="86" y="650" fill="#ffffff" font-size="10" font-weight="600" font-family="Arial, sans-serif" text-anchor="middle">7</text>
+        <text x="116" y="640" fill="#2d3142" font-size="15" font-weight="600">Cierre de la interfaz de usuario</text>
+        <text x="116" y="658" fill="#4f5d75" font-size="11.5">Auditoría visible, paginación, cobro con cliente y efectivo, y pulido del flujo de nueva venta</text>
+        <text x="1120" y="640" fill="#bf4520" font-size="11" font-family="Consolas, monospace" text-anchor="end">13–14 OCT 2026</text>
+        <text x="1120" y="658" fill="#4f5d75" font-size="11" font-family="Consolas, monospace" text-anchor="end">SPEC-STOCK-007 / FRONT-004 / FRONT-007</text>
+
+        <!-- legend -->
+        <line x1="40" y1="706" x2="1140" y2="706" stroke="rgba(45,49,66,0.12)" stroke-width="0.8"/>
+        <circle cx="52" cy="726" r="6" fill="#2d3142"/>
+        <text x="66" y="730" fill="#4f5d75" font-size="11">Fase fundacional</text>
+        <circle cx="196" cy="726" r="6" fill="#bf4520"/>
+        <text x="210" y="730" fill="#4f5d75" font-size="11">Fase de gobierno, consistencia y operación</text>
+        <text x="1120" y="730" fill="#4f5d75" font-size="11" font-family="Consolas, monospace" text-anchor="end">Cada fase cierra con SPEC validada, suite verde y E2E</text>
+      </svg>
+
+    <p class="note">Fases ejecutadas en 17 días, del 28 de septiembre al 14 de octubre de 2026. El eje temporal es real: la concentración de las fases 1 a 6 el 12 de octubre corresponde a la aprobación de la ampliación de alcance (D-AUTH-SCOPE) y a la verificación conjunta por la prueba de extremo a extremo.</p>
+  </div>
+</body>
+</html>
