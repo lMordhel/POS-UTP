@@ -93,8 +93,15 @@ export function SalesView({ refreshKey }) {
       ) : (
         <>
           <table className="pos-table">
+            <caption>Ventas registradas, de la más reciente a la más antigua</caption>
             <thead>
-              <tr><th scope="col">#</th><th scope="col">Fecha</th><th scope="col">Total</th><th scope="col">Estado</th><th /></tr>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Fecha</th>
+                <th scope="col" className="num">Total</th>
+                <th scope="col">Estado</th>
+                <th scope="col" className="actions" />
+              </tr>
             </thead>
             <tbody>
               {sales.map((s) => (
