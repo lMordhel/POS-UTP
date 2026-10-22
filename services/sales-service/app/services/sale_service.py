@@ -253,8 +253,8 @@ class SaleService:
             db.flush()
         return SaleRead.model_validate(sale), False
 
-    def list(self, db: Session, skip: int, limit: int) -> list[SaleRead]:
-        return [SaleRead.model_validate(s) for s in sale_repository.list(db, skip, limit)]
+    def list(self, db: Session, skip: int, limit: int, desc: bool = True) -> list[SaleRead]:
+        return [SaleRead.model_validate(s) for s in sale_repository.list(db, skip, limit, desc=desc)]
 
     def get(self, db: Session, sale_id: int) -> SaleRead | None:
         sale = sale_repository.get(db, sale_id)

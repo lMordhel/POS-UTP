@@ -39,11 +39,25 @@ export function SaleRow({ sale, onSelect }) {
   return (
     <tr>
       <td>{sale.id}</td>
-      <td>{sale.fecha ? new Date(sale.fecha).toLocaleString() : ''}</td>
+      {/* SPEC-FRONT-008 (AC-FRONT08-02): fecha en es-PE y en 24 horas; sin
+          locale el navegador usa en-US y muestra "9/28/2026, 9:15:07 PM". */}
+      <td>
+        {sale.fecha
+          ? new Date(sale.fecha).toLocaleString('es-PE', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: false,
+            })
+          : ''}
+      </td>
       <td>{money(sale.total)}</td>
       <td>{sale.estado}</td>
       <td>
-        <button onClick={() => onSelect(sale.id)}>Ver</button>
+        <button className="pos-btn" onClick={() => onSelect(sale.id)}>Ver</button>
       </td>
     </tr>
   )

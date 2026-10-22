@@ -110,3 +110,47 @@ def test_list_and_get_sale(client, cashier_headers):
     assert detail.status_code == 200
     assert len(detail.json()["items"]) == 1
     assert client.get("/api/v1/sales/9999", headers=cashier_headers).status_code == 404
+
+
+def _create_sales(client, cashier_headers, n=3):
+    return [
+        client.post(
+            "/api/v1/sales", json={"items": [{"producto_id": 1, "cantidad": 1}]}, headers=cashier_headers
+        ).json()["id"]
+        for _ in range(n)
+    ]
+
+
+@pytest.mark.integration
+def test_list_sales_returns_newest_first_by_default(client, cashier_headers):
+    """AC-ERF07-04: la venta más reciente es la primera de la lista."""
+    ids = _create_sales(client, cashier_headers)
+    listing = client.get("/api/v1/sales", headers=cashier_headers)
+    assert listing.status_code == 200
+    assert [s["id"] for s in listing.json()] == sorted(ids, reverse=True)
+
+
+@pytest.mark.integration
+def test_list_sales_accepts_explicit_ascending_order(client, cashier_headers):
+    """AC-ERF07-04: `order=asc` devuelve la más antigua primero."""
+    ids = _create_sales(client, cashier_headers)
+    listing = client.get("/api/v1/sales?order=asc", headers=cashier_headers)
+    assert listing.status_code == 200
+    assert [s["id"] for s in listing.json()] == ids
+
+
+@pytest.mark.integration
+def test_list_sales_paginates_from_the_newest(client, cashier_headers):
+    """AC-ERF07-04: skip/limit recortan desde la venta más reciente."""
+    ids = _create_sales(client, cashier_headers)
+    newest_first = sorted(ids, reverse=True)
+    first_page = client.get("/api/v1/sales?limit=2", headers=cashier_headers).json()
+    second_page = client.get("/api/v1/sales?limit=2&skip=2", headers=cashier_headers).json()
+    assert [s["id"] for s in first_page] == newest_first[:2]
+    assert [s["id"] for s in second_page] == newest_first[2:]
+
+
+@pytest.mark.integration
+def test_list_sales_rejects_unknown_order(client, cashier_headers):
+    """AC-ERF07-04: `order` fuera de asc|desc → 422."""
+    assert client.get("/api/v1/sales?order=xyz", headers=cashier_headers).status_code == 422

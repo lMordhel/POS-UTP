@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { salesApi } from '../api.js'
 import { PAGE_SIZE, apiErrorMessage, money } from '../utils.js'
 import { ErrorBanner, Loading, Pager, SaleRow } from '../components.jsx'
@@ -10,6 +10,7 @@ export function SalesView({ refreshKey }) {
   const [hasNext, setHasNext] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const detailRef = useRef(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -33,6 +34,13 @@ export function SalesView({ refreshKey }) {
     load()
   }, [load, refreshKey])
 
+  // SPEC-FRONT-008 (AC-FRONT08-03): al abrir el detalle el foco va al panel,
+  // que se muestra encima de la tabla; antes el detalle aparecía debajo de
+  // 20 filas y el clic en "Ver" parecía no hacer nada.
+  useEffect(() => {
+    if (detail) detailRef.current?.focus()
+  }, [detail])
+
   async function select(id) {
     setError('')
     try {
@@ -46,13 +54,47 @@ export function SalesView({ refreshKey }) {
     <section>
       <h2>Ventas</h2>
       <ErrorBanner message={error} />
+      {detail ? (
+        <div
+          className="pos-ticket pos-detail"
+          role="region"
+          aria-label={`Detalle de la venta ${detail.id}`}
+          ref={detailRef}
+          tabIndex={-1}
+        >
+          <div className="pos-detail-head">
+            <h3>Venta #{detail.id} — Total {money(detail.total)}</h3>
+            <button type="button" className="pos-btn" onClick={() => setDetail(null)}>Cerrar</button>
+          </div>
+          <table className="pos-table pos-ticket-table">
+            <thead>
+              <tr>
+                <th scope="col">Producto</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {detail.items.map((i, idx) => (
+                <tr key={idx}>
+                  <td>Producto {i.producto_id}</td>
+                  <td>{i.cantidad}</td>
+                  <td>{money(i.precio_unitario)}</td>
+                  <td>{money(i.subtotal)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
       {loading ? (
         <Loading />
       ) : (
         <>
-          <table>
+          <table className="pos-table">
             <thead>
-              <tr><th>#</th><th>Fecha</th><th>Total</th><th>Estado</th><th /></tr>
+              <tr><th scope="col">#</th><th scope="col">Fecha</th><th scope="col">Total</th><th scope="col">Estado</th><th /></tr>
             </thead>
             <tbody>
               {sales.map((s) => (
@@ -65,18 +107,6 @@ export function SalesView({ refreshKey }) {
             onNext={() => setPage((p) => p + 1)} />
         </>
       )}
-      {detail ? (
-        <div>
-          <h3>Venta #{detail.id} — Total {money(detail.total)}</h3>
-          <ul>
-            {detail.items.map((i, idx) => (
-              <li key={idx}>
-                Producto {i.producto_id} × {i.cantidad} @ {money(i.precio_unitario)} = {money(i.subtotal)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
     </section>
   )
 }
