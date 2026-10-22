@@ -26,11 +26,20 @@ function Shell() {
   return (
     <>
       <p>
-        {user.username} ({user.rol}) <button onClick={logout}>Salir</button>
+        {user.username} ({user.rol}) <button type="button" className="pos-btn" onClick={logout}>Salir</button>
       </p>
-      <nav>
+      {/* SPEC-FRONT-008 (AC-FRONT08-05): la pestaña activa se marca con
+          aria-current y con estilo propio en vez de quedar deshabilitada, que
+          le quitaba el foco visible al teclado. */}
+      <nav className="pos-tabs" aria-label="Secciones del punto de venta">
         {TABS.map((t) => (
-          <button key={t.id} onClick={() => setTab(t.id)} disabled={active === t.id}>
+          <button
+            key={t.id}
+            type="button"
+            className={active === t.id ? 'pos-btn pos-tab pos-tab--active' : 'pos-btn pos-tab'}
+            aria-current={active === t.id ? 'page' : undefined}
+            onClick={() => setTab(t.id)}
+          >
             {t.label}
           </button>
         ))}
