@@ -380,7 +380,7 @@ export function NewSaleView({ onSold }) {
               <tr key={p.id} className="animate-row">
                 <td>{p.nombre}</td>
                 <td>{money(p.precio)}</td>
-                <td>{p.stock}</td>
+                <td className={p.stock === 0 ? 'pos-stock-zero' : undefined}>{p.stock}</td>
                 <td>
                   <label className="pos-label" htmlFor={`qty-${p.id}`}>
                     Cantidad de {p.nombre}
@@ -389,8 +389,18 @@ export function NewSaleView({ onSold }) {
                     onChange={(e) => setQty((m) => ({ ...m, [p.id]: e.target.value }))} />
                 </td>
                 <td>
-                  <button type="button" className="pos-btn" aria-label={`Agregar ${p.nombre} a la venta`} onClick={() => addLine(p)}>
-                    Agregar
+                  {/* SPEC-FRONT-008 (AC-FRONT08-04): sin stock el botón queda
+                      deshabilitado y lo dice; antes el clic no hacía nada y el
+                      aviso aparecía lejos de la fila. */}
+                  <button
+                    type="button"
+                    className="pos-btn"
+                    disabled={p.stock === 0}
+                    title={p.stock === 0 ? 'Sin stock disponible' : undefined}
+                    aria-label={p.stock === 0 ? `${p.nombre} sin stock disponible` : `Agregar ${p.nombre} a la venta`}
+                    onClick={() => addLine(p)}
+                  >
+                    {p.stock === 0 ? 'Sin stock' : 'Agregar'}
                   </button>
                 </td>
               </tr>
