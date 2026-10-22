@@ -83,6 +83,53 @@ body {
   margin-bottom: 4px;
 }
 
+/* Pestañas de navegación (SPEC-FRONT-008) */
+.pos-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.pos-tab--active {
+  background-color: var(--pos-accent);
+  border-color: var(--pos-accent);
+  color: var(--pos-accent-contrast);
+  font-weight: 600;
+}
+
+.pos-tab--active:hover {
+  background-color: #1748b5;
+}
+
+/* Detalle de venta (SPEC-FRONT-008) */
+.pos-detail {
+  margin-bottom: 16px;
+}
+
+.pos-detail:focus-visible {
+  outline: 3px solid var(--pos-focus);
+  outline-offset: 2px;
+}
+
+.pos-detail-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pos-detail-head h3 {
+  margin: 0;
+}
+
+/* Stock agotado (SPEC-FRONT-008) */
+.pos-stock-zero {
+  color: var(--pos-danger);
+  font-weight: 600;
+}
+
 /* Vista Nueva venta */
 .new-sale {
   display: grid;
