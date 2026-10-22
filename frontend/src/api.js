@@ -109,7 +109,7 @@ export const salesApi = {
     }
     return request(SALES, '/sales', { method: 'POST', body: JSON.stringify(body) })
   },
-  list: ({ skip = 0, limit = PAGE_SIZE + 1 } = {}) =>
-    request(SALES, `/sales?skip=${skip}&limit=${limit}`),
+  list: ({ skip = 0, limit = PAGE_SIZE + 1, order = 'desc' } = {}) =>
+    request(SALES, `/sales?skip=${skip}&limit=${limit}&order=${order}`),
   get: (id) => request(SALES, `/sales/${id}`),
 }
