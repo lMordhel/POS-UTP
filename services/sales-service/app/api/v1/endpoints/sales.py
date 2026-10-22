@@ -74,12 +74,17 @@ def register_sale(
 def list_sales(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
+    order: str = Query("desc", pattern="^(asc|desc)$"),
     db: Session = Depends(get_db),
     service: SaleService = Depends(_service),
     _user: User = Depends(seller),
 ):
-    """ERF-07 (SPEC-SALES-003). ERF-10: admin y cajero en lectura."""
-    return service.list(db, skip, limit)
+    """ERF-07 (SPEC-SALES-003 1.1.0). ERF-10: admin y cajero en lectura.
+
+    AC-ERF07-04: `order=desc` (por defecto) devuelve la venta más reciente
+    primero; `order=asc` devuelve la más antigua primero.
+    """
+    return service.list(db, skip, limit, desc=(order == "desc"))
 
 
 @router.get("/{sale_id}", response_model=SaleRead)

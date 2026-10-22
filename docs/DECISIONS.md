@@ -161,6 +161,25 @@
 - ERF-09 (autenticación) y ERF-10 (autorización por roles) DECIDED 2026-10-12 para el documento académico (OQ-AUTH-02); la edición del `.docx` queda a cargo del usuario (fuera del repo).
 - Plan por fases con SPEC propia cada una: 1 auth+RBAC (SPEC-AUTH-001) → 2 hardening → 3 idempotencia/saga → 4 Alembic/auditoría → 5 optimización Sales→Stock → 6 observabilidad.
 
+## ADR-018 — Orden del listado de ventas: la más reciente primero
+
+- Status: APPROVED (2026-10-21, decisión de usuario)
+- Decisión: `GET /api/v1/sales` devuelve las ventas ordenadas por `id` descendente
+  por defecto, con `order=asc` disponible para el orden inverso. La
+  paginación (`skip`, `limit`) recorta sobre ese orden, de modo que la primera
+  página contiene siempre las ventas más recientes.
+- Motivo: en la verificación en ejecución del 2026-10-21 la lista salía en orden
+  ascendente, de modo que la venta recién registrada quedaba en la última
+  página y era invisible para quien opera el punto de venta. La operación
+  necesita la última venta a la vista, no la primera.
+- Alternativa descartada: invertir el orden en el frontend. No sirve con
+  paginación por `skip`: la página seguiría siendo la correcta pero el orden
+  dentro de la página quedaría incoherente con el resto del listado.
+- Consecuencia: el orden deja de ser un detalle de implementación y pasa a
+  ser parte del contrato del endpoint; se documenta en SPEC-SALES-003 1.1.0
+  (FR-04, BR-03, AC-ERF07-04).
+- Afecta a: SPEC-SALES-003, SPEC-FRONT-008.
+
 ## Historial
 
 | Fecha | Cambio |
