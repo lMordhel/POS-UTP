@@ -29,10 +29,21 @@ function toError(res, detail) {
   throw err
 }
 
+async function settle(res) {
+  if (!res.ok) {
+    // Sólo un 401 definitivo cierra sesión (S4): un 409/422 es una respuesta de
+    // negocio y debe llegar al llamador con su status, sin expulsar al usuario.
+    if (res.status === 401) store.onUnauthorized()
+    toError(res, await res.text())
+  }
+  return res.json()
+}
+
 async function request(base, path, options = {}, retried = false) {
   let res = await raw(base, path, options)
   if (res.status === 401 && !retried) {
     // Renueva una vez con el refresh y reintenta (FR-03).
+    let renewed = false
     const refresh = store.getRefresh()
     if (refresh) {
       const rr = await fetch(`${SALES}/api/v1/auth/refresh`, {
@@ -44,16 +55,13 @@ async function request(base, path, options = {}, retried = false) {
         const pair = await rr.json()
         store.setTokens({ access_token: pair.access_token, refresh_token: pair.refresh_token })
         res = await raw(base, path, options)
-        if (res.ok) return res.json()
+        renewed = true
       }
     }
-    store.onUnauthorized()
+    // Sin refresh utilizable la sesión terminó: settle() cierra una sola vez.
+    if (!renewed) return settle(res)
   }
-  if (!res.ok) {
-    const detail = await res.text()
-    toError(res, detail)
-  }
-  return res.json()
+  return settle(res)
 }
 
 export const authApi = {
