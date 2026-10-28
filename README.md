@@ -79,8 +79,8 @@ a propósito (`app/core/config.py`).
 ## Tests
 
 ```powershell
-cd services/stock-service; py -m pytest tests -q   # 70 tests
-cd ../sales-service; py -m pytest tests -q          # 85 tests
+cd services/stock-service; py -m pytest tests -q   # 72 tests
+cd ../sales-service; py -m pytest tests -q          # 87 tests
 cd ../..; py infra/e2e_check.py                     # E2E real Ventas→Stock
 cd frontend; npm test                               # 4 tests (vitest, sin navegador)
 ```

@@ -163,13 +163,26 @@ inventario completo de variables documentado en `README.md` (§ Entorno y
 configuración). **No se renombró el archivo para evadir el control.** Crear los
 `.env.example` (copiando la tabla del README) queda como decisión del usuario.
 
+**L8 — Verificación (T8):** el verificador independiente (`gentle-ai-verify`) fue
+**rechazado por el runtime**: exige que la tarea declare `Risk: item N` y no
+corresponde reintentar ni agregar la línea para hacerlo pasar. Verificación hecha
+inline: suites completas (sales 87, stock 72), frontend vitest (4/4), `infra/e2e_check.py`
+real en verde, más dos verificaciones empíricas propias:
+
+- **S5 probado en ejecución**: `root.level=INFO`, handler atado a `<stderr>` y la
+  línea `app.access` impresa en stderr con el formato configurado.
+- **S1 probado por barrido**: test que enumera todas las operaciones no públicas
+  desde el OpenAPI (7 en Sales, 9 en Stock) y exige 401 con refresh token y
+  distinto de 401 con access token. Una ruta nueva sin la dependencia de auth
+  también lo hace fallar.
+
 ## Progress
 
 - [x] T1 — entorno y línea base (132 tests, 69 sales + 63 stock)
-- [x] T2 — S1 (sales 73 / stock 65, commit `cbc9225`)
-- [x] T3 — S2 (stock 67, commit `cfdcb4c`)
-- [x] T4 — S3 (sales 82, commit `da7b15c`)
-- [x] T5 — S4 (frontend 4/4, commit `851ffd3`)
-- [x] T6 — S5 (sales 85 / stock 70, commit `9946277`)
-- [ ] T7 — S6: compose y documentación hechos; **`.env.example` bloqueado** (L7)
-- [ ] T8 — verificación independiente
+- [x] T2 — S1 (commit `cbc9225`)
+- [x] T3 — S2 (commit `cfdcb4c`)
+- [x] T4 — S3 (commit `da7b15c`)
+- [x] T5 — S4 (commit `851ffd3`)
+- [x] T6 — S5 (commit `9946277`)
+- [ ] T7 — S6: compose y documentación hechos (`e9121c0`); **`.env.example` bloqueado** (L7)
+- [x] T8 — verificación inline (L8): sales 87, stock 72, frontend 4, E2E OK

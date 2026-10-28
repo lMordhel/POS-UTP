@@ -99,3 +99,45 @@ def test_service_token_still_allowed(client, sample_product):
         json={"delta": -1, "motivo": "venta:1"},
         headers=headers,
     ).status_code == 200
+
+
+_PUBLIC = {"/health", "/metrics", "/ready"}
+
+
+def _protected_routes() -> list[tuple[str, str]]:
+    """(método, ruta con id concreto) de todo lo que NO es público."""
+    import re
+
+    import app.main as main_module
+
+    found: list[tuple[str, str]] = []
+    for path, operations in main_module.app.openapi()["paths"].items():
+        if path in _PUBLIC:
+            continue
+        concrete = re.sub(r"\{[^}]+\}", "1", path)
+        found.extend((method.upper(), concrete) for method in operations)
+    return sorted(found)
+
+
+@pytest.mark.integration
+def test_every_protected_route_rejects_refresh_token(client):
+    """S1: barrido completo — el refresh no autentica NINGUNA ruta de Stock."""
+    from app.core import security
+
+    refresh = security.create_refresh_token("1", "admin", family="f-sweep")
+    headers = {"Authorization": f"Bearer {refresh}"}
+    routes = _protected_routes()
+    assert routes, "el barrido no enumeró rutas: revisar _protected_routes"
+    for method, path in routes:
+        resp = client.request(method, path, headers=headers)
+        assert resp.status_code == 401, f"{method} {path} devolvió {resp.status_code}"
+
+
+@pytest.mark.integration
+def test_every_protected_route_accepts_access_token(client, admin_headers):
+    """S1 (regresión): el barrido no puede pasar por rechazar todo."""
+    routes = _protected_routes()
+    assert routes
+    for method, path in routes:
+        resp = client.request(method, path, headers=admin_headers)
+        assert resp.status_code != 401, f"{method} {path} rechazó un access token válido"
