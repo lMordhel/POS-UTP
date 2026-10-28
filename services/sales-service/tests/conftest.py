@@ -33,6 +33,8 @@ class FakeStockClient:
         self.fail_once_negative = False
         self.fail_compensate = False
         self.fail_adjust_ids: set[int] = set()
+        self.fail_not_found_ids: set[int] = set()
+        self.fail_unexpected_ids: set[int] = set()
         self.batch_calls: list[list[int]] = []
 
     def reset(self):
@@ -91,6 +93,10 @@ class FakeStockClient:
             return self.get_product(product_id).stock
         if product_id in self.fail_adjust_ids and delta < 0:
             raise StockUnavailableError("ajuste caído (fake)")
+        if product_id in self.fail_not_found_ids and delta < 0:
+            raise StockProductNotFoundError(f"producto inexistente: {product_id}")
+        if product_id in self.fail_unexpected_ids and delta < 0:
+            raise RuntimeError("fallo no previsto (fake)")
         if self.fail_once_negative and delta < 0:
             self.fail_once_negative = False
             product = self.get_product(product_id)

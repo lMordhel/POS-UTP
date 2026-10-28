@@ -67,15 +67,20 @@ class StockClient:
                 last_exc = exc
         raise StockUnavailableError(f"stock no disponible: {last_exc}")
 
+    def _unavailable(self, resp: httpx.Response, accion: str) -> StockUnavailableError:
+        """Status que no sabemos interpretar = fallo de Stock (502), nunca 500 crudo."""
+        return StockUnavailableError(
+            f"stock no disponible en {accion}: HTTP {resp.status_code}"
+        )
+
     def batch_get_products(self, ids: list[int]) -> list[StockProduct]:
         """SPEC-STOCK-006: una lectura por lote (precios + stock)."""
         try:
             resp = self._request("POST", "/api/v1/products/batch", json={"ids": ids})
         except httpx.HTTPError as exc:
             raise StockUnavailableError(f"stock no disponible: {exc}")
-        if resp.status_code >= 500:
-            raise StockUnavailableError(f"stock falló: HTTP {resp.status_code}")
-        resp.raise_for_status()
+        if not resp.is_success:
+            raise self._unavailable(resp, "lectura por lote")
         return [
             StockProduct(
                 id=item["id"],
@@ -103,9 +108,8 @@ class StockClient:
             raise StockProductNotFoundError(f"producto inexistente: {product_id}")
         if resp.status_code == 409:
             raise StockInsufficientError(resp.json().get("detail", "stock insuficiente"))
-        if resp.status_code >= 500:
-            raise StockUnavailableError(f"stock falló: HTTP {resp.status_code}")
-        resp.raise_for_status()
+        if not resp.is_success:
+            raise self._unavailable(resp, f"ajuste de producto={product_id}")
         return int(resp.json()["cantidad"])
 
 

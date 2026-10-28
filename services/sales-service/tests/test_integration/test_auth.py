@@ -138,3 +138,73 @@ def test_refresh_reuse_revokes_family(client, seed_users):
     assert client.post(
         "/api/v1/auth/refresh", json={"refresh_token": second["refresh_token"]}
     ).status_code == 401
+
+
+@pytest.mark.integration
+def test_refresh_token_rejected_as_access(client, seed_users):
+    """S1: el refresh (7 días) no autentica rutas protegidas.
+
+    Antes del fix un token de 7 días entraba como access de 15 minutos en
+    cualquier ruta, anulando la rotación con detección de reuso.
+    """
+    pair = _login(client, "caja", "Caja1234").json()
+    headers = {"Authorization": f"Bearer {pair['refresh_token']}"}
+    assert client.get("/api/v1/sales", headers=headers).status_code == 401
+    assert client.get("/api/v1/users", headers=headers).status_code == 401
+
+
+@pytest.mark.integration
+def test_access_token_still_accepted(client, seed_users):
+    """S1 (regresión): el access de 15 minutos sigue entrando."""
+    pair = _login(client, "caja", "Caja1234").json()
+    headers = {"Authorization": f"Bearer {pair['access_token']}"}
+    assert client.get("/api/v1/sales", headers=headers).status_code == 200
+
+
+_PUBLIC = {"/health", "/metrics", "/ready", "/api/v1/auth/login", "/api/v1/auth/refresh"}
+
+
+def _protected_routes() -> list[tuple[str, str]]:
+    """(método, ruta con id concreto) de todo lo que NO es público.
+
+    Se enumera desde el OpenAPI para que una ruta nueva quede cubierta sin
+    tocar el test.
+    """
+    import re
+
+    import app.main as main_module
+
+    found: list[tuple[str, str]] = []
+    for path, operations in main_module.app.openapi()["paths"].items():
+        if path in _PUBLIC:
+            continue
+        concrete = re.sub(r"\{[^}]+\}", "1", path)
+        found.extend((method.upper(), concrete) for method in operations)
+    return sorted(found)
+
+
+@pytest.mark.integration
+def test_every_protected_route_rejects_refresh_token(client, seed_users):
+    """S1: barrido completo — el refresh no autentica NINGUNA ruta protegida.
+
+    Un test acotado a /sales solo probaría la ruta que elegí. Este recorre todo
+    lo que expone el servicio, así que una ruta nueva sin la dependencia de
+auth también lo hace fallar.
+    """
+    pair = _login(client, "caja", "Caja1234").json()
+    headers = {"Authorization": f"Bearer {pair['refresh_token']}"}
+    routes = _protected_routes()
+    assert routes, "el barrido no enumeró rutas: revisar _protected_routes"
+    for method, path in routes:
+        resp = client.request(method, path, headers=headers)
+        assert resp.status_code == 401, f"{method} {path} devolvió {resp.status_code}"
+
+
+@pytest.mark.integration
+def test_every_protected_route_accepts_access_token(client, admin_headers, seed_users):
+    """S1 (regresión): el barrido anterior no puede pasar por rechazar todo."""
+    routes = _protected_routes()
+    assert routes
+    for method, path in routes:
+        resp = client.request(method, path, headers=admin_headers)
+        assert resp.status_code != 401, f"{method} {path} rechazó un access token válido"

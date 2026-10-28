@@ -76,3 +76,45 @@ def test_failed_compensation_502_and_log(client, fake_stock, cashier_headers, ca
     assert resp.status_code == 502
     assert any("compensaci" in r.message and "venta" in r.message for r in caplog.records)
     assert client.get("/api/v1/sales", headers=cashier_headers).json() == []
+
+
+@pytest.mark.integration
+def test_product_vanishing_mid_saga_is_404_and_compensates(
+    client, fake_stock, cashier_headers
+):
+    """S3: un producto desactivado entre el batch y el ajuste no deja stock debitado.
+
+    Antes del fix `StockProductNotFoundError` no se capturaba en la saga: la
+    excepción subía como 500 y las líneas ya descontadas quedaban debitadas sin
+    venta (fuga silenciosa de inventario).
+    """
+    fake_stock.fail_not_found_ids = {2}
+    body = {
+        "items": [
+            {"producto_id": 1, "cantidad": 2},
+            {"producto_id": 2, "cantidad": 1},
+        ]
+    }
+    resp = _post(client, cashier_headers, body, key="K-NOTFOUND")
+    assert resp.status_code == 404
+    assert client.get("/api/v1/sales", headers=cashier_headers).json() == []
+    # La línea 1 ya se había descontado: la compensación la devuelve.
+    assert fake_stock.products[1].stock == 100
+
+
+@pytest.mark.integration
+def test_unexpected_error_during_discount_compensates(
+    client, fake_stock, cashier_headers
+):
+    """S3: cualquier fallo no previsto compensa antes de propagarse."""
+    fake_stock.fail_unexpected_ids = {2}
+    body = {
+        "items": [
+            {"producto_id": 1, "cantidad": 2},
+            {"producto_id": 2, "cantidad": 1},
+        ]
+    }
+    with pytest.raises(RuntimeError):
+        _post(client, cashier_headers, body, key="K-UNEXPECTED")
+    assert fake_stock.products[1].stock == 100
+    assert client.get("/api/v1/sales", headers=cashier_headers).json() == []

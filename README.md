@@ -45,6 +45,31 @@ Swagger: http://localhost:8002/docs (Stock), http://localhost:8001/docs (Sales).
 docker compose -f infra/docker-compose.yml down
 ```
 
+## Entorno y configuración
+
+Cada servicio lee su configuración con pydantic-settings (`env_prefix` `SALES_` /
+`STOCK_`) desde variables de entorno o desde un `.env` en la carpeta del
+servicio; `infra/.env` alimenta al compose. Ninguno se versiona (ver
+`.gitignore`): esto es el inventario de lo que acepta cada uno.
+
+| Variable | Servicio | Default | Para qué |
+| --- | --- | --- | --- |
+| `POS_ENV` | ambos | `dev` | `prod` desactiva `/docs` y activa el fail-fast de secretos |
+| `POS_LOG_LEVEL` | ambos | `INFO` | nivel del root logger |
+| `SALES_DATABASE_URL` / `STOCK_DATABASE_URL` | sales / stock | `sqlite:///./*.db` | Postgres en compose |
+| `SALES_STOCK_SERVICE_URL` | sales | `http://localhost:8002` | cliente Sales→Stock (ADR-003) |
+| `SALES_STOCK_TIMEOUT_SECONDS` | sales | `5.0` | timeout del cliente |
+| `SALES_JWT_SECRET` / `STOCK_JWT_SECRET` | sales / stock | `change-me-dev-only` | **mismo valor**: Sales firma el token de servicio que Stock verifica (ADR-008) |
+| `SALES_JWT_ALGORITHM` | ambos | `HS256` | algoritmo de firma |
+| `SALES_ACCESS_TOKEN_MINUTES` | sales | `15` | vida del access token |
+| `SALES_REFRESH_TOKEN_DAYS` | sales | `7` | vida del refresh token |
+| `SALES_ADMIN_USERNAME` / `SALES_ADMIN_PASSWORD` | sales | `admin` / `change-me-admin` | admin de bootstrap |
+| `SALES_CORS_ORIGINS` / `STOCK_CORS_ORIGINS` | sales / stock | `http://localhost:5173` | orígenes permitidos |
+| `SALES_RATE_LOGIN`, `SALES_RATE_REFRESH`, `SALES_RATE_WRITE`, `STOCK_RATE_WRITE` | sales / stock | ver `core/config.py` | límites slowapi |
+
+Con `POS_ENV=prod`, cualquiera de los secretos de ejemplo hace fallar el arranque
+a propósito (`app/core/config.py`).
+
 ## Demo en 1 minuto
 
 1. Stock docs → `POST /products` (ej. `{"codigo":"DEMO-1","nombre":"Café","precio":"25.90","cantidad_inicial":50}`).
@@ -54,9 +79,10 @@ docker compose -f infra/docker-compose.yml down
 ## Tests
 
 ```powershell
-cd services/stock-service; py -m pytest tests -q   # 63 tests
-cd ../sales-service; py -m pytest tests -q          # 65 tests
+cd services/stock-service; py -m pytest tests -q   # 72 tests
+cd ../sales-service; py -m pytest tests -q          # 87 tests
 cd ../..; py infra/e2e_check.py                     # E2E real Ventas→Stock
+cd frontend; npm test                               # 4 tests (vitest, sin navegador)
 ```
 
 ## Estructura
