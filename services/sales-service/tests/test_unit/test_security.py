@@ -49,3 +49,26 @@ def test_service_token_has_admin_role_and_service_type():
     assert claims["sub"] == security.SERVICE_SUBJECT
     assert claims["rol"] == "admin"
     assert claims["type"] == "service"
+
+
+def test_get_current_claims_rejects_refresh_token():
+    """S1: un refresh firmado y vigente no es una credencial de acceso."""
+    refresh = security.create_refresh_token("1", "admin", family="f-1")
+    with pytest.raises(HTTPException) as exc:
+        security.get_current_claims(refresh)
+    assert exc.value.status_code == 401
+
+
+def test_get_current_claims_rejects_token_without_type():
+    """S1: no hay default permisivo cuando falta el claim `type`."""
+    from app.core.config import get_settings
+
+    settings = get_settings()
+    token = pyjwt.encode(
+        {"sub": "1", "rol": "admin"},
+        settings.JWT_SECRET,
+        algorithm=settings.JWT_ALGORITHM,
+    )
+    with pytest.raises(HTTPException) as exc:
+        security.get_current_claims(token)
+    assert exc.value.status_code == 401

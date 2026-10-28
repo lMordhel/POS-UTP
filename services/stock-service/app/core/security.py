@@ -21,6 +21,12 @@ CREDENTIALS_EXCEPTION = HTTPException(
     {"WWW-Authenticate": "Bearer"},
 )
 
+#: Tipos de credencial válidos como Bearer en rutas protegidas (S1).
+#: `access` = usuario final; `service` = credencial Sales→Stock (ADR-008
+#: addendum, emitida por Sales con rol admin). Cualquier otro valor — en
+#: particular `refresh`, que vive 7 días — no autentica peticiones.
+TOKEN_TYPES_ALLOWED = frozenset({"access", "service"})
+
 
 def hash_password(plain: str) -> str:
     return bcrypt.hashpw(plain.encode(), bcrypt.gensalt()).decode()
@@ -66,9 +72,12 @@ def decode_token(token: str) -> dict:
 
 def get_current_claims(token: str = Depends(oauth2_scheme)) -> dict:
     try:
-        return decode_token(token)
+        claims = decode_token(token)
     except pyjwt.PyJWTError:
         raise CREDENTIALS_EXCEPTION from None
+    if claims.get("type") not in TOKEN_TYPES_ALLOWED:
+        raise CREDENTIALS_EXCEPTION
+    return claims
 
 
 def check_role(claims: dict, *roles: str) -> dict:

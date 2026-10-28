@@ -138,3 +138,24 @@ def test_refresh_reuse_revokes_family(client, seed_users):
     assert client.post(
         "/api/v1/auth/refresh", json={"refresh_token": second["refresh_token"]}
     ).status_code == 401
+
+
+@pytest.mark.integration
+def test_refresh_token_rejected_as_access(client, seed_users):
+    """S1: el refresh (7 días) no autentica rutas protegidas.
+
+    Antes del fix un token de 7 días entraba como access de 15 minutos en
+    cualquier ruta, anulando la rotación con detección de reuso.
+    """
+    pair = _login(client, "caja", "Caja1234").json()
+    headers = {"Authorization": f"Bearer {pair['refresh_token']}"}
+    assert client.get("/api/v1/sales", headers=headers).status_code == 401
+    assert client.get("/api/v1/users", headers=headers).status_code == 401
+
+
+@pytest.mark.integration
+def test_access_token_still_accepted(client, seed_users):
+    """S1 (regresión): el access de 15 minutos sigue entrando."""
+    pair = _login(client, "caja", "Caja1234").json()
+    headers = {"Authorization": f"Bearer {pair['access_token']}"}
+    assert client.get("/api/v1/sales", headers=headers).status_code == 200
