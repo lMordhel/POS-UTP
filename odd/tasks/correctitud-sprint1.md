@@ -161,7 +161,7 @@ Candidato para Sprint 2.
 - [x] T1 — entorno y línea base (132 tests, 69 sales + 63 stock)
 - [x] T2 — S1 (sales 73 / stock 65, commit `cbc9225`)
 - [x] T3 — S2 (stock 67)
-- [ ] T4 — S3
+- [x] T4 — S3 (sales 82; `HTTPStatusError` eliminado del borde y saga compensa)
 - [ ] T5 — S4
 - [ ] T6 — S5
 - [ ] T7 — S6

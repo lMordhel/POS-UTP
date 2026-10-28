@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.clients.stock_client import (
     StockClient,
     StockInsufficientError,
+    StockProductNotFoundError,
     StockUnavailableError,
     stock_client,
 )
@@ -244,6 +245,16 @@ class SaleService:
             self._compensate(merged, discounted, sale.id, idempotency_key)
             raise SaleInsufficientStockError(str(exc))
         except StockUnavailableError:
+            self._compensate(merged, discounted, sale.id, idempotency_key)
+            raise
+        except StockProductNotFoundError as exc:
+            # El producto desapareció entre el batch y el ajuste (desactivado o
+            # borrado): 404 de dominio, con las líneas ya descontadas revertidas.
+            self._compensate(merged, discounted, sale.id, idempotency_key)
+            raise SaleProductNotFoundError(str(exc))
+        except Exception:
+            # Cualquier fallo no previsto también revierte lo ya descontado:
+            # stock debitado sin venta es una pérdida silenciosa de inventario.
             self._compensate(merged, discounted, sale.id, idempotency_key)
             raise
 
