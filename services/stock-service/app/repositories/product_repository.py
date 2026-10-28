@@ -5,6 +5,16 @@ from app.models.inventory import Inventory
 from app.models.product import Product
 
 
+def locked_inventory_statement(producto_id: int):
+    """`SELECT ... FOR UPDATE` de la fila de inventario de un producto (S2).
+
+    Vive a nivel de módulo para que el test pueda compilarlo contra el dialecto
+    que aplica el lock (Postgres). SQLite, el motor de la suite, ignora
+    `FOR UPDATE` en silencio.
+    """
+    return select(Inventory).where(Inventory.producto_id == producto_id).with_for_update()
+
+
 class ProductRepository:
     def get(self, db: Session, product_id: int) -> Product | None:
         return db.get(Product, product_id)
@@ -51,7 +61,18 @@ class InventoryRepository:
         return inv
 
     def get_by_product(self, db: Session, producto_id: int) -> Inventory | None:
+        """Lectura sin lock: para consultas y respuestas HTTP (S2)."""
         return db.scalars(select(Inventory).where(Inventory.producto_id == producto_id)).first()
+
+    def get_by_product_for_update(self, db: Session, producto_id: int) -> Inventory | None:
+        """Lectura con lock de fila: base del read-modify-write del ajuste (S2).
+
+        Sin esto dos ventas concurrentes del último producto leen la misma
+        cantidad y la segunda pisa a la primera (lost update): el
+        `CheckConstraint cantidad >= 0` no lo detecta porque cada escritura es
+        válida por separado.
+        """
+        return db.scalars(locked_inventory_statement(producto_id)).first()
 
 
 product_repository = ProductRepository()

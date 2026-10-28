@@ -135,7 +135,7 @@ class ProductService:
                     cantidad=existing.cantidad_resultante,
                     updated_at=existing.created_at,
                 )
-        inv = inventory_repository.get_by_product(db, product_id)
+        inv = inventory_repository.get_by_product_for_update(db, product_id)
         if inv is None:
             if product_repository.get(db, product_id) is None:
                 raise StockNotFoundError(f"producto inexistente: {product_id}")

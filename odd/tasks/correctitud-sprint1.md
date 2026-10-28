@@ -149,11 +149,18 @@ S1 (`type == "access"`) rompe la saga, porque `create_service_token()` emite
 `type="service"`. Por eso la allowlist incluye `service` y hay un test que lo
 protege.
 
+**L6 — Follow-up identificado y NO expandido (T3):** si un producto no tiene fila
+en `inventories` (sólo posible con datos legados: `POST /products` siempre la
+crea), dos ajustes concurrentes pueden intentar `create_initial` a la vez y el
+segundo choca contra el `unique` de `producto_id` → 500. Es previo al fix, no lo
+empeora y queda fuera del alcance de S2 (lost update sobre filas existentes).
+Candidato para Sprint 2.
+
 ## Progress
 
-- [ ] T1 — entorno y línea base
-- [ ] T2 — S1
-- [ ] T3 — S2
+- [x] T1 — entorno y línea base (132 tests, 69 sales + 63 stock)
+- [x] T2 — S1 (sales 73 / stock 65, commit `cbc9225`)
+- [x] T3 — S2 (stock 67)
 - [ ] T4 — S3
 - [ ] T5 — S4
 - [ ] T6 — S5
