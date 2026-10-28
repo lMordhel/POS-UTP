@@ -9,6 +9,7 @@ from slowapi.errors import RateLimitExceeded
 from app.api.v1.router import api_router
 from app.core.config import get_settings
 from app.core.database import check_db, init_db
+from app.core.logging_config import configure_logging
 from app.core.metrics import render as render_metrics
 from app.core.middleware import (
     ObservabilityMiddleware,
@@ -18,6 +19,7 @@ from app.core.middleware import (
 )
 
 PROD = os.getenv("POS_ENV", "dev") == "prod"
+configure_logging()
 
 
 @asynccontextmanager

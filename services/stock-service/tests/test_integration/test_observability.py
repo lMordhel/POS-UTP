@@ -73,3 +73,44 @@ def test_access_log_json(client, caplog):
     assert entry["method"] == "GET" and entry["route"] == "app.main.health"
     assert entry["status"] == 200 and entry["request_id"] == "log-1"
     assert isinstance(entry["duration_ms"], int)
+
+
+def _stderr_handlers():
+    """Handlers instalados por `configure_logging` (marcados)."""
+    from app.core.logging_config import HANDLER_MARKER
+
+    return [h for h in logging.getLogger().handlers if getattr(h, HANDLER_MARKER, False)]
+
+
+def test_configure_logging_installs_stderr_handler():
+    """S5: hay un handler real; antes el access log escribía al vacío."""
+    import sys
+
+    from app.core.logging_config import configure_logging
+
+    configure_logging()
+    handlers = _stderr_handlers()
+    assert len(handlers) == 1
+    assert isinstance(handlers[0], logging.StreamHandler)
+    assert handlers[0].stream in (sys.stderr, sys.__stderr__)
+
+
+def test_configure_logging_is_idempotent():
+    """S5: reimportar la app no duplica handlers ni líneas de log."""
+    from app.core.logging_config import configure_logging
+
+    configure_logging()
+    configure_logging()
+    assert len(_stderr_handlers()) == 1
+
+
+def test_log_level_comes_from_environment(monkeypatch):
+    """S5: POS_LOG_LEVEL manda sobre el default INFO."""
+    from app.core.logging_config import configure_logging
+
+    monkeypatch.setenv("POS_LOG_LEVEL", "warning")
+    configure_logging()
+    assert logging.getLogger().level == logging.WARNING
+    monkeypatch.delenv("POS_LOG_LEVEL")
+    configure_logging()
+    assert logging.getLogger().level == logging.INFO
