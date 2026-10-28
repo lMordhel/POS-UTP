@@ -21,7 +21,14 @@ services:
   stock:
     build: ../services/stock-service
     environment:
+      # POS_ENV=prod desactiva /docs y hace fallar el arranque si quedan los
+      # secretos de ejemplo (get_settings los valida).
+      POS_ENV: ${POS_ENV:-dev}
+      POS_LOG_LEVEL: ${POS_LOG_LEVEL:-INFO}
       STOCK_DATABASE_URL: postgresql+psycopg2://pos:pos@postgres:5432/stock_db
+      # JWT_SECRET compartido a propósito: Sales firma el token de servicio que
+      # Stock verifica (ADR-008). Dos valores distintos rompen la saga.
+      STOCK_JWT_SECRET: ${JWT_SECRET:-change-me-dev-only}
       STOCK_CORS_ORIGINS: http://localhost:5173,http://localhost:4173,http://127.0.0.1:5173,http://127.0.0.1:4173
     ports:
       - "8002:8002"
@@ -32,8 +39,12 @@ services:
   sales:
     build: ../services/sales-service
     environment:
+      POS_ENV: ${POS_ENV:-dev}
+      POS_LOG_LEVEL: ${POS_LOG_LEVEL:-INFO}
       SALES_DATABASE_URL: postgresql+psycopg2://pos:pos@postgres:5432/ventas_db
       SALES_STOCK_SERVICE_URL: http://stock:8002
+      SALES_JWT_SECRET: ${JWT_SECRET:-change-me-dev-only}
+      SALES_ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me-admin}
       SALES_CORS_ORIGINS: http://localhost:5173,http://localhost:4173,http://127.0.0.1:5173,http://127.0.0.1:4173
     ports:
       - "8001:8001"

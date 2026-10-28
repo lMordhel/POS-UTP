@@ -156,13 +156,20 @@ segundo choca contra el `unique` de `producto_id` → 500. Es previo al fix, no 
 empeora y queda fuera del alcance de S2 (lost update sobre filas existentes).
 Candidato para Sprint 2.
 
+**L7 — Entrega bloqueada por política (S6, parcial):** el harness rechaza escribir
+cualquier ruta `.env.example` ("sensitive path"). Se entregó la parte segura:
+`POS_ENV`/`POS_LOG_LEVEL`/secretos cableados en `infra/docker-compose.yml` y el
+inventario completo de variables documentado en `README.md` (§ Entorno y
+configuración). **No se renombró el archivo para evadir el control.** Crear los
+`.env.example` (copiando la tabla del README) queda como decisión del usuario.
+
 ## Progress
 
 - [x] T1 — entorno y línea base (132 tests, 69 sales + 63 stock)
 - [x] T2 — S1 (sales 73 / stock 65, commit `cbc9225`)
-- [x] T3 — S2 (stock 67)
-- [x] T4 — S3 (sales 82; `HTTPStatusError` eliminado del borde y saga compensa)
-- [ ] T5 — S4
-- [ ] T6 — S5
-- [ ] T7 — S6
-- [ ] T8 — verificación
+- [x] T3 — S2 (stock 67, commit `cfdcb4c`)
+- [x] T4 — S3 (sales 82, commit `da7b15c`)
+- [x] T5 — S4 (frontend 4/4, commit `851ffd3`)
+- [x] T6 — S5 (sales 85 / stock 70, commit `9946277`)
+- [ ] T7 — S6: compose y documentación hechos; **`.env.example` bloqueado** (L7)
+- [ ] T8 — verificación independiente
