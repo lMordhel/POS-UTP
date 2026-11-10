@@ -176,6 +176,31 @@ real en verde, más dos verificaciones empíricas propias:
   distinto de 401 con access token. Una ruta nueva sin la dependencia de auth
   también lo hace fallar.
 
+**L9 — `.env.example` x2 entregados (S6, cierra T7):** el guard de rutas
+sensibles del harness bloquea de forma dura cualquier ruta que empiece con `.env`:
+lectura y escritura, en todos los modos de permisos incluido Super Yolo, y sin
+opción de configuración (`gentle-pi/docs/permission-modes.md:56,89`). El agente no
+puede crear ni leer esos archivos: los creó el usuario con el contenido provisto.
+**Verificación sin leerlos**: `tests/test_unit/test_env_example.py` en cada
+servicio compara los nombres de clave de la plantilla contra
+`Settings.model_fields` (con el prefijo del servicio) + `POS_ENV`, y falla si
+falta una variable o si aparece una clave que ningún módulo lee; lee solo nombres,
+nunca valores. Resultado: sales 3 passed, stock 3 passed. RED probado sobre una
+copia sintética incompleta en `/tmp` con el mismo archivo de test: detectó las 12
+variables faltantes. Convención explicada y aceptada por el usuario: `.env` es
+privado y no se versiona; `.env.example` es la plantilla versionada de la que se
+copia el `.env`.
+
+**L10 — Cierre de T7 y normalización de fin de línea:** el usuario decidió
+commitear todo en un único `chore(infra)` y arreglar el ruido de fin de línea por
+separado. El worktree tenía CRLF y HEAD LF en ~510 archivos (`git diff` =
+62 644 líneas, `--ignore-cr-at-eol` = 0): el repo ya almacenaba LF, así que la
+normalización no cambió contenido, solo agregó `.gitattributes`
+(`* text=auto eol=lf` + binarios declarados) y reescribió el worktree a LF.
+Verificación: `git diff` vacío, `git ls-files --eol` = 543 `i/lf w/lf`, suites en
+verde. Los png del repo no están trackeados, así que `sed` sobre extensiones de
+texto no tocó binarios.
+
 ## Progress
 
 - [x] T1 — entorno y línea base (132 tests, 69 sales + 63 stock)
@@ -184,5 +209,5 @@ real en verde, más dos verificaciones empíricas propias:
 - [x] T4 — S3 (commit `da7b15c`)
 - [x] T5 — S4 (commit `851ffd3`)
 - [x] T6 — S5 (commit `9946277`)
-- [ ] T7 — S6: compose y documentación hechos (`e9121c0`); **`.env.example` bloqueado** (L7)
+- [x] T7 — S6: compose y documentación (`e9121c0`); `.env.example` x2 los creó el usuario por el bloqueo del harness (L9)
 - [x] T8 — verificación inline (L8): sales 87, stock 72, frontend 4, E2E OK

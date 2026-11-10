@@ -49,8 +49,11 @@ docker compose -f infra/docker-compose.yml down
 
 Cada servicio lee su configuración con pydantic-settings (`env_prefix` `SALES_` /
 `STOCK_`) desde variables de entorno o desde un `.env` en la carpeta del
-servicio; `infra/.env` alimenta al compose. Ninguno se versiona (ver
-`.gitignore`): esto es el inventario de lo que acepta cada uno.
+servicio; `infra/.env` alimenta al compose. Los `.env` no se versionan (ver
+`.gitignore`): la plantilla versionada de cada servicio es su `.env.example`,
+que se copia a `.env` y se ajusta. Esto es el inventario de lo que acepta cada uno, y
+un test por servicio (`tests/test_unit/test_env_example.py`) falla si la plantilla
+se desactualiza respecto de `Settings`.
 
 | Variable | Servicio | Default | Para qué |
 | --- | --- | --- | --- |
@@ -60,9 +63,10 @@ servicio; `infra/.env` alimenta al compose. Ninguno se versiona (ver
 | `SALES_STOCK_SERVICE_URL` | sales | `http://localhost:8002` | cliente Sales→Stock (ADR-003) |
 | `SALES_STOCK_TIMEOUT_SECONDS` | sales | `5.0` | timeout del cliente |
 | `SALES_JWT_SECRET` / `STOCK_JWT_SECRET` | sales / stock | `change-me-dev-only` | **mismo valor**: Sales firma el token de servicio que Stock verifica (ADR-008) |
-| `SALES_JWT_ALGORITHM` | ambos | `HS256` | algoritmo de firma |
-| `SALES_ACCESS_TOKEN_MINUTES` | sales | `15` | vida del access token |
-| `SALES_REFRESH_TOKEN_DAYS` | sales | `7` | vida del refresh token |
+| `SALES_API_V1_STR` / `STOCK_API_V1_STR` | sales / stock | `/api/v1` | prefijo de la API |
+| `SALES_JWT_ALGORITHM` / `STOCK_JWT_ALGORITHM` | sales / stock | `HS256` | algoritmo de firma |
+| `SALES_ACCESS_TOKEN_MINUTES` / `STOCK_ACCESS_TOKEN_MINUTES` | sales / stock | `15` | vida del access token |
+| `SALES_REFRESH_TOKEN_DAYS` / `STOCK_REFRESH_TOKEN_DAYS` | sales / stock | `7` | vida del refresh token |
 | `SALES_ADMIN_USERNAME` / `SALES_ADMIN_PASSWORD` | sales | `admin` / `change-me-admin` | admin de bootstrap |
 | `SALES_CORS_ORIGINS` / `STOCK_CORS_ORIGINS` | sales / stock | `http://localhost:5173` | orígenes permitidos |
 | `SALES_RATE_LOGIN`, `SALES_RATE_REFRESH`, `SALES_RATE_WRITE`, `STOCK_RATE_WRITE` | sales / stock | ver `core/config.py` | límites slowapi |
