@@ -1,5 +1,7 @@
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.models.inventory import Inventory
 from app.models.product import Product
 from app.repositories.product_repository import inventory_repository, product_repository
 from app.repositories import inventory_movement_repository as movement_repository
@@ -139,7 +141,7 @@ class ProductService:
         if inv is None:
             if product_repository.get(db, product_id) is None:
                 raise StockNotFoundError(f"producto inexistente: {product_id}")
-            inv = inventory_repository.create_initial(db, product_id, 0)
+            inv = self._create_or_reload_inventory(db, product_id)
         product = product_repository.get(db, product_id)
         cantidad_antes = inv.cantidad
         new_quantity = cantidad_antes + delta
@@ -168,6 +170,26 @@ class ProductService:
         return StockRead(
             producto_id=product_id, cantidad=inv.cantidad, updated_at=inv.updated_at
         )
+
+    def _create_or_reload_inventory(self, db: Session, product_id: int) -> Inventory:
+        """Crea la fila de inventario que falta sin romper la transacción del caller (L6).
+
+        Dos transacciones pueden leer `None` a la vez (datos legados: el producto
+        no tiene fila) e insertar ambas; la segunda choca contra el `unique` de
+        `inventories.producto_id` y antes escapaba como HTTP 500. El SAVEPOINT
+        acota el daño al INSERT fallido: un `rollback()` completo descartaría la
+        unidad de trabajo del caller. Si el INSERT falla, se relee la fila que
+        ganó la carrera y el ajuste continúa sobre ella.
+        """
+        try:
+            with db.begin_nested():
+                return inventory_repository.create_initial(db, product_id, 0)
+        except IntegrityError:
+            inv = inventory_repository.get_by_product_for_update(db, product_id)
+            if inv is None:
+                # No fue una carrera: la fila no existe, el fallo no es recuperable.
+                raise
+            return inv
 
     def list_movements(
         self, db: Session, producto_id: int | None = None, skip: int = 0, limit: int = 20

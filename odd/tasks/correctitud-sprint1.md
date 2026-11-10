@@ -201,6 +201,37 @@ Verificación: `git diff` vacío, `git ls-files --eol` = 543 `i/lf w/lf`, suites
 verde. Los png del repo no están trackeados, así que `sed` sobre extensiones de
 texto no tocó binarios.
 
+**L11 — L6 cerrado: la carrera de `create_initial` ya no produce 500:**
+`adjust_stock` creaba la fila de inventario que faltaba con un `create_initial`
+suelto; dos transacciones que leían `None` a la vez chocaban contra el `unique` de
+`inventories.producto_id` y el `IntegrityError` salía como 500. El nuevo
+`ProductService._create_or_reload_inventory` envuelve el INSERT en un SAVEPOINT
+(`db.begin_nested()`): en `IntegrityError` relee con `get_by_product_for_update` y
+continúa sobre la fila que ganó la carrera; si la fila realmente no existe,
+re-lanza el error original. El SAVEPOINT deja la transacción del caller usable,
+cosa que un `rollback()` completo destruiría (hay un test que lo demuestra: un
+renombre floheado antes del ajuste sobrevive al commit).
+
+Verificación: test-first, RED ejecutado sobre el código previo (5 de los 6 tests
+nuevos fallan, con el `UNIQUE` real de SQLite en archivo, no con un error
+fabricado) y GREEN **81 passed** (baseline 75 + 6). Verificación independiente
+(`gentle-ai-verify`) con veredicto `pass` sobre seis puntos; sus 4 pruebas
+durables quedaron incorporadas para cerrar el hueco que marcó: los dos tests
+originales no afirmaban que el reintento ocurriera de verdad, así que un refactor
+podía dejarlos en verde sin ejercitar el camino de recuperación.
+
+**Riesgo residual declarado:** la suite corre en SQLite, donde `FOR UPDATE` es un
+no-op; la corrección bajo PostgreSQL READ COMMITTED está **argumentada, no
+ejecutada** (el INSERT perdedor espera el índice único hasta que la otra
+transacción confirma, así que la relectura ve la fila). Bajo REPEATABLE READ la
+relectura no la vería y volvería el 500; el proyecto no fija nivel de aislamiento
+en ningún lado.
+
+**Follow-up nuevo, fuera de L6 (pre-existente):** dos requests concurrentes con la
+misma `Idempotency-Key` pasan ambos `get_adjustment` y chocan contra el `unique` de
+`stock_adjustments.clave` → 500. El fix mueve el fallo de `inventories` a
+`stock_adjustments` en esa combinación; el código es idéntico al baseline.
+
 ## Progress
 
 - [x] T1 — entorno y línea base (132 tests, 69 sales + 63 stock)
