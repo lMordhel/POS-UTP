@@ -120,7 +120,8 @@ si cambia una URL hay que redeployar, no alcanza con guardar la variable.
 
 El backend **no** se despliega en Vercel: el modelo serverless choca con el pool de
 conexiones a Postgres, los locks de fila de `adjust_stock` y la saga
-Sales→Stock con compensación. Su host queda pendiente de decisión.
+Sales→Stock con compensación. Para desplegarlo en una VM gratuita que no duerme,
+con TLS automático delante de los dos servicios, ver **`infra/DEPLOY-VM.md`**.
 
 ## Estructura
 

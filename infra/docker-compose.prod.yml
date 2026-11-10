@@ -1,0 +1,56 @@
+# Overlay de producción para una VM propia (Oracle Cloud Always Free, GCP e2-micro,
+# cualquier host con Docker). NO se usa en desarrollo.
+#
+#   docker compose -f infra/docker-compose.yml -f infra/docker-compose.prod.yml up -d --build
+#
+# Qué agrega sobre el compose base:
+#   1. Caddy como único punto de entrada público (80/443) con TLS automático.
+#      El front en Vercel es HTTPS y el navegador bloquea que una página HTTPS
+#      llame a http://IP:8001 (mixed content): sin TLS delante, el login falla.
+#   2. `restart: unless-stopped` en todos los servicios para que un reinicio de
+#      la VM no deje el stack abajo.
+#
+# Lo que NO hace: no expone 8001/8002 al mundo. Caddy habla con los servicios por
+# la red interna de Docker. Si abrís 8001/8002 en el firewall de la VM, estás
+# publicando la API sin TLS y sin necesidad.
+
+services:
+  postgres:
+    restart: unless-stopped
+
+  stock:
+    restart: unless-stopped
+    environment:
+      # El compose base fija CORS a los localhost de desarrollo. Acá se reemplaza
+      # por el dominio real del front (Vercel) más los que hagan falta, en una
+      # sola variable para no repetirla dos veces.
+      STOCK_CORS_ORIGINS: ${CORS_ORIGINS:?falta CORS_ORIGINS en infra/.env}
+
+  sales:
+    restart: unless-stopped
+    environment:
+      SALES_CORS_ORIGINS: ${CORS_ORIGINS:?falta CORS_ORIGINS en infra/.env}
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      # Se leen de infra/.env. sslip.io resuelve cualquier IP sin comprar dominio:
+      # 203.0.113.5 -> sales.203-0-113-5.sslip.io (los puntos se vuelven guiones).
+      SALES_HOST: ${SALES_HOST:?falta SALES_HOST en infra/.env}
+      STOCK_HOST: ${STOCK_HOST:?falta STOCK_HOST en infra/.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - stock
+      - sales
+
+volumes:
+  caddy_data:
+  caddy_config:

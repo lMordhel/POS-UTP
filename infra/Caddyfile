@@ -1,0 +1,20 @@
+# Caddy en producción: único punto de entrada público, TLS automático (Let's Encrypt).
+#
+# Los hostnames vienen de infra/.env (SALES_HOST / STOCK_HOST) para no editar este
+# archivo por cada deploy. Con sslip.io no hace falta comprar dominio:
+#
+#   SALES_HOST=sales.203-0-113-5.sslip.io
+#   STOCK_HOST=stock.203-0-113-5.sslip.io
+#
+# Requisito: la VM tiene que tener 80 y 443 abiertos, porque Let's Encrypt valida
+# el dominio por HTTP-01. Si el firewall bloquea el 80, el certificado no se emite.
+
+{$SALES_HOST} {
+	encode gzip
+	reverse_proxy sales:8001
+}
+
+{$STOCK_HOST} {
+	encode gzip
+	reverse_proxy stock:8002
+}
