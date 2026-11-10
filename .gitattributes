@@ -1,0 +1,16 @@
+# Almacenar siempre LF en el repositorio y en el worktree, sin importar el SO.
+# Sin esto, un checkout en Windows mete CRLF y el worktree aparece entero
+# modificado: un diff de 500 archivos donde no cambió una sola línea real.
+* text=auto eol=lf
+
+# Binarios: git los detecta por contenido, pero se declaran para que nadie los
+# normalice por accidente.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.docx binary
+*.xlsx binary
+*.zip binary
