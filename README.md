@@ -89,6 +89,39 @@ cd ../..; py infra/e2e_check.py                     # E2E real Ventas→Stock
 cd frontend; npm test                               # 4 tests (vitest, sin navegador)
 ```
 
+## Deploy del frontend (Vercel)
+
+El frontend es un build estático de Vite: Vercel lo sirve sin más configuración que
+la carpeta raíz y las dos variables de entorno.
+
+1. En Vercel: **New Project** → importar el repo `POS-UTP`.
+2. **Root Directory**: `frontend` (el repo es un monorepo; si se deja la raíz, el
+   build falla porque no encuentra `package.json`).
+3. Framework: **Vite**, que lo detecta solo. `frontend/vercel.json` fija build,
+   salida e instalación igual, para que el deploy no dependa del autodetectado.
+4. **Environment Variables** en Production y Preview:
+   - `VITE_SALES_URL` → URL pública del sales-service
+   - `VITE_STOCK_URL` → URL pública del stock-service
+
+Las `VITE_*` se **hornean en el bundle al compilar**, no se leen en runtime:
+si cambia una URL hay que redeployar, no alcanza con guardar la variable.
+
+### Lo que no va a funcionar todavía
+
+- **Front en Vercel contra back local: no.** El navegador bloquea que una página
+  HTTPS llame a `http://localhost` (mixed content) y el login falla en la consola.
+  Para probar el front desplegado contra el back de tu máquina, publicá los puertos
+  por un túnel HTTPS (`cloudflared`, `ngrok`) y poné esas URLs en las variables.
+- Cuando el back tenga dominio público, agregalo a `SALES_CORS_ORIGINS` y
+  `STOCK_CORS_ORIGINS` (lista separada por comas; `*` no se acepta con
+  `POS_ENV=prod`).
+- `POS_ENV=prod` exige secretos reales: si quedan los de ejemplo, el arranque
+  falla a propósito.
+
+El backend **no** se despliega en Vercel: el modelo serverless choca con el pool de
+conexiones a Postgres, los locks de fila de `adjust_stock` y la saga
+Sales→Stock con compensación. Su host queda pendiente de decisión.
+
 ## Estructura
 
 ```text
