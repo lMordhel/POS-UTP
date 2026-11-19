@@ -23,14 +23,14 @@ Frontend Vite (:5173) ──► Sales (:8001) ──► Stock (:8002)
 
 ## Levantar todo
 
-```powershell
+```bash
 # Backend + Postgres (primera vez o con cambios)
 docker compose -f infra/docker-compose.yml up -d --build
 
 # Ver estado / salud
 docker compose -f infra/docker-compose.yml ps
-Invoke-RestMethod http://localhost:8002/health
-Invoke-RestMethod http://localhost:8001/health
+curl http://localhost:8002/health
+curl http://localhost:8001/health
 
 # Frontend (otra terminal)
 cd frontend
@@ -40,7 +40,7 @@ npm run dev   # http://localhost:5173
 
 Swagger: http://localhost:8002/docs (Stock), http://localhost:8001/docs (Sales).
 
-```powershell
+```bash
 # Apagar
 docker compose -f infra/docker-compose.yml down
 ```
@@ -82,14 +82,27 @@ a propósito (`app/core/config.py`).
 
 ## Tests
 
-```powershell
-cd services/stock-service; py -m pytest tests -q   # 72 tests
-cd ../sales-service; py -m pytest tests -q          # 87 tests
-cd ../..; py infra/e2e_check.py                     # E2E real Ventas→Stock
-cd frontend; npm test                               # 4 tests (vitest, sin navegador)
+```bash
+cd services/stock-service && python -m pytest tests -q   # 84 tests
+cd ../sales-service && python -m pytest tests -q        # 92 tests
+cd ../../infra && python e2e_check.py                   # E2E real Ventas→Stock
+cd ../frontend && npm test                             # 4 tests (vitest, sin navegador)
 ```
 
+`e2e_check.py` levanta sus propios servicios en los puertos 8001/8002 con SQLite
+temporal, así que necesita esos puertos libres: con el stack de compose arriba,
+primero `docker compose -f infra/docker-compose.yml stop`, y después
+`up -d` para volver al stack.
+
+Los tests de cada servicio levantan la app con `TestClient` y parchean
+`_request_session_factory`, así que ejercitan el mismo wiring que producción
+(sesión por request y commit en la ruta, antes de responder).
+
 ## Deploy del frontend (Vercel)
+
+> **Estado: mejora futura, fuera del alcance actual.** El objetivo del proyecto es
+> que todo corra en local (ver *Levantar todo*). Lo de esta sección queda como
+> referencia y solo se ejecuta si se pide explícitamente desplegar a producción.
 
 El frontend es un build estático de Vite: Vercel lo sirve sin más configuración que
 la carpeta raíz y las dos variables de entorno.

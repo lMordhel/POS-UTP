@@ -39,7 +39,7 @@ Decisión del usuario (2026-10-14): UI de cobro tras el backend de Fase 2.
 - [x] PAGO-01 SPEC-FRONT-007 DRAFT + rama (commit 9a7cd34)
 - [x] PAGO-02 SPEC-FRONT-007 → APPROVED 1.0.0 (gate del usuario)
 - [x] PAGO-03 Implementación + `npm run build` verde (AC demo pendiente → PAGO-04; commit ac62b1f, sin push)
-- [ ] PAGO-04 Demo manual por AC + VALIDATED + merge (+ push si se pide)
+- [x] PAGO-04 Demo manual por AC + VALIDATED + merge (+ push si se pide) — merge `5c2cfe6` en `main`; verificado 2026-11-19
 
 ## Authorized scope
 

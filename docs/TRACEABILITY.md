@@ -17,7 +17,7 @@ Relación obligatoria: `ERF → SPEC → AC → Endpoint → Service → Test`.
 
 Notas:
 
-* ERF-01..ERF-08 validados con tests en verde; ERF-09/10 aprobados 2026-10-12 (SPEC-AUTH-001 1.0.0, implementación en curso).
+* ERF-01..ERF-08 validados con tests en verde; ERF-09/10 aprobados 2026-10-12 y validados (SPEC-AUTH-001, filas de arriba en `Validated`).
 * Futuro mapeo AC → test (ej. `AC-ERF05-01 → test_update_stock_valid_quantity`)
   ya sugerido en cada SPEC.
 * Transversal: SPEC-ARCH-001 cubre ERF-01..ERF-08 a nivel de arquitectura.

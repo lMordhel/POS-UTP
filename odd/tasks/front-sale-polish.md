@@ -42,7 +42,7 @@ entendible y claro. Skills instaladas: `web-design-guidelines` (revisión UI)
 - [x] SALE-POL-02 SPEC-FRONT-005 → APPROVED 1.0.0 (gate del usuario, OQs)
 - [x] SALE-POL-03 Implementación polish + `npm run build` verde (AC-08 demo
   manual pendiente → SALE-POL-04; commit 91f35ff, sin push)
-- [ ] SALE-POL-04 Demo manual por AC + VALIDATED + merge (+ push si se pide)
+- [x] SALE-POL-04 Demo manual por AC + VALIDATED + merge (+ push si se pide) — merge `7c2fedf` en `main`; verificado 2026-11-19
 
 ## Authorized scope
 

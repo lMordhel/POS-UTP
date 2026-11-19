@@ -39,7 +39,7 @@ clásico (SPEC + gate + TDD) para que nada se rompa.
 - [x] SALE-EFE-01 SPEC-SALES-005 DRAFT (+ ERF) + rama (commit 2e49024)
 - [x] SALE-EFE-02 SPEC-SALES-005 → APPROVED 1.0.0 (gate del usuario, OQs)
 - [x] SALE-EFE-03 Implementación TDD (RED observado → GREEN → REFACTOR) + pytest verde (commit ccfb9c8, sin push)
-- [ ] SALE-EFE-04 Smoke contra compose/Postgres + VALIDATED + merge (+ push si se pide)
+- [x] SALE-EFE-04 Smoke contra compose/Postgres + VALIDATED + merge (+ push si se pide) — merge `32be58d` en `main`; verificado 2026-11-19
 
 ## Authorized scope
 

@@ -44,7 +44,7 @@ el backend ya expone (`ilike` en código/nombre) — sin cambios backend.
 - [x] SALE-PRO-02 SPEC-FRONT-006 → APPROVED 1.0.0 (gate del usuario)
 - [x] SALE-PRO-03 Implementación Fase 1 + `npm run build` verde (AC-08 demo
   manual pendiente → SALE-PRO-04; commit 686968d, sin push)
-- [ ] SALE-PRO-04 Demo manual por AC + VALIDATED + merge (+ push si se pide)
+- [x] SALE-PRO-04 Demo manual por AC + VALIDATED + merge (+ push si se pide) — merge `7c2fedf` en `main`; verificado 2026-11-19
 
 ## Authorized scope
 

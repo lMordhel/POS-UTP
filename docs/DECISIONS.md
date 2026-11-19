@@ -180,6 +180,40 @@
   (FR-04, BR-03, AC-ERF07-04).
 - Afecta a: SPEC-SALES-003, SPEC-FRONT-008.
 
+## ADR-019 — La escritura se commitea antes de responder
+
+- Status: APPROVED (2026-11-19, corregido en la verificación local del stack)
+- Decisión: el commit de la transacción del request vive en
+  `CommitBeforeResponseRoute` (`app/core/transactions.py`), un `APIRoute` que
+  commitea cuando el endpoint terminó bien y todavía no se envió la respuesta.
+  `get_db` ya no commitea: solo cierra y hace rollback ante error.
+- Motivo: FastAPI >= 0.106 ejecuta el código posterior al `yield` de una
+  dependencia **después** de enviar la respuesta. Con el `db.commit()` en
+  `get_db`, la escritura se confirmaba cuando el cliente ya tenía su 2xx: una
+  lectura inmediata devolvía el estado anterior y un fallo de commit no podía
+  reportarse. Medido contra Postgres en `docker compose`: 10/10 lecturas
+  obsoletas sin espera, 0/10 con 300 ms; tras el arreglo, 0/10.
+- Alternativa descartada: commitear dentro de cada servicio. Rompe el contrato
+  que fija `test_inventory_missing_row_race` (el servicio deja `flush` y el
+  llamador controla la transacción) y depende de que nadie olvide el commit en
+  un endpoint nuevo.
+- Consecuencia: los tests parchean `_request_session_factory` y no `get_db`,
+  así que ejercitan el mismo wiring que producción. Un rechazo (4xx) no deja
+  nada confirmado, y una escritura que falla al commit ya no puede devolver
+  201/200.
+
+## ADR-020 — El objetivo es correr en local; producción queda como mejora futura
+
+- Status: APPROVED (2026-11-19, decisión de usuario)
+- Decisión: el entregable actual es el sistema corriendo completo en local
+  (compose + Postgres + frontend Vite). El despliegue a producción
+  (`infra/DEPLOY-VM.md`, Vercel) queda documentado como mejora futura y no se
+  ejecuta salvo pedido explícito del usuario.
+- Motivo: la guía de despliegue está completa, pero ejecutarla depende de una
+  cuenta cloud y de un dominio; no es requisito para verificar el sistema.
+- Consecuencia: `README.md` marca la sección de deploy como fuera de alcance y
+  la verificación se hace contra el stack local.
+
 ## Historial
 
 | Fecha | Cambio |
