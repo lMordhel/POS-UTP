@@ -194,19 +194,14 @@ def db_engine():
 def client(db_engine, fake_stock, monkeypatch):
     TestingSession = sessionmaker(bind=db_engine, autoflush=False, autocommit=False)
 
-    def override_get_db():
-        db = TestingSession()
-        try:
-            yield db
-            db.commit()
-        except Exception:
-            db.rollback()
-            raise
-        finally:
-            db.close()
+    # Se parchea el punto de inyección de `get_db`, no `SessionLocal`: así el
+    # test usa el mismo wiring que producción (commit en la ruta, antes de
+    # responder) sin arrastrar el bootstrap de `init_db` a la DB del test.
+    from app.core import database as database_module
+
+    monkeypatch.setattr(database_module, "_request_session_factory", TestingSession)
 
     monkeypatch.setattr(sale_service_module.sale_service, "client", fake_stock)
-    app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()

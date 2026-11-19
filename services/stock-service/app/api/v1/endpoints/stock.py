@@ -13,7 +13,9 @@ from app.services.product_service import (
     product_service,
 )
 
-router = APIRouter()
+from app.core.transactions import CommitBeforeResponseRoute
+
+router = APIRouter(route_class=CommitBeforeResponseRoute)
 admin_only = require_role("admin")
 reader = require_role("admin", "cajero")
 _settings = get_settings()

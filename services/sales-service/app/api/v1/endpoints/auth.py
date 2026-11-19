@@ -13,7 +13,9 @@ from app.services.auth_service import (
     refresh_pair as service_refresh,
 )
 
-router = APIRouter()
+from app.core.transactions import CommitBeforeResponseRoute
+
+router = APIRouter(route_class=CommitBeforeResponseRoute)
 _settings = get_settings()
 
 

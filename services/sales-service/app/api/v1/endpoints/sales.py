@@ -19,7 +19,9 @@ from app.services.sale_service import (
     sale_service,
 )
 
-router = APIRouter()
+from app.core.transactions import CommitBeforeResponseRoute
+
+router = APIRouter(route_class=CommitBeforeResponseRoute)
 seller = require_active_role("admin", "cajero")
 _rate_write = get_settings().RATE_WRITE
 

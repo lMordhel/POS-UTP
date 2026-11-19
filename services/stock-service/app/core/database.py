@@ -9,6 +9,7 @@ from pathlib import Path
 from alembic import command
 from alembic.config import Config
 from alembic.script import ScriptDirectory
+from fastapi import Request
 from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, Session
 
@@ -23,6 +24,9 @@ _settings = get_settings()
 _connect_args = {"check_same_thread": False} if _settings.DATABASE_URL.startswith("sqlite") else {}
 engine = create_engine(_settings.DATABASE_URL, connect_args=_connect_args)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+# Punto de inyección de los tests: `get_db` lo lee en cada request. El bootstrap
+# (`init_db`) sigue usando `SessionLocal` para no mezclar la DB de tests.
+_request_session_factory = SessionLocal
 
 _ALEMBIC_DIR = Path(__file__).resolve().parents[2] / "alembic"
 _BUSINESS_TABLES = {"products", "inventories"}
@@ -81,11 +85,20 @@ def check_db() -> bool:
         return False
 
 
-def get_db() -> Iterator[Session]:
-    db = SessionLocal()
+def get_db(request: Request) -> Iterator[Session]:
+    """Sesión por request. NO commitea aquí.
+
+    FastAPI >= 0.106 ejecuta el código posterior al `yield` DESPUÉS de enviar
+    la respuesta: un `db.commit()` en este punto confirmaba la escritura
+    cuando el cliente ya tenía su 2xx, así que una lectura inmediata devolvía
+    el estado anterior y un fallo de commit no podía reportarse. El commit lo
+    hace `CommitBeforeResponseRoute` al terminar bien el endpoint; el teardown
+    solo garantiza el cierre.
+    """
+    db = _request_session_factory()
+    request.state.db = db
     try:
         yield db
-        db.commit()
     except Exception:
         db.rollback()
         raise

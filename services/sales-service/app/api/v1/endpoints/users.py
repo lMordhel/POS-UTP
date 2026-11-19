@@ -8,7 +8,9 @@ from app.schemas.auth import UserCreate, UserRead, UserUpdate
 from app.services.user_service import UserExistsError
 from app.services import user_service as user_service_module
 
-router = APIRouter()
+from app.core.transactions import CommitBeforeResponseRoute
+
+router = APIRouter(route_class=CommitBeforeResponseRoute)
 admin_only = require_active_role("admin")
 
 
